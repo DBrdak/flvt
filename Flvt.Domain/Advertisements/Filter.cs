@@ -12,12 +12,41 @@ public sealed record Filter
 
     public Filter() => _tempFilter = this;
 
-    public Filter InLocation(string location) => _tempFilter with { Location = location };
-    public Filter ToPrice(int maxPrice) => _tempFilter with { MaxPrice = maxPrice };
-    public Filter FromRooms(int minRooms) => _tempFilter with { MinRooms = minRooms };
-    public Filter ToRooms(int maxRooms) => _tempFilter with { MaxRooms = maxRooms };
-    public Filter FromArea(int minArea) => _tempFilter with { MinArea = minArea };
-    public Filter ToArea(int maxArea) => _tempFilter with { MaxArea = maxArea };
+    public Filter InLocation(string location)
+    {
+        _tempFilter.Location = location;
+        return _tempFilter;
+    }
+
+    public Filter ToPrice(int maxPrice)
+    {
+        _tempFilter.MaxPrice = maxPrice;
+        return _tempFilter;
+    }
+
+    public Filter FromRooms(int minRooms)
+    {
+        _tempFilter.MinRooms = minRooms;
+        return _tempFilter;
+    }
+
+    public Filter ToRooms(int maxRooms)
+    {
+        _tempFilter.MinArea = maxRooms;
+        return _tempFilter;
+    }
+
+    public Filter FromArea(int minArea)
+    {
+        _tempFilter.MinArea = minArea;
+        return _tempFilter;
+    }
+
+    public Filter ToArea(int maxArea)
+    {
+        _tempFilter.MaxArea = maxArea;
+        return _tempFilter;
+    }
 
     public Filter Build()
     {
