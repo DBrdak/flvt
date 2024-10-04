@@ -4,6 +4,7 @@ public sealed record Filter
 {
     private Filter _tempFilter;
     public string Location { get; private set; } = string.Empty;
+    public int? MinPrice { get; private set; }
     public int? MaxPrice { get; private set; }
     public int? MinRooms { get; private set; }
     public int? MaxRooms { get; private set; }
@@ -15,6 +16,12 @@ public sealed record Filter
     public Filter InLocation(string location)
     {
         _tempFilter.Location = location;
+        return _tempFilter;
+    }
+
+    public Filter FromPrice(int minPrice)
+    {
+        _tempFilter.MinPrice = minPrice;
         return _tempFilter;
     }
 
@@ -32,7 +39,7 @@ public sealed record Filter
 
     public Filter ToRooms(int maxRooms)
     {
-        _tempFilter.MinArea = maxRooms;
+        _tempFilter.MaxRooms = maxRooms;
         return _tempFilter;
     }
 
@@ -53,6 +60,13 @@ public sealed record Filter
         if (string.IsNullOrWhiteSpace(_tempFilter.Location))
         {
             throw new ArgumentException("Location is required");
+        }
+
+        if (_tempFilter.MaxPrice is not null &&
+            _tempFilter.MinPrice is not null && 
+            _tempFilter.MinPrice > _tempFilter.MaxPrice)
+        {
+            throw new ArgumentException("Max price must be greater than or equal to min price");
         }
 
         if (_tempFilter.MaxArea is not null &&

@@ -10,7 +10,7 @@ public sealed class ScrapingOrchestrator : IScrapingOrchestrator // todo this sh
 {
     public async Task<IEnumerable<ScrapedAdvertisement>> ScrapeAsync(Filter filter)
     {
-        using var morizonScraper = new MorizonScraper(filter);
+        var morizonScraper = new MorizonScraper(filter);
         //using var otodomScraper = new OtodomScraper(filter);
         //using var olxScraper = new OlxScraper(filter);
 

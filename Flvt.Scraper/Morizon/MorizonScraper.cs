@@ -1,13 +1,14 @@
-﻿using Flvt.Domain.Advertisements;
+﻿using System.Runtime.CompilerServices;
+using Flvt.Domain.Advertisements;
 using Flvt.Domain.Extensions;
-using Flvt.Scraper.Extensions;
-using OpenQA.Selenium;
+using HtmlAgilityPack;
 
 namespace Flvt.Scraper.Morizon;
 
 internal sealed class MorizonScraper : WebScraper
 {
     private const string baseUrl = "https://www.morizon.pl/do-wynajecia/mieszkania";
+    private readonly HashSet<string> _advertisementsLinks = [];
 
     public MorizonScraper(Filter filter) : base(filter, baseUrl)
     {
@@ -16,32 +17,49 @@ internal sealed class MorizonScraper : WebScraper
 
     public override async Task<IEnumerable<ScrapedAdvertisement>> ScrapeAsync()
     {
-        await Browser.Navigate().GoToUrlAsync(QueryUrl);
-
-        var advertisements = Browser.Wait().Until(d => d.FindElements(By.ClassName("q-Oe37")));
-        var advertisementsLinks = advertisements.Select(ad => ad.GetAttribute("href"));
-
+        await ScrapeAdvertisementsLinksAsync();
+        
         return null;
+    }
+
+    private async Task ScrapeAdvertisementsLinksAsync()
+    {
+        var page = 1;
+        bool isValidPage;
+
+        do
+        {
+            var pageUrl = $"{QueryUrl}&page={page}";
+            var client = new HttpClient();
+            var g = await client.GetAsync(pageUrl);
+            var c = await g.Content.ReadAsStringAsync();
+            var htmlDoc = new HtmlDocument();
+
+            htmlDoc.LoadHtml(c);
+
+            var advertisements = htmlDoc.DocumentNode.SelectNodes("//a[contains(@class, 'q-Oe37')]").ToList();
+
+            advertisements.ForEach(ad => _advertisementsLinks.Add(ad.GetAttributeValue("href", string.Empty)));
+
+            isValidPage = page == 1 || htmlDoc.DocumentNode.SelectSingleNode("//a[contains(@class, 'QnjRFa')]") is not null;
+            page++;
+        }
+        while (isValidPage);
     }
 
     protected override void BuildQueryUrl()
     {
         var location = Filter.Location.ToLower().ReplacePolishCharacters();
-        var maxPrice = Filter.MaxPrice is null ?
-                string.Empty : $"do-{Filter.MaxPrice}/";
 
-        var minArea = Filter.MaxArea is null ? string.Empty : $"ps[living_area_from]={Filter.MinArea}";
-        var maxArea = Filter.MaxArea is null ? string.Empty : $"ps[living_area_to]={Filter.MaxArea}";
+        var minPrice = Filter.MinPrice is null ? string.Empty : $"ps[price_from]={Filter.MinPrice}&";
+        var maxPrice = Filter.MaxPrice is null ? string.Empty : $"ps[price_to]={Filter.MaxPrice}&";
 
-        var minRooms = Filter.MinRooms;
-        var maxRooms = Filter.MaxRooms;
-        var rooms = string.Empty;
+        var minArea = Filter.MinArea is null ? string.Empty : $"ps[living_area_from]={Filter.MinArea}&";
+        var maxArea = Filter.MaxArea is null ? string.Empty : $"ps[living_area_to]={Filter.MaxArea}&";
 
-        for (var i = 0; i <= minRooms - maxRooms; i++)
-        {
-            rooms += $"&ps[number_of_rooms][{i}]={minRooms + i}";
-        }
+        var minRooms = Filter.MinRooms is null ? string.Empty : $"ps[number_of_rooms_from]={Filter.MinRooms}&";
+        var maxRooms = Filter.MaxRooms is null ? string.Empty : $"ps[number_of_rooms_to]={Filter.MaxRooms}&";
 
-        QueryUrl = $"{BaseUrl}/{maxPrice}{location}/?{minArea}{maxArea}{rooms}";
+        QueryUrl = $"{BaseUrl}/{location}/?{minPrice}{maxPrice}{minArea}{maxArea}{minRooms}{maxRooms}";
     }
 }
