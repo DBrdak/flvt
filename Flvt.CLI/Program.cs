@@ -1,5 +1,5 @@
-﻿using Flvt.Domain.Advertisements;
-using Flvt.Scraper;
+﻿using Flvt.Application.ProcessAdvertisements;
+using Flvt.Domain.Subscribers;
 using Newtonsoft.Json;
 
 namespace Flvt.CLI;
@@ -9,7 +9,6 @@ internal class Program
         
     static async Task Main(string[] args)
     {
-        var a = new ScrapingOrchestrator();
         var filter = new Filter()
             .InLocation("warszawa")
             .ToArea(45)
@@ -18,9 +17,15 @@ internal class Program
             .FromRooms(2)
             .ToRooms(4)
             .Build();
+        var cmd = new ProcessAdvertisementsCommand(
+            filter.Location,
+            filter.MinPrice,
+            filter.MaxPrice,
+            filter.MinRooms,
+            filter.MaxRooms,
+            filter.MinArea,
+            filter.MaxArea);
 
-        var b = await a.ScrapeAsync(filter);
 
-        Console.WriteLine(JsonConvert.SerializeObject(b));
     }
 }

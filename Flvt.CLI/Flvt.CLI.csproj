@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Flvt.Scraper\Flvt.Scraper.csproj" />
+    <ProjectReference Include="..\Flvt.Application\Flvt.Application.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,4 +1,5 @@
 ﻿using Flvt.Domain.Advertisements;
+using Flvt.Domain.Subscribers;
 
 namespace Flvt.Application.Abstractions;
 
