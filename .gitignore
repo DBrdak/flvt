@@ -364,3 +364,4 @@ FodyWeavers.xsd
 /Flvt.Infrastructure/AI/api_key.txt
 /Flvt.Processor/AI/api_key.txt
 /Flvt.API/appsettings.json
+/Flvt.Domain/XD.cs
