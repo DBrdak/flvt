@@ -1,4 +1,5 @@
 ﻿using Amazon.CloudWatchLogs;
+using Flvt.Application.Behaviors;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using Serilog.Formatting.Json;
@@ -15,6 +16,7 @@ public static class ApplicationInjector
             config =>
             {
                 config.RegisterServicesFromAssemblyContaining<ApplicationAssemblyReference>();
+                config.AddOpenBehavior(typeof(TrackingBehavior<,>));
             });
 
         var options = new CloudWatchSinkOptions

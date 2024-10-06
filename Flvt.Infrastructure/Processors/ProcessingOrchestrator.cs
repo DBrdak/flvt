@@ -32,7 +32,7 @@ internal sealed class ProcessingOrchestrator : IProcessingOrchestrator
         {
             processedAdvertisements = existingAdvertisementsGetResult.Value.ToList();
         }
-
+        //todo Invert
         FindNotProcessedAdvertisements(scrapedAdvertisements, processedAdvertisements);
 
         var prompts = await SendPromptsAsync();
@@ -57,13 +57,13 @@ internal sealed class ProcessingOrchestrator : IProcessingOrchestrator
 
         var semiProcessedAdvertisement = JsonConvert.DeserializeObject<SemiProcessedAdvertisement>(ResponseAsJson(prompt.Value));
 
-        var advertisement = _advertisementsToProcess.First(ad => ad.Link == prompt.Value);
-
         if (semiProcessedAdvertisement is null)
         {
-            Log.Logger.Error("AI processor failed to convert processed advertisement ({link})", advertisement.Link);
+            Log.Logger.Error("AI processor failed to convert prompt to processed advertisement, prompt: ({prompt})", prompt);
             return;
         }
+
+        var advertisement = _advertisementsToProcess.First(ad => ad.Link == semiProcessedAdvertisement.Link);
 
         var processedAdvertisement = new ProcessedAdvertisement(
             advertisement,
@@ -95,15 +95,15 @@ internal sealed class ProcessingOrchestrator : IProcessingOrchestrator
     }
 
     private string ResponseAsJson(string response) =>
-        response.Substring(response.IndexOf('{'), response.IndexOf('{') - response.LastIndexOf('}') + 1);
+        response.Substring(response.IndexOf('{'), response.LastIndexOf('}') - response.IndexOf('{') + 1);
 
     private void FindNotProcessedAdvertisements(
-        IEnumerable<ScrapedAdvertisement> scrapedAdvertisements,
-        IEnumerable<ProcessedAdvertisement> processedAdvertisements)
+        IEnumerable<ScrapedAdvertisement> sAdvertisements,
+        IEnumerable<ProcessedAdvertisement> pAdvertisements)
     {
-        foreach (var scrapedAdvertisement in scrapedAdvertisements)
+        foreach (var scrapedAdvertisement in sAdvertisements)
         {
-            var processedAdvertisement = processedAdvertisements.ToList().FirstOrDefault(
+            var processedAdvertisement = pAdvertisements.ToList().FirstOrDefault(
                 ad => ad.Link == scrapedAdvertisement.Link && scrapedAdvertisement.UpdatedAt == ad.UpdatedAt);
 
             switch (processedAdvertisement)

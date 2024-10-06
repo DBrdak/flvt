@@ -1,8 +1,13 @@
 ﻿using Amazon.CloudWatchLogs;
 using Amazon.Runtime;
 using Flvt.Application.Abstractions;
+using Flvt.Domain.Advertisements.Errors;
+using Flvt.Domain.Subscribers;
+using Flvt.Infrastructure.Data;
+using Flvt.Infrastructure.Data.Repositories;
 using Flvt.Infrastructure.Monitoring;
 using Flvt.Infrastructure.Processors;
+using Flvt.Infrastructure.Processors.AI;
 using Flvt.Infrastructure.Processors.AI.GPT;
 using Flvt.Infrastructure.Scrapers;
 using Microsoft.Extensions.Configuration;
@@ -16,25 +21,18 @@ public static class InfrastructureInjector
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services)
     {
-        services.AddSingleton<ILoggingService, LoggingService>();
+        services.AddRepositories();
         services.AddScrapers();
         services.AddProcessors();
 
-        var awsSettings = new AWSSettings();
-        builder.Configuration.GetSection(nameof(AWSSettings)).Bind(awsSettings);
+        return services;
+    }
 
-        var client = new AmazonCloudWatchLogsClient(new BasicAWSCredentials(awsSettings.AccessKey, awsSettings.SecretKey), Amazon.RegionEndpoint.USEast1);
-
-        configuration
-            .WriteTo.AmazonCloudWatch(
-                logGroup: awsSettings.LogGroup,
-                logStreamPrefix: awsSettings.LogStreamPrefix,
-                restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Verbose,
-                createLogGroup: false,
-                appendUniqueInstanceGuid: false,
-                appendHostName: false,
-                logGroupRetentionPolicy: LogGroupRetentionPolicy.OneMonth,
-                cloudWatchClient: client);
+    private static IServiceCollection AddRepositories(this IServiceCollection services)
+    {
+        services.AddScoped<DataContext>();
+        services.AddScoped<IProcessedAdvertisementRepository, ProcessedAdvertisementRepository>();
+        services.AddScoped<ISubscriberRepository, SubscriberRepository>();
 
         return services;
     }
@@ -48,6 +46,8 @@ public static class InfrastructureInjector
 
     private static IServiceCollection AddProcessors(this IServiceCollection services)
     {
+        services.AddScoped<AIProcessor>();
+
         services.AddScoped<IProcessingOrchestrator, ProcessingOrchestrator>();
 
         services.ConfigureOptions<GPTOptionsSetup>();
@@ -57,9 +57,9 @@ public static class InfrastructureInjector
         services.AddHttpClient<GPTClient>(
                 (serviceProvider, httpClient) =>
                 {
-                    var geminiOptions = serviceProvider.GetRequiredService<IOptions<GPTOptions>>().Value;
+                    var gptOptions = serviceProvider.GetRequiredService<IOptions<GPTOptions>>().Value;
 
-                    httpClient.BaseAddress = new Uri(geminiOptions.Url);
+                    httpClient.BaseAddress = new Uri(gptOptions.Url);
                 })
             .AddHttpMessageHandler<GPTDelegatingHandler>();
 

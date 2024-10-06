@@ -13,6 +13,7 @@ public sealed class TrackingBehavior<TRequest, TResponse> : IPipelineBehavior<TR
         RequestHandlerDelegate<TResponse> next,
         CancellationToken cancellationToken)
     {
+        TResponse? response = null;
         Log.Logger.Information("Started processing {request}", typeof(TRequest).Name);
         var timer = new Stopwatch();
         
@@ -20,7 +21,7 @@ public sealed class TrackingBehavior<TRequest, TResponse> : IPipelineBehavior<TR
 
         try
         {
-            var response = await next();
+            response = await next();
         }
         catch (Exception e)
         {
@@ -34,6 +35,6 @@ public sealed class TrackingBehavior<TRequest, TResponse> : IPipelineBehavior<TR
             Log.Logger.Warning("Processing {request} took {time}ms", typeof(TRequest).Name, timer.ElapsedMilliseconds);
         }
 
-        return default;
+        return response ?? (TResponse)Error.Exception;
     }
 }

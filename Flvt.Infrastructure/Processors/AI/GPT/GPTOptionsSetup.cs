@@ -1,4 +1,5 @@
-﻿using Flvt.Infrastructure.SecretManager;
+﻿using Flvt.Domain;
+using Flvt.Infrastructure.SecretManager;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 
@@ -19,6 +20,8 @@ internal sealed class GPTOptionsSetup : IConfigureOptions<GPTOptions>
     public void Configure(GPTOptions options)
     {
         _configuration.GetSection(sectionName).Bind(options);
+
+        options.ApiKey = XD.LOL; // TODO Remove
 
         if (string.IsNullOrWhiteSpace(options.ApiKey))
         {

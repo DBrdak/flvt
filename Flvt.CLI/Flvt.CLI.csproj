@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Flvt.Application\Flvt.Application.csproj" />
+    <ProjectReference Include="..\Flvt.Infrastructure\Flvt.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

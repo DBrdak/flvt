@@ -1,6 +1,12 @@
 ﻿using Flvt.Application.ProcessAdvertisements;
 using Flvt.Domain.Subscribers;
+using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
+using System.ComponentModel.Design;
+using Flvt.Application;
+using Flvt.Infrastructure;
+using MediatR;
+using Microsoft.Extensions.Configuration;
 
 namespace Flvt.CLI;
 
@@ -8,6 +14,33 @@ internal class Program
 {
         
     static async Task Main(string[] args)
+    {
+        var configuration = new ConfigurationBuilder()
+            .Build();
+
+        var serviceProvider = new ServiceCollection()
+            .AddSingleton<IConfiguration>(configuration)
+            .AddScoped<IService, Service>()
+            .AddApplication()
+            .AddInfrastructure()
+            .BuildServiceProvider();
+
+        var s = serviceProvider.GetRequiredService<IService>();
+
+        await s.Run();
+    }
+}
+
+public class Service : IService
+{
+    private readonly ISender _sender;
+
+    public Service(ISender sender)
+    {
+        _sender = sender;
+    }
+
+    public async Task Run()
     {
         var filter = new Filter()
             .InLocation("warszawa")
@@ -26,6 +59,11 @@ internal class Program
             filter.MinArea,
             filter.MaxArea);
 
-
+        var response = await _sender.Send(cmd);
     }
+}
+
+public interface IService
+{
+    Task Run();
 }
