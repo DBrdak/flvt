@@ -1,6 +1,4 @@
-﻿using System.Runtime.InteropServices.JavaScript;
-using Flvt.Domain.Primitives;
-using Newtonsoft.Json;
+﻿using Flvt.Domain.Primitives;
 
 namespace Flvt.Domain.Subscribers;
 

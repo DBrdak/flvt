@@ -1,8 +1,6 @@
 ﻿using Flvt.Application.ProcessAdvertisements;
 using Flvt.Domain.Subscribers;
 using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json;
-using System.ComponentModel.Design;
 using Flvt.Application;
 using Flvt.Infrastructure;
 using MediatR;

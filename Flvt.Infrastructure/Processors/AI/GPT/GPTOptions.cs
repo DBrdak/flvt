@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.Options;
-
-namespace Flvt.Infrastructure.Processors.AI.GPT;
+﻿namespace Flvt.Infrastructure.Processors.AI.GPT;
 
 public class GPTOptions
 {

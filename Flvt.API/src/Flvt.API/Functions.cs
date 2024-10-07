@@ -6,7 +6,6 @@ using Flvt.API.Utils;
 using Flvt.Application.ProcessAdvertisements;
 using Flvt.Domain.Advertisements;
 using MediatR;
-using Serilog;
 using Serilog.Context;
 
 [assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.SystemTextJson.DefaultLambdaJsonSerializer))]

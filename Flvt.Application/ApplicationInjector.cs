@@ -4,7 +4,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using Serilog.Formatting.Json;
 using Serilog.Sinks.AwsCloudWatch;
-using Serilog.Sinks.AwsCloudWatch.LogStreamNameProvider;
 
 namespace Flvt.Application;
 

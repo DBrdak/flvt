@@ -1,4 +1,3 @@
-using Amazon.Runtime;
 using Flvt.Application;
 using Flvt.Infrastructure;
 using Microsoft.Extensions.Configuration;

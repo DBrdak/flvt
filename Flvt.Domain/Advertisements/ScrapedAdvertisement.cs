@@ -1,5 +1,9 @@
-﻿using Flvt.Domain.Advertisements.Errors;
+﻿using System.ComponentModel;
+using System.Runtime.Serialization;
+using Flvt.Domain.Advertisements.Errors;
+using Flvt.Domain.Extensions;
 using Flvt.Domain.Primitives;
+using Microsoft.VisualBasic;
 
 namespace Flvt.Domain.Advertisements;
 
@@ -77,8 +81,8 @@ public sealed class ScrapedAdvertisement
                 new RoomsCount(int.Parse(roomsCount!), roomsUnit),
                 floor ?? "",
                 new Area(decimal.Parse(areaValue!), areaUnit),
-                addedAt is null ? null : DateTime.Parse(addedAt),
-                updatedAt is null ? null : DateTime.Parse(updatedAt))
+                addedAt is null ? null : DateParser.ParseDate(addedAt),
+                updatedAt is null ? null : DateParser.ParseDate(updatedAt))
         };
     }
 }

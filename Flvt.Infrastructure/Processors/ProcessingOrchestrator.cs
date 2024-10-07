@@ -4,7 +4,6 @@ using Flvt.Domain.Advertisements.Errors;
 using Flvt.Domain.Primitives;
 using Flvt.Infrastructure.Processors.AI;
 using Flvt.Infrastructure.Processors.AI.Models;
-using Microsoft.AspNetCore.Hosting;
 using Newtonsoft.Json;
 using Serilog;
 
@@ -32,7 +31,7 @@ internal sealed class ProcessingOrchestrator : IProcessingOrchestrator
         {
             processedAdvertisements = existingAdvertisementsGetResult.Value.ToList();
         }
-        //todo Invert
+
         FindNotProcessedAdvertisements(scrapedAdvertisements, processedAdvertisements);
 
         var prompts = await SendPromptsAsync();

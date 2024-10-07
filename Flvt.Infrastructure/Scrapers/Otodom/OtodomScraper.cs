@@ -1,23 +1,11 @@
-﻿using Flvt.Application.Abstractions;
-using Flvt.Domain.Advertisements;
-using Flvt.Domain.Subscribers;
+﻿using Flvt.Domain.Subscribers;
+using Flvt.Infrastructure.Scrapers.Shared;
 
 namespace Flvt.Infrastructure.Scrapers.Otodom;
 
-internal sealed class OtodomScraper : WebScraper
+internal sealed class OtodomScraper : AdvertisementScraper
 {
-    private const string baseUrl = "https://www.otodom.pl/pl/wyniki";
-
-    public OtodomScraper(Filter filter) : base(filter)
-    {
-    }
-
-    public override async Task<IEnumerable<ScrapedAdvertisement>> ScrapeAsync()
-    {
-        return null;
-    }
-
-    protected override void BuildQueryUrl()
+    public OtodomScraper(Filter filter) : base(filter, new OtodomParser())
     {
     }
 }

@@ -1,6 +1,5 @@
 using Flvt.Application.Abstractions;
 using Flvt.Application.Messaging;
-using Flvt.Domain.Advertisements;
 using Flvt.Domain.Primitives;
 using Flvt.Domain.Subscribers;
 

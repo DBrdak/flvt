@@ -1,9 +1,7 @@
-﻿using System.Security.Principal;
-using Amazon.DynamoDBv2;
+﻿using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DocumentModel;
 using Amazon.Runtime;
 using Flvt.Domain;
-using Flvt.Domain.Advertisements;
 
 namespace Flvt.Infrastructure.Data;
 

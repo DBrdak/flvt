@@ -1,19 +1,14 @@
-﻿using Amazon.CloudWatchLogs;
-using Amazon.Runtime;
-using Flvt.Application.Abstractions;
+﻿using Flvt.Application.Abstractions;
 using Flvt.Domain.Advertisements.Errors;
 using Flvt.Domain.Subscribers;
 using Flvt.Infrastructure.Data;
 using Flvt.Infrastructure.Data.Repositories;
-using Flvt.Infrastructure.Monitoring;
 using Flvt.Infrastructure.Processors;
 using Flvt.Infrastructure.Processors.AI;
 using Flvt.Infrastructure.Processors.AI.GPT;
 using Flvt.Infrastructure.Scrapers;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using Serilog.Sinks.AwsCloudWatch;
 
 namespace Flvt.Infrastructure;
 

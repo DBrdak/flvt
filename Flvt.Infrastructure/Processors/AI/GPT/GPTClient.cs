@@ -1,5 +1,4 @@
 ﻿using System.Text;
-using Flvt.Application.Abstractions;
 using Flvt.Domain.Primitives;
 using Flvt.Infrastructure.Processors.AI.GPT.Models;
 using Flvt.Infrastructure.Processors.AI.GPT.Models.Response;

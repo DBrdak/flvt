@@ -1,5 +1,4 @@
 ﻿using Flvt.Domain.Advertisements;
-using Flvt.Domain.Primitives;
 using Flvt.Infrastructure.Processors.AI.Models;
 
 namespace Flvt.Infrastructure.Processors.AI;
