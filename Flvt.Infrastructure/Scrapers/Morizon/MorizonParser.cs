@@ -1,7 +1,6 @@
 ﻿using Flvt.Domain.Extensions;
 using Flvt.Domain.Subscribers;
 using Flvt.Infrastructure.Scrapers.Shared;
-using HtmlAgilityPack;
 
 namespace Flvt.Infrastructure.Scrapers.Morizon;
 

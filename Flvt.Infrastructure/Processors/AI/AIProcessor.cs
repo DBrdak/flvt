@@ -16,7 +16,7 @@ internal sealed class AIProcessor
 
     public async Task<Result<string>> SendPromptAsync(Prompt prompt, CancellationToken cancellationToken)
     {
-        var response = await _gptClient.GenerateContentAsync(prompt.ToString(), cancellationToken);
+        var response = await _gptClient.MessageAsync(prompt.ToString(), cancellationToken);
 
         return response;
     }

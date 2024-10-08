@@ -1,4 +1,4 @@
-﻿namespace Flvt.Infrastructure.Processors.AI.GPT;
+﻿namespace Flvt.Infrastructure.Processors.AI.GPT.Options;
 
 public class GPTOptions
 {

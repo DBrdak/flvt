@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Options;
 
-namespace Flvt.Infrastructure.Processors.AI.GPT;
+namespace Flvt.Infrastructure.Processors.AI.GPT.Options;
 
 internal sealed class GPTDelegatingHandler : DelegatingHandler
 {

@@ -1,5 +1,4 @@
-﻿using System.Globalization;
-using Flvt.Domain.Advertisements;
+﻿using Flvt.Domain.Advertisements;
 using Flvt.Domain.Subscribers;
 using HtmlAgilityPack;
 using Newtonsoft.Json;
@@ -68,7 +67,7 @@ internal abstract class AdvertisementScraper
 
         var location = _advertisementParser.ParseLocation();
         var description = _advertisementParser.ParseDescription();
-        var contactType = _advertisementParser.ParseContactType(); // TODO problem
+        var contactType = _advertisementParser.ParseContactType();
         var price = _advertisementParser.ParsePrice(); // TODO problem
         var floor = _advertisementParser.ParseFloor(); // TODO problem
         var area = _advertisementParser.ParseArea(); // TODO problem

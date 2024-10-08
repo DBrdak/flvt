@@ -5,12 +5,12 @@ namespace Flvt.Domain.Advertisements;
 public sealed class ProcessedAdvertisement
 {
     public string Link { get; init; }
-    public string Address { get; init; }
+    public Address Address { get; init; }
     public Coordinates? Location { get; init; }
     public string Description { get; init; }
     public string ContactType { get; init; }
     public Money Price { get; init; }
-    public string PriceNotes { get; init; }
+    public string[] PriceNotes { get; init; }
     public Money? Deposit { get; init; }
     public RoomsCount Rooms { get; init; }
     public string Floor { get; init; }
@@ -21,29 +21,36 @@ public sealed class ProcessedAdvertisement
     public string? AvailableFrom { get; init; }
 
     public ProcessedAdvertisement(
-        ScrapedAdvertisement scrapedAdvertisement,
+        string link,
+        Address address,
+        Coordinates? location,
         string description,
-        decimal price,
-        string priceNotes,
-        decimal? deposit,
-        string? availableFrom,
+        string contactType,
+        Money price,
+        string[] priceNotes,
+        Money? deposit,
+        RoomsCount rooms,
+        string floor,
+        Area area,
         string[] facilities,
-        Coordinates? coordinates)
+        DateTime? addedAt,
+        DateTime? updatedAt,
+        string? availableFrom)
     {
-        Link = scrapedAdvertisement.Link;
-        Address = scrapedAdvertisement.Location;
-        Location = coordinates;
+        Link = link;
+        Address = address;
+        Location = location;
         Description = description;
-        ContactType = scrapedAdvertisement.ContactType;
-        Price = new Money(price, scrapedAdvertisement.Price.Currency);
+        ContactType = contactType;
+        Price = price;
         PriceNotes = priceNotes;
-        Deposit = deposit is null ? null : new Money(deposit.Value, scrapedAdvertisement.Price.Currency);
-        Rooms = scrapedAdvertisement.Rooms;
-        Floor = scrapedAdvertisement.Floor;
-        Area = scrapedAdvertisement.Area;
-        AddedAt = scrapedAdvertisement.AddedAt;
-        UpdatedAt = scrapedAdvertisement.UpdatedAt;
-        AvailableFrom = availableFrom;
+        Deposit = deposit;
+        Rooms = rooms;
+        Floor = floor;
+        Area = area;
         Facilities = facilities;
+        AddedAt = addedAt;
+        UpdatedAt = updatedAt;
+        AvailableFrom = availableFrom;
     }
 }

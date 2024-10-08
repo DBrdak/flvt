@@ -1,7 +1,6 @@
 ﻿using Flvt.Application.Abstractions;
 using Flvt.Domain.Advertisements;
 using Flvt.Domain.Subscribers;
-using Flvt.Infrastructure.Scrapers.Morizon;
 using Flvt.Infrastructure.Scrapers.Otodom;
 
 namespace Flvt.Infrastructure.Scrapers;

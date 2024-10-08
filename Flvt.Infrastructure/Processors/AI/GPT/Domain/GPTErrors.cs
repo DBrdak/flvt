@@ -1,6 +1,6 @@
 ﻿using Flvt.Domain.Primitives;
 
-namespace Flvt.Infrastructure.Processors.AI.GPT.Models;
+namespace Flvt.Infrastructure.Processors.AI.GPT.Domain;
 
 internal static class GPTErrors
 {

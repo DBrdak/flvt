@@ -1,9 +1,6 @@
-﻿using System.ComponentModel;
-using System.Runtime.Serialization;
-using Flvt.Domain.Advertisements.Errors;
+﻿using Flvt.Domain.Advertisements.Errors;
 using Flvt.Domain.Extensions;
 using Flvt.Domain.Primitives;
-using Microsoft.VisualBasic;
 
 namespace Flvt.Domain.Advertisements;
 

@@ -3,7 +3,6 @@ using Flvt.Domain.Advertisements;
 using Flvt.Domain.Advertisements.Errors;
 using Flvt.Domain.Primitives;
 using Flvt.Infrastructure.Processors.AI;
-using Flvt.Infrastructure.Processors.AI.Models;
 using Newtonsoft.Json;
 using Serilog;
 
@@ -54,25 +53,13 @@ internal sealed class ProcessingOrchestrator : IProcessingOrchestrator
             return;
         }
 
-        var semiProcessedAdvertisement = JsonConvert.DeserializeObject<SemiProcessedAdvertisement>(ResponseAsJson(prompt.Value));
+        var processedAdvertisement = JsonConvert.DeserializeObject<ProcessedAdvertisement>(ResponseAsJson(prompt.Value));
 
-        if (semiProcessedAdvertisement is null)
+        if (processedAdvertisement is null)
         {
             Log.Logger.Error("AI processor failed to convert prompt to processed advertisement, prompt: ({prompt})", prompt);
             return;
         }
-
-        var advertisement = _advertisementsToProcess.First(ad => ad.Link == semiProcessedAdvertisement.Link);
-
-        var processedAdvertisement = new ProcessedAdvertisement(
-            advertisement,
-            semiProcessedAdvertisement.ShortDescription,
-            semiProcessedAdvertisement.Price,
-            semiProcessedAdvertisement.NotesForPrice,
-            semiProcessedAdvertisement.Deposit,
-            semiProcessedAdvertisement.AvailableFrom,
-            semiProcessedAdvertisement.Facilities,
-            null);
 
         _processedAdvertisements.Add(processedAdvertisement);
     }

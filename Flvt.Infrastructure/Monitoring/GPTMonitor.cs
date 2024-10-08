@@ -1,6 +1,6 @@
 ﻿namespace Flvt.Infrastructure.Monitoring
 {
-    internal class CostsMonitor
+    internal class GPTMonitor
     {
     }
 }

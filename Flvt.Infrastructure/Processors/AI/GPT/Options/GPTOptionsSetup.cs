@@ -3,14 +3,14 @@ using Flvt.Infrastructure.SecretManager;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 
-namespace Flvt.Infrastructure.Processors.AI.GPT;
+namespace Flvt.Infrastructure.Processors.AI.GPT.Options;
 
 internal sealed class GPTOptionsSetup : IConfigureOptions<GPTOptions>
 {
     private const string sectionName = "gpt_key";
     private readonly IConfiguration _configuration;
     private const string secretName = "flvt/gpt_key";
-    private const string baseUrl = "https://api.openai.com/v1/chat/completions";
+    private const string baseUrl = "https://api.openai.com";
 
     public GPTOptionsSetup(IConfiguration configuration)
     {

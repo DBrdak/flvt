@@ -6,6 +6,7 @@ using Flvt.Infrastructure.Data.Repositories;
 using Flvt.Infrastructure.Processors;
 using Flvt.Infrastructure.Processors.AI;
 using Flvt.Infrastructure.Processors.AI.GPT;
+using Flvt.Infrastructure.Processors.AI.GPT.Options;
 using Flvt.Infrastructure.Scrapers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;

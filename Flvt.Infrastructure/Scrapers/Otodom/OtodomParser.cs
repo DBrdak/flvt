@@ -12,7 +12,7 @@ internal sealed class OtodomParser : AdvertisementParser
     private const string descriptionNodeSelector = "//div[contains(@class, 'css-v0orps e14akrx11')]";
     private const string extraDescriptionNodeSelector = "//div[contains(@class, 'css-1xbf5wd e1qhas4i0')]";
     private const string priceNodeSelector = "//span[contains(@class, 'css-1o51x5a e1w5xgvx1')]";
-    private const string contactTypeNodeSelector = "//div[contains(@class, 'e1qhas4i2 css-1airkmu')]/p[text()='Typ ogłoszeniodawcy:']";
+    private const string contactTypeNodeSelector = "//div[contains(@class, 'css-t7cajz e1qhas4i1')]";
     private const string locationNodeSelector = "//a[contains(@class, 'css-1jjm9oe e42rcgs1')]";
     private const string roomsAreaNodeSelector = "//div[contains(@class, 'css-1ftqasz')]";
     private const int areaIndex = 0;
@@ -89,7 +89,9 @@ internal sealed class OtodomParser : AdvertisementParser
     }
 
     public override string? ParseContactType() =>
-        Document.DocumentNode.SelectSingleNode(contactTypeNodeSelector)
+        Document.DocumentNode.SelectNodes(contactTypeNodeSelector)
+            .FirstOrDefault(node => node.InnerText.Contains("Typ ogłoszeniodawcy"))
+            ?.ChildNodes.ElementAtOrDefault(1)
             ?.InnerText.Trim();
 
     public override string? ParseLocation() =>
