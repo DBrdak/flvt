@@ -20,6 +20,7 @@ internal sealed class OtodomParser : AdvertisementParser
     private const string areaPattern = "m²";
     private const string roomsKeyword = "pok";
     private const string floorNodeSelector = "//div[contains(@class, 'css-t7cajz e1qhas4i1')]";
+    private string? _floor = string.Empty;
     private const string addedAtNodeSelector = "//div[@class='css-1821gv5 e82kd4s1']/p[contains(text(), 'Dodano:')]";
     private const string updatedAtNodeSelector = "//div[@class='css-1821gv5 e82kd4s1']/p[contains(text(), 'Aktualizacja:')]";
     private readonly List<HtmlNode> _roomsAreaNodes = []; 
@@ -73,7 +74,7 @@ internal sealed class OtodomParser : AdvertisementParser
 
     public override string? ParseDescription() =>
         string.Join(" ",
-                "Title:", Document.DocumentNode.SelectSingleNode(titleNodeSelector),
+                "Title:", Document.DocumentNode.SelectSingleNode(titleNodeSelector).InnerText,
                 "Description:", Document.DocumentNode.SelectSingleNode(descriptionNodeSelector)
                     ?.InnerText,
                 "Specification", Document.DocumentNode.SelectSingleNode(extraDescriptionNodeSelector)
@@ -100,11 +101,31 @@ internal sealed class OtodomParser : AdvertisementParser
         Document.DocumentNode.SelectSingleNode(locationNodeSelector)
             ?.InnerText.Trim();
 
-    public override string? ParseFloor() =>
+    public string? ParseFloor() =>
         Document.DocumentNode.SelectNodes(floorNodeSelector)
             .FirstOrDefault(node => node.InnerText.ToLower().Contains("piętro"))
             ?.ChildNodes.ElementAtOrDefault(1)
             ?.InnerText.Trim();
+
+    public override string? ParseSpecificFloor()
+    {
+        if (_floor == string.Empty)
+        {
+            _floor = ParseFloor();
+        }
+
+        return _floor?.Split('/').ElementAtOrDefault(0)?.Trim();
+    }
+
+    public override string? ParseTotalFloors()
+    {
+        if (_floor == string.Empty)
+        {
+            _floor = ParseFloor();
+        }
+
+        return _floor?.Split('/').ElementAtOrDefault(1)?.Trim();
+    }
 
     public override (string? Count, string? Unit) ParseRooms()
     {

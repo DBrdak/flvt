@@ -21,6 +21,7 @@ internal class MorizonParser : AdvertisementParser
     private const int areaIndex = 2;
     private const int floorIndex = 3;
     private string? _floorRoomsArea = string.Empty;
+    private string? _floor = string.Empty;
 
     protected override string GetBaseUrl() => "https://www.morizon.pl";
 
@@ -86,11 +87,31 @@ internal class MorizonParser : AdvertisementParser
         Document.DocumentNode.SelectSingleNode(locationNodeSelector)
             ?.InnerText.Trim();
 
-    public override string? ParseFloor()
+    public string? ParseFloor()
     {
         PrepareFloorRoomsArea();
 
         return _floorRoomsArea?.Split(roomsFloorAreaSeparator).ElementAtOrDefault(floorIndex)?.Trim();
+    }
+
+    public override string? ParseSpecificFloor()
+    {
+        if (_floor == string.Empty)
+        {
+            _floor = ParseFloor();
+        }
+
+        return _floor?.Split('/').ElementAtOrDefault(0)?.Trim();
+    }
+
+    public override string? ParseTotalFloors()
+    {
+        if (_floor == string.Empty)
+        {
+            _floor = ParseFloor();
+        }
+
+        return _floor?.Split('/').ElementAtOrDefault(1)?.Trim();
     }
 
     public override (string? Count, string? Unit) ParseRooms()

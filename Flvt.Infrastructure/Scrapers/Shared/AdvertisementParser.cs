@@ -22,9 +22,11 @@ public abstract class AdvertisementParser
     public abstract (string? Amount, string? Currency) ParsePrice();
     public abstract string? ParseContactType();
     public abstract string? ParseLocation();
-    public abstract string? ParseFloor();
+    public abstract string? ParseSpecificFloor();
+    public abstract string? ParseTotalFloors();
     public abstract (string? Count, string? Unit) ParseRooms();
     public abstract (string? Value, string? Unit) ParseArea();
     public abstract string? ParseAddedAt();
     public abstract string? ParseUpdatedAt();
+
 }

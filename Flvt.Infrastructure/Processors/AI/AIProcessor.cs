@@ -1,8 +1,8 @@
 ﻿using Flvt.Domain.Advertisements;
 using Flvt.Domain.Primitives;
 using Flvt.Infrastructure.Processors.AI.GPT;
+using Flvt.Infrastructure.Processors.AI.GPT.Messages;
 using Flvt.Infrastructure.Processors.AI.GPT.Utils;
-using Flvt.Infrastructure.Processors.AI.Models;
 using Newtonsoft.Json;
 
 namespace Flvt.Infrastructure.Processors.AI;
@@ -20,26 +20,24 @@ internal sealed class AIProcessor
         IEnumerable<ScrapedAdvertisement> scrapedAdvertisements,
         CancellationToken cancellationToken)
     {
-        var messages = scrapedAdvertisements.Select(JsonConvert.SerializeObject);
+        var messages = scrapedAdvertisements.Select(GPTMessageFactory.CreateBasicMessage).ToList()[..9];
+        List<Task<string?>> replyTasks = [];
 
-        var replyResult = await _gptClient.MessageAsync(
-            AssistantVariant.BasicAdvertisementProcessor,
-            messages,
-            cancellationToken);
-
-        if (replyResult.IsFailure)
+        foreach (var message in messages)
         {
-            return replyResult.Error;
+            replyTasks.Add(_gptClient.CreateCompletionAsync(
+                message,
+                GPTModel.Mini4o));
         }
 
-        var replies = replyResult.Value;
+        var replyResults = await Task.WhenAll(replyTasks);
 
-        var processedAdvertisements = replies
-            .Select(JsonConvert.DeserializeObject<ProcessedAdvertisement>)
+        var replies = replyResults.Where(r => r is not null);
+
+        var processedAdvertisements = replies.Select(JsonConvert.DeserializeObject<ProcessedAdvertisement?>)
+            .Where(ad => ad is not null)
             .ToList();
 
-        return processedAdvertisements.Any(x => x is null) ?
-            AIProcessorErrors.DeserializationError :
-            Result.Success(processedAdvertisements);
+        return processedAdvertisements;
     }
 }

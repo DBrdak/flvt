@@ -13,7 +13,7 @@ public sealed class ProcessedAdvertisement
     public string[] PriceNotes { get; init; }
     public Money? Deposit { get; init; }
     public RoomsCount Rooms { get; init; }
-    public string Floor { get; init; }
+    public Floor Floor { get; init; }
     public Area Area { get; init; }
     public string[] Facilities { get; init; }
     public DateTime? AddedAt { get; init; }
@@ -30,7 +30,7 @@ public sealed class ProcessedAdvertisement
         string[] priceNotes,
         Money? deposit,
         RoomsCount rooms,
-        string floor,
+        Floor floor,
         Area area,
         string[] facilities,
         DateTime? addedAt,

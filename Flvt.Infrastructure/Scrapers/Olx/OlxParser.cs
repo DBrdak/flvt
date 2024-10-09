@@ -44,7 +44,17 @@ internal sealed class OlxParser : AdvertisementParser
         return null;
     }
 
-    public override string? ParseFloor()
+    public string? ParseFloor()
+    {
+        return null;
+    }
+
+    public override string? ParseSpecificFloor()
+    {
+        return null;
+    }
+
+    public override string? ParseTotalFloors()
     {
         return null;
     }

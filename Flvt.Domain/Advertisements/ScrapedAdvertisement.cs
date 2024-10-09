@@ -12,7 +12,7 @@ public sealed class ScrapedAdvertisement
     public string ContactType { get; init; }
     public Money Price { get; init; }
     public RoomsCount Rooms { get; init; }
-    public string Floor { get; init; }
+    public Floor? Floor { get; init; }
     public Area Area { get; init; }
     public DateTime? AddedAt { get; init; }
     public DateTime? UpdatedAt { get; init; }
@@ -24,7 +24,7 @@ public sealed class ScrapedAdvertisement
         string contactType,
         Money price,
         RoomsCount rooms,
-        string floor,
+        Floor? floor,
         Area area,
         DateTime? addedAt,
         DateTime? updatedAt)
@@ -52,7 +52,8 @@ public sealed class ScrapedAdvertisement
         string? roomsUnit,
         string? areaValue,
         string? areaUnit,
-        string? floor,
+        string? specificFloor,
+        string? totalFloors,
         string? addedAt,
         string? updatedAt)
     {
@@ -76,7 +77,9 @@ public sealed class ScrapedAdvertisement
                 contactType!,
                 new Money(int.Parse(price!), Currency.FromCode(currency).Value),
                 new RoomsCount(int.Parse(roomsCount!), roomsUnit),
-                floor ?? "",
+                specificFloor is null || totalFloors is null ?
+                    null :
+                    new(specificFloor,totalFloors),
                 new Area(decimal.Parse(areaValue!), areaUnit),
                 addedAt is null ? null : DateParser.ParseDate(addedAt),
                 updatedAt is null ? null : DateParser.ParseDate(updatedAt))

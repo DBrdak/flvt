@@ -1,12 +1,12 @@
-﻿using Flvt.Infrastructure.Processors.AI.GPT.Domain.Runs;
+﻿using Flvt.Infrastructure.Processors.AI.GPT.Domain.Chat.Completions;
 
 namespace Flvt.Infrastructure.Monitoring;
 
 internal sealed class GPTMonitor : IPerformanceMonitor, ICostsMonitor
 {
-    private readonly List<Run> _completedRuns = [];
+    private readonly List<ChatCompletion> _completions = [];
 
-    public void AddRun(Run run) => _completedRuns.Add(run);
+    public void AddCompletion(ChatCompletion run) => _completions.Add(run);
 
     public async Task ReportPerformanceAsync()
     {

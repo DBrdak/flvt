@@ -14,7 +14,6 @@ internal sealed class GPTDelegatingHandler : DelegatingHandler
     protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
     {
         request.Headers.Add("Authorization", $"Bearer {_gptOptions.ApiKey}");
-        request.Headers.Add("OpenAI-Beta", $"assistants=v2");
 
         return base.SendAsync(request, cancellationToken);
     }

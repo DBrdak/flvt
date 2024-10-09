@@ -68,7 +68,8 @@ internal abstract class AdvertisementScraper
         var description = _advertisementParser.ParseDescription();
         var contactType = _advertisementParser.ParseContactType();
         var price = _advertisementParser.ParsePrice();
-        var floor = _advertisementParser.ParseFloor();
+        var specificFloor = _advertisementParser.ParseSpecificFloor();
+        var totalFloors = _advertisementParser.ParseTotalFloors();
         var area = _advertisementParser.ParseArea();
         var rooms = _advertisementParser.ParseRooms();
         var addedAt = _advertisementParser.ParseAddedAt();
@@ -85,7 +86,8 @@ internal abstract class AdvertisementScraper
             rooms.Unit,
             area.Value,
             area.Unit,
-            floor,
+            specificFloor, 
+            totalFloors,
             addedAt,
             updatedAt);
 
