@@ -1,4 +1,4 @@
-﻿namespace Flvt.Infrastructure.Processors.AI.GPT.Domain.Runs;
+﻿namespace Flvt.Infrastructure.Processors.AI.GPT.Domain.Runs.ValueObjects;
 
 internal sealed record RunStatus()
 {

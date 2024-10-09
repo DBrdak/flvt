@@ -21,7 +21,7 @@ internal sealed class ProcessingOrchestrator : IProcessingOrchestrator
         _aiProcessor = aiProcessor;
     }
 
-    public async Task ProcessAsync(IEnumerable<ScrapedAdvertisement> scrapedAdvertisements)
+    public async Task<Result<IEnumerable<ProcessedAdvertisement>>> ProcessAsync(IEnumerable<ScrapedAdvertisement> scrapedAdvertisements)
     {
         var existingAdvertisementsGetResult = await _processedAdvertisementRepository.GetAllAsync(CancellationToken.None);
         List<ProcessedAdvertisement> processedAdvertisements = [];
@@ -33,9 +33,16 @@ internal sealed class ProcessingOrchestrator : IProcessingOrchestrator
 
         FindNotProcessedAdvertisements(scrapedAdvertisements, processedAdvertisements);
 
-        var prompts = await SendPromptsAsync();
+        var processingResult = await _aiProcessor.ProcessBasicAdvertisementAsync(
+            _advertisementsToProcess,
+            CancellationToken.None);
 
-        prompts.ToList().ForEach(ProcessPromptAsync);
+        if (processingResult.IsFailure)
+        {
+            return processingResult.Error;
+        }
+
+        _processedAdvertisements.AddRange(processingResult.Value);
 
         var addResult = await _processedAdvertisementRepository.AddRangeAsync(_processedAdvertisements, CancellationToken.None);
 
@@ -43,53 +50,17 @@ internal sealed class ProcessingOrchestrator : IProcessingOrchestrator
         {
             Log.Logger.Error("Failed to add processed advertisements to the database: {error}", addResult.Error);
         }
+
+        return _processedAdvertisements;
     }
-
-    private void ProcessPromptAsync(Result<string> prompt)
-    {
-        if (prompt.IsFailure)
-        {
-            Log.Logger.Error("AI processor failed to process advertisement: {error}", prompt.Error);
-            return;
-        }
-
-        var processedAdvertisement = JsonConvert.DeserializeObject<ProcessedAdvertisement>(ResponseAsJson(prompt.Value));
-
-        if (processedAdvertisement is null)
-        {
-            Log.Logger.Error("AI processor failed to convert prompt to processed advertisement, prompt: ({prompt})", prompt);
-            return;
-        }
-
-        _processedAdvertisements.Add(processedAdvertisement);
-    }
-
-    private async Task<IEnumerable<Result<string>>> SendPromptsAsync()
-    {
-        var promptTasks = new List<Task<Result<string>>>();
-
-        foreach (var advertisement in _advertisementsToProcess)
-        {
-            var prompt = PromptFactory.CreateDefaultAdvertisementProcessingPrompt(advertisement);
-
-            promptTasks.Add(_aiProcessor.SendPromptAsync(prompt, CancellationToken.None));
-        }
-
-        await Task.WhenAll(promptTasks);
-
-        return promptTasks.Select(p => p.Result);
-    }
-
-    private string ResponseAsJson(string response) =>
-        response.Substring(response.IndexOf('{'), response.LastIndexOf('}') - response.IndexOf('{') + 1);
 
     private void FindNotProcessedAdvertisements(
-        IEnumerable<ScrapedAdvertisement> sAdvertisements,
-        IEnumerable<ProcessedAdvertisement> pAdvertisements)
+        IEnumerable<ScrapedAdvertisement> scrapedAdvertisements,
+        List<ProcessedAdvertisement> processedAdvertisements)
     {
-        foreach (var scrapedAdvertisement in sAdvertisements)
+        foreach (var scrapedAdvertisement in scrapedAdvertisements)
         {
-            var processedAdvertisement = pAdvertisements.ToList().FirstOrDefault(
+            var processedAdvertisement = processedAdvertisements.FirstOrDefault(
                 ad => ad.Link == scrapedAdvertisement.Link && scrapedAdvertisement.UpdatedAt == ad.UpdatedAt);
 
             switch (processedAdvertisement)

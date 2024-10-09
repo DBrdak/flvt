@@ -1,4 +1,5 @@
-﻿using Flvt.Domain.Extensions;
+﻿using System.Text.RegularExpressions;
+using Flvt.Domain.Extensions;
 using Flvt.Domain.Subscribers;
 using Flvt.Infrastructure.Scrapers.Shared;
 using HtmlAgilityPack;
@@ -11,13 +12,14 @@ internal sealed class OtodomParser : AdvertisementParser
     private const string titleNodeSelector = "//div[contains(@class, 'css-1y950rh ehdsj770')]";
     private const string descriptionNodeSelector = "//div[contains(@class, 'css-v0orps e14akrx11')]";
     private const string extraDescriptionNodeSelector = "//div[contains(@class, 'css-1xbf5wd e1qhas4i0')]";
-    private const string priceNodeSelector = "//span[contains(@class, 'css-1o51x5a e1w5xgvx1')]";
+    private const string priceNodeSelector = "//strong[@class='css-1o51x5a e1w5xgvx1']";
     private const string contactTypeNodeSelector = "//div[contains(@class, 'css-t7cajz e1qhas4i1')]";
+    private const string contactTypeKeyword = "typ ogłoszeniodawcy";
     private const string locationNodeSelector = "//a[contains(@class, 'css-1jjm9oe e42rcgs1')]";
-    private const string roomsAreaNodeSelector = "//div[contains(@class, 'css-1ftqasz')]";
-    private const int areaIndex = 0;
-    private const int roomsIndex = 1;
-    private const string floorNodeSelector = "//div[p[text()='Piętro:']]/p[2]";
+    private const string roomsAreaNodeSelector = "//div[@class='css-1ftqasz']";
+    private const string areaPattern = "m²";
+    private const string roomsKeyword = "pok";
+    private const string floorNodeSelector = "//div[contains(@class, 'css-t7cajz e1qhas4i1')]";
     private const string addedAtNodeSelector = "//div[@class='css-1821gv5 e82kd4s1']/p[contains(text(), 'Dodano:')]";
     private const string updatedAtNodeSelector = "//div[@class='css-1821gv5 e82kd4s1']/p[contains(text(), 'Aktualizacja:')]";
     private readonly List<HtmlNode> _roomsAreaNodes = []; 
@@ -90,7 +92,7 @@ internal sealed class OtodomParser : AdvertisementParser
 
     public override string? ParseContactType() =>
         Document.DocumentNode.SelectNodes(contactTypeNodeSelector)
-            .FirstOrDefault(node => node.InnerText.Contains("Typ ogłoszeniodawcy"))
+            .FirstOrDefault(node => node.InnerText.ToLower().Contains(contactTypeKeyword))
             ?.ChildNodes.ElementAtOrDefault(1)
             ?.InnerText.Trim();
 
@@ -99,7 +101,9 @@ internal sealed class OtodomParser : AdvertisementParser
             ?.InnerText.Trim();
 
     public override string? ParseFloor() =>
-        Document.DocumentNode.SelectSingleNode(floorNodeSelector)
+        Document.DocumentNode.SelectNodes(floorNodeSelector)
+            .FirstOrDefault(node => node.InnerText.ToLower().Contains("piętro"))
+            ?.ChildNodes.ElementAtOrDefault(1)
             ?.InnerText.Trim();
 
     public override (string? Count, string? Unit) ParseRooms()
@@ -109,7 +113,8 @@ internal sealed class OtodomParser : AdvertisementParser
             PrepareRoomsArea();
         }
 
-        var rooms = _roomsAreaNodes.ElementAtOrDefault(roomsIndex)?.InnerText.Trim();
+        var rooms = _roomsAreaNodes.FirstOrDefault(node => node.InnerText.Contains(roomsKeyword))
+            ?.InnerText.Trim();
 
         if (rooms is null)
         {
@@ -129,14 +134,15 @@ internal sealed class OtodomParser : AdvertisementParser
             PrepareRoomsArea();
         }
 
-        var area = _roomsAreaNodes.ElementAtOrDefault(areaIndex)?.InnerText.Trim();
+        var area = _roomsAreaNodes.FirstOrDefault(node => node.InnerText.Contains(areaPattern))
+            ?.InnerText.Trim();
 
         if (area is null)
         {
             return (null, null);
         }
 
-        var areaValue = area[..(area.IndexOf('m') - 1)];
+        var areaValue = area[..area.IndexOf('m')];
         var areaUnit = area.Substring(area.IndexOf('m'), 2);
 
         return (areaValue, areaUnit);

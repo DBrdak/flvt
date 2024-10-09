@@ -1,6 +1,6 @@
 ﻿namespace Flvt.Infrastructure.Monitoring;
 
-internal interface IPerformanceMonitor
+internal interface IPerformanceMonitor : IAsyncDisposable
 {
-    Task ReportPerformanceAsync();
+    protected Task ReportPerformanceAsync();
 }

@@ -18,6 +18,13 @@ public static class ApplicationInjector
                 config.AddOpenBehavior(typeof(TrackingBehavior<,>));
             });
 
+        services.AddLogger();
+
+        return services;
+    }
+
+    private static IServiceCollection AddLogger(this IServiceCollection services)
+    {
         var options = new CloudWatchSinkOptions
         {
             LogGroupName = "flvt",
@@ -29,6 +36,7 @@ public static class ApplicationInjector
         Log.Logger = new LoggerConfiguration()
             .Enrich.FromLogContext()
             .WriteTo.AmazonCloudWatch(options, client)
+            .WriteTo.Console()
             .CreateLogger();
 
         return services;

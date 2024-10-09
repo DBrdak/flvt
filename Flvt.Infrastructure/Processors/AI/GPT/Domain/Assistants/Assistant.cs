@@ -1,4 +1,6 @@
-﻿namespace Flvt.Infrastructure.Processors.AI.GPT.Domain.Assistants;
+﻿using Flvt.Infrastructure.Processors.AI.GPT.Domain.Shared;
+
+namespace Flvt.Infrastructure.Processors.AI.GPT.Domain.Assistants;
 
 internal sealed record Assistant(
     string Id,
@@ -13,21 +15,4 @@ internal sealed record Assistant(
     Dictionary<string, string>? Metadata,
     decimal? Temperature,
     decimal? TopP,
-    ResponseFormat? ResponseFormat
-);
-
-internal sealed record ToolResources(
-    List<string>? FileIds,
-    List<string>? VectorStoreIds
-);
-internal sealed record ResponseFormat(
-    string Type,
-    string? JsonSchema
-)
-{
-    public static ResponseFormat JsonObject = new("json_object", null);
-}
-
-internal sealed record Tool(
-    string Type
-);
+    ResponseFormat? ResponseFormat);

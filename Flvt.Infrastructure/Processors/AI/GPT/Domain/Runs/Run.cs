@@ -1,4 +1,7 @@
-﻿namespace Flvt.Infrastructure.Processors.AI.GPT.Domain.Runs;
+﻿using Flvt.Infrastructure.Processors.AI.GPT.Domain.Runs.ValueObjects;
+using Flvt.Infrastructure.Processors.AI.GPT.Domain.Shared;
+
+namespace Flvt.Infrastructure.Processors.AI.GPT.Domain.Runs;
 
 internal sealed record Run(
     string Id,
@@ -25,59 +28,12 @@ internal sealed record Run(
     int? MaxPromptTokens,
     int? MaxCompletionTokens,
     TruncationStrategy TruncationStrategy,
-    ToolChoice ToolChoice,
+    object ToolChoice,
     bool ParallelToolCalls,
-    ResponseFormat ResponseFormat
+    object ResponseFormat
 )
 {
     public bool IsCompleted => Status == RunStatus.Completed;
     public bool IsFailed => Status != RunStatus.Completed && Status != RunStatus.InProgress && Status != RunStatus.Queued;
+    public bool IsInProgress => !IsCompleted && !IsFailed;
 }
-
-internal sealed record RequiredAction(
-    string Type,
-    string Description
-);
-
-internal sealed record LastError(
-    string Code,
-    string Message
-);
-
-internal sealed record IncompleteDetails(
-    string Reason,
-    string Details
-);
-
-internal sealed record Tool(
-    string Type
-);
-
-internal sealed record Usage(
-    int PromptTokens,
-    int CompletionTokens,
-    int TotalTokens
-);
-
-internal sealed record TruncationStrategy(
-    string Method,
-    int MaxTokens
-);
-
-internal sealed record ToolChoice(
-    string Type,
-    Function? Function
-);
-
-internal sealed record Function(
-    string Name
-);
-
-internal sealed record ResponseFormat(
-    string Type,
-    JsonSchema? JsonSchema
-);
-
-internal sealed record JsonSchema(
-    Dictionary<string, object> Schema
-);

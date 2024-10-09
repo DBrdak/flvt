@@ -1,6 +1,6 @@
 ﻿namespace Flvt.Infrastructure.Monitoring;
 
-internal interface ICostsMonitor
+internal interface ICostsMonitor : IAsyncDisposable
 {
     Task ReportCostsAsync();
 }

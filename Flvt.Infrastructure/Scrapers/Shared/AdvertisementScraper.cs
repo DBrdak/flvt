@@ -52,9 +52,8 @@ internal abstract class AdvertisementScraper
 
         foreach (var advertisementLink in _advertisementsLinks)
         {
-            //var task = ScrapeAdvertisementContentAsync(advertisementLink);
-            //tasks.Add(task);
-            await ScrapeAdvertisementContentAsync(advertisementLink);
+            var task = ScrapeAdvertisementContentAsync(advertisementLink);
+            tasks.Add(task);
         }
 
         await Task.WhenAll(tasks);
@@ -68,10 +67,10 @@ internal abstract class AdvertisementScraper
         var location = _advertisementParser.ParseLocation();
         var description = _advertisementParser.ParseDescription();
         var contactType = _advertisementParser.ParseContactType();
-        var price = _advertisementParser.ParsePrice(); // TODO problem
-        var floor = _advertisementParser.ParseFloor(); // TODO problem
-        var area = _advertisementParser.ParseArea(); // TODO problem
-        var rooms = _advertisementParser.ParseRooms(); // TODO problem
+        var price = _advertisementParser.ParsePrice();
+        var floor = _advertisementParser.ParseFloor();
+        var area = _advertisementParser.ParseArea();
+        var rooms = _advertisementParser.ParseRooms();
         var addedAt = _advertisementParser.ParseAddedAt();
         var updatedAt = _advertisementParser.ParseUpdatedAt();
 
@@ -96,7 +95,8 @@ internal abstract class AdvertisementScraper
             return;
         }
 
-        Log.Error($"Failed to create ScrapedAdvertisement, error: {createResult.Error}. Advertisement link: {advertisementLink}");
+        Log.Warning(
+            $"Failed to create ScrapedAdvertisement, error: {createResult.Error}. Advertisement link: {advertisementLink}");
     }
 
     private async Task ScrapeAdvertisementsLinksAsync()

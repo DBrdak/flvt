@@ -1,8 +1,10 @@
 ﻿using Flvt.Domain.Advertisements;
+using Flvt.Domain.Primitives;
 
 namespace Flvt.Application.Abstractions;
 
 public interface IProcessingOrchestrator
 {
-    Task ProcessAsync(IEnumerable<ScrapedAdvertisement> scrapedAdvertisements);
+    Task<Result<IEnumerable<ProcessedAdvertisement>>> ProcessAsync(
+        IEnumerable<ScrapedAdvertisement> scrapedAdvertisements);
 }

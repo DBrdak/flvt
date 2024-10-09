@@ -12,7 +12,7 @@ internal sealed class AssistantFactory
             Model: "gpt-4o-mini",
             Name: AssistantVariant.BasicAdvertisementProcessor.Name,
             Instructions: BasicProcessorInstructions.CompleteInstruction,
-            ResponseFormat: ResponseFormat.JsonObject,
+            ResponseFormat: BasicProcessorInstructions.ResponseFormat,
             Tools: [],
             ToolResources: null,
             Metadata: null,

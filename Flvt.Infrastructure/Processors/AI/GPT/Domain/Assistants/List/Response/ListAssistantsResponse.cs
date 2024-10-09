@@ -1,3 +1,5 @@
-﻿namespace Flvt.Infrastructure.Processors.AI.GPT.Domain.Assistants.List.Response;
+﻿using Flvt.Infrastructure.Processors.AI.GPT.Domain.Assistants.Create.Response;
 
-internal sealed record ListAssistantsResponse(string Object, IEnumerable<Assistant> Data);
+namespace Flvt.Infrastructure.Processors.AI.GPT.Domain.Assistants.List.Response;
+
+internal sealed record ListAssistantsResponse(string Object, IEnumerable<AssistantCreateResponse> Data);

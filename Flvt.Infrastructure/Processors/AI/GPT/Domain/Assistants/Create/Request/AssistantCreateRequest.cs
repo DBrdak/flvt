@@ -1,4 +1,6 @@
-﻿namespace Flvt.Infrastructure.Processors.AI.GPT.Domain.Assistants.Create.Request;
+﻿using Flvt.Infrastructure.Processors.AI.GPT.Domain.Shared;
+
+namespace Flvt.Infrastructure.Processors.AI.GPT.Domain.Assistants.Create.Request;
 
 internal sealed record AssistantCreateRequest(
     string Model,
