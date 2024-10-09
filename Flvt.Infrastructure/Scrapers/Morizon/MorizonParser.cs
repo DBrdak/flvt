@@ -1,5 +1,5 @@
 ﻿using Flvt.Domain.Extensions;
-using Flvt.Domain.Subscribers;
+using Flvt.Domain.Primitives.Subscribers.Filters;
 using Flvt.Infrastructure.Scrapers.Shared;
 
 namespace Flvt.Infrastructure.Scrapers.Morizon;
@@ -29,7 +29,7 @@ internal class MorizonParser : AdvertisementParser
 
     public override string ParseQueryUrl(Filter filter)
     {
-        var location = filter.Location.ToLower().ReplacePolishCharacters();
+        var location = filter.Location.City.ToLower().ReplacePolishCharacters();
 
         var minPrice = filter.MinPrice is null ? string.Empty : $"ps[price_from]={filter.MinPrice}";
         var maxPrice = filter.MaxPrice is null ? string.Empty : $"ps[price_to]={filter.MaxPrice}";

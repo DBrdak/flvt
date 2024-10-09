@@ -1,4 +1,4 @@
-﻿using Flvt.Domain.Primitives;
+﻿using Flvt.Domain.Primitives.Responses;
 using MediatR;
 
 namespace Flvt.Application.Messaging;

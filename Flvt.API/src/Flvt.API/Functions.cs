@@ -3,8 +3,8 @@ using Amazon.Lambda.Annotations.APIGateway;
 using Amazon.Lambda.APIGatewayEvents;
 using Amazon.Lambda.Core;
 using Flvt.API.Utils;
-using Flvt.Application.ProcessAdvertisements;
-using Flvt.Domain.Advertisements;
+using Flvt.Application.Advertisements.ProcessAdvertisements;
+using Flvt.Domain.ProcessedAdvertisements;
 using MediatR;
 using Serilog.Context;
 
@@ -26,6 +26,7 @@ public class Functions
     public async Task<APIGatewayHttpApiV2ProxyResponse> ProcessNewAdvertisements(
         [FromBody] string emailAddress,
         [FromQuery] string location,
+        [FromQuery] string filterName,
         [FromQuery] int? minPrice,
         [FromQuery] int? maxPrice,
         [FromQuery] int? minRooms,
@@ -37,6 +38,7 @@ public class Functions
         using (LogContext.PushProperty("CorrelationId", requestContext.RequestContext.RequestId))
         {
             var command = new ProcessAdvertisementsCommand(
+                filterName,
                 location,
                 minPrice,
                 maxPrice,

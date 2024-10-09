@@ -1,4 +1,4 @@
-﻿using Flvt.Domain.Primitives;
+﻿using Flvt.Domain.Primitives.Responses;
 using Flvt.Domain.Subscribers;
 
 namespace Flvt.Infrastructure.Data.Repositories;

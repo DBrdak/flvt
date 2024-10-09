@@ -1,5 +1,5 @@
-﻿using Flvt.Domain.Advertisements;
-using Flvt.Domain.Subscribers;
+﻿using Flvt.Domain.Primitives.Subscribers.Filters;
+using Flvt.Domain.ScrapedAdvertisements;
 using HtmlAgilityPack;
 using Newtonsoft.Json;
 using Serilog;

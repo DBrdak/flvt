@@ -1,7 +1,5 @@
 ﻿using System.Text;
-using Flvt.Domain.Primitives;
 using Flvt.Infrastructure.Monitoring;
-using Flvt.Infrastructure.Processors.AI.GPT.Domain;
 using Flvt.Infrastructure.Processors.AI.GPT.Domain.Chat.Completions;
 using Flvt.Infrastructure.Processors.AI.GPT.Utils;
 using Serilog;
@@ -29,7 +27,7 @@ internal sealed class GPTClient
         var response = await _httpClient.PostAsync(GPTPaths.CreateCompletion, CreateHttpBody(completionRequest));
         var responseContent = await response.Content.ReadAsStringAsync();
 
-        if (!response.IsSuccessStatusCode)
+        if (!response.IsSuccessStatusCode) //TODO check if the error is due to rate limit
         {
             Log.Logger.Error("Failed to create GPT Completion, response: {response}", responseContent);
 

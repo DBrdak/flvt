@@ -1,5 +1,5 @@
 ﻿using System.Diagnostics;
-using Flvt.Domain.Primitives;
+using Flvt.Domain.Primitives.Responses;
 using MediatR;
 using Serilog;
 

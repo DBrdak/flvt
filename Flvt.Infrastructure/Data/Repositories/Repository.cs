@@ -1,5 +1,5 @@
 ﻿using Amazon.DynamoDBv2.DocumentModel;
-using Flvt.Domain.Primitives;
+using Flvt.Domain.Primitives.Responses;
 using Newtonsoft.Json;
 
 namespace Flvt.Infrastructure.Data.Repositories;

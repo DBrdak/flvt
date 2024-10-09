@@ -1,6 +1,6 @@
 ﻿using Flvt.Application.Abstractions;
-using Flvt.Domain.Advertisements;
-using Flvt.Domain.Subscribers;
+using Flvt.Domain.Primitives.Subscribers.Filters;
+using Flvt.Domain.ScrapedAdvertisements;
 using Flvt.Infrastructure.Scrapers.Otodom;
 
 namespace Flvt.Infrastructure.Scrapers;

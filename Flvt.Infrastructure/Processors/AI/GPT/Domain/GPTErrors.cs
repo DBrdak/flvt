@@ -1,4 +1,4 @@
-﻿using Flvt.Domain.Primitives;
+﻿using Flvt.Domain.Primitives.Responses;
 
 namespace Flvt.Infrastructure.Processors.AI.GPT.Domain;
 

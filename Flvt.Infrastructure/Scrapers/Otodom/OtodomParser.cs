@@ -1,6 +1,5 @@
-﻿using System.Text.RegularExpressions;
-using Flvt.Domain.Extensions;
-using Flvt.Domain.Subscribers;
+﻿using Flvt.Domain.Extensions;
+using Flvt.Domain.Primitives.Subscribers.Filters;
 using Flvt.Infrastructure.Scrapers.Shared;
 using HtmlAgilityPack;
 
@@ -47,7 +46,7 @@ internal sealed class OtodomParser : AdvertisementParser
         List<string> roomsValues = [];
         var sixRoomsValue = "SIX_OR_MORE";
 
-        for (var i = filter.MinRooms ?? 1; i <= 6 && i <= (filter.MaxRooms ?? 6); i++)
+        for (var i = filter.MinRooms?.Value ?? 1; i <= 6 && i <= (filter.MaxRooms?.Value ?? 6); i++)
         {
             roomsValues.Add(i == 6 ? sixRoomsValue : i.ToStandarizedString());
         }

@@ -1,5 +1,6 @@
-﻿using Flvt.Domain.Advertisements;
-using Flvt.Domain.Primitives;
+﻿using Flvt.Domain.Primitives.Responses;
+using Flvt.Domain.ProcessedAdvertisements;
+using Flvt.Domain.ScrapedAdvertisements;
 
 namespace Flvt.Application.Abstractions;
 

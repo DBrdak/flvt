@@ -1,9 +1,8 @@
 ﻿using Flvt.Application.Abstractions;
-using Flvt.Domain.Advertisements;
-using Flvt.Domain.Advertisements.Errors;
-using Flvt.Domain.Primitives;
+using Flvt.Domain.Primitives.Responses;
+using Flvt.Domain.ProcessedAdvertisements;
+using Flvt.Domain.ScrapedAdvertisements;
 using Flvt.Infrastructure.Processors.AI;
-using Newtonsoft.Json;
 using Serilog;
 
 namespace Flvt.Infrastructure.Processors;

@@ -1,5 +1,5 @@
 ﻿using Flvt.Application.Abstractions;
-using Flvt.Domain.Advertisements.Errors;
+using Flvt.Domain.ProcessedAdvertisements;
 using Flvt.Domain.Subscribers;
 using Flvt.Infrastructure.Data;
 using Flvt.Infrastructure.Data.Repositories;

@@ -1,5 +1,5 @@
 ﻿using Amazon.Lambda.APIGatewayEvents;
-using Flvt.Domain.Primitives;
+using Flvt.Domain.Primitives.Responses;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 

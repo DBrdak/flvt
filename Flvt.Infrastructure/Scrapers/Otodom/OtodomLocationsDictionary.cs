@@ -1,5 +1,5 @@
 ﻿using Flvt.Domain.Extensions;
-using Flvt.Domain.Subscribers;
+using Flvt.Domain.Primitives.Subscribers.Filters;
 
 namespace Flvt.Infrastructure.Scrapers.Otodom;
 
@@ -31,5 +31,5 @@ internal static class OtodomLocationsDictionary
     };
 
     public static string? OtodomLocation(this Filter filter) => 
-        Locations.GetValueOrDefault(filter.Location?.ToLower().ReplacePolishCharacters() ?? string.Empty);
+        Locations.GetValueOrDefault(filter.Location.City.ToLower().ReplacePolishCharacters());
 }

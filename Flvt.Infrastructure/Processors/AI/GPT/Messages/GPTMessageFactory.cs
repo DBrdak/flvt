@@ -1,4 +1,4 @@
-﻿using Flvt.Domain.Advertisements;
+﻿using Flvt.Domain.ScrapedAdvertisements;
 using Flvt.Infrastructure.Processors.AI.GPT.Domain.Chat.Completions;
 using Flvt.Infrastructure.Processors.AI.GPT.Messages.Instructions;
 using Newtonsoft.Json;

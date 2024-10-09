@@ -1,4 +1,4 @@
-﻿using Flvt.Domain.Subscribers;
+﻿using Flvt.Domain.Primitives.Subscribers.Filters;
 using HtmlAgilityPack;
 
 namespace Flvt.Infrastructure.Scrapers.Shared;

@@ -1,6 +1,5 @@
-﻿using Flvt.Domain.Advertisements;
-using Flvt.Domain.Advertisements.Errors;
-using Flvt.Domain.Primitives;
+﻿using Flvt.Domain.Primitives.Responses;
+using Flvt.Domain.ProcessedAdvertisements;
 
 namespace Flvt.Infrastructure.Data.Repositories;
 
