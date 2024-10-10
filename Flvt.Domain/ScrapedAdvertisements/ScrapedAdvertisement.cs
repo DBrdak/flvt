@@ -18,6 +18,8 @@ public sealed class ScrapedAdvertisement
     public Area Area { get; init; }
     public DateTime? AddedAt { get; init; }
     public DateTime? UpdatedAt { get; init; }
+    public DateTime? LastScrapedAt { get; init; }
+    public IEnumerable<string> Photos { get; init; }
 
     public ScrapedAdvertisement(
         string link,
@@ -29,7 +31,9 @@ public sealed class ScrapedAdvertisement
         Floor? floor,
         Area area,
         DateTime? addedAt,
-        DateTime? updatedAt)
+        DateTime? updatedAt,
+        DateTime? lastScrapedAt,
+        IEnumerable<string> photos)
     {
         Link = link;
         Location = location;
@@ -41,6 +45,8 @@ public sealed class ScrapedAdvertisement
         Area = area;
         AddedAt = addedAt;
         UpdatedAt = updatedAt;
+        LastScrapedAt = lastScrapedAt;
+        Photos = photos;
     }
 
     public static Result<ScrapedAdvertisement> CreateFromScrapedContent(
@@ -57,7 +63,8 @@ public sealed class ScrapedAdvertisement
         string? specificFloor,
         string? totalFloors,
         string? addedAt,
-        string? updatedAt)
+        string? updatedAt,
+        IEnumerable<string>? photos)
     {
 
         return advertisementLink switch
@@ -83,8 +90,10 @@ public sealed class ScrapedAdvertisement
                     null :
                     new(specificFloor, totalFloors),
                 new Area(decimal.Parse(areaValue!), areaUnit),
-                addedAt is null ? null : DateParser.ParseDate(addedAt),
-                updatedAt is null ? null : DateParser.ParseDate(updatedAt))
+                string.IsNullOrWhiteSpace(addedAt) ? null : DateParser.ParseDate(addedAt),
+                string.IsNullOrWhiteSpace(updatedAt) ? null : DateParser.ParseDate(updatedAt),
+                DateTime.UtcNow,
+                photos ?? [])
         };
     }
 }

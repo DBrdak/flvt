@@ -1,8 +1,10 @@
 ﻿using Flvt.Application.Abstractions;
 using Flvt.Domain.ProcessedAdvertisements;
+using Flvt.Domain.ScrapedAdvertisements;
 using Flvt.Domain.Subscribers;
 using Flvt.Infrastructure.Data;
 using Flvt.Infrastructure.Data.Repositories;
+using Flvt.Infrastructure.Monitoring;
 using Flvt.Infrastructure.Processors;
 using Flvt.Infrastructure.Processors.AI;
 using Flvt.Infrastructure.Processors.AI.GPT;
@@ -20,6 +22,7 @@ public static class InfrastructureInjector
         services.AddRepositories();
         services.AddScrapers();
         services.AddProcessors();
+        services.AddMonitoring();
 
         return services;
     }
@@ -28,6 +31,7 @@ public static class InfrastructureInjector
     {
         services.AddScoped<DataContext>();
         services.AddScoped<IProcessedAdvertisementRepository, ProcessedAdvertisementRepository>();
+        services.AddScoped<IScrapedAdvertisementRepository, ScrapedAdvertisementRepository>();
         services.AddScoped<ISubscriberRepository, SubscriberRepository>();
 
         return services;
@@ -58,6 +62,14 @@ public static class InfrastructureInjector
                     httpClient.BaseAddress = new Uri(gptOptions.Url);
                 })
             .AddHttpMessageHandler<GPTDelegatingHandler>();
+
+        return services;
+    }
+
+    private static IServiceCollection AddMonitoring(this IServiceCollection services)
+    {
+        services.AddScoped<GPTMonitor>();
+        services.AddScoped<ScrapingMonitor>();
 
         return services;
     }

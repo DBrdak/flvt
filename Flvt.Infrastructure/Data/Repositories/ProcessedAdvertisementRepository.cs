@@ -10,7 +10,6 @@ internal sealed class ProcessedAdvertisementRepository : Repository<ProcessedAdv
     }
 
     public async Task<Result<IEnumerable<ProcessedAdvertisement>>> GetManyByLinkAsync(
-        IEnumerable<string> links,
-        CancellationToken cancellationToken) =>
-        await GetManyByIdAsync(links, cancellationToken);
+        IEnumerable<string> links) =>
+        await GetManyByIdAsync(links);
 }

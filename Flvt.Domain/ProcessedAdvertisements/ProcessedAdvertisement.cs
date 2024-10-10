@@ -20,6 +20,7 @@ public sealed class ProcessedAdvertisement
     public DateTime? AddedAt { get; init; }
     public DateTime? UpdatedAt { get; init; }
     public string? AvailableFrom { get; init; }
+    public bool? Pets { get; init; }
 
     public ProcessedAdvertisement(
         string link,
@@ -36,7 +37,8 @@ public sealed class ProcessedAdvertisement
         string[] facilities,
         DateTime? addedAt,
         DateTime? updatedAt,
-        string? availableFrom)
+        string? availableFrom,
+        bool? pets)
     {
         Link = link;
         Address = address;
@@ -53,5 +55,6 @@ public sealed class ProcessedAdvertisement
         AddedAt = addedAt;
         UpdatedAt = updatedAt;
         AvailableFrom = availableFrom;
+        Pets = pets;
     }
 }

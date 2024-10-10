@@ -29,4 +29,5 @@ public abstract class AdvertisementParser
     public abstract string? ParseAddedAt();
     public abstract string? ParseUpdatedAt();
 
+    public abstract IEnumerable<string>? ParseImage();
 }

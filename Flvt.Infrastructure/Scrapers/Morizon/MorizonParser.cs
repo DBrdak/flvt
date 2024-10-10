@@ -16,6 +16,7 @@ internal class MorizonParser : AdvertisementParser
     private const string floorRoomsAreaNodeSelector = "//div[contains(@class, 'Ca6gX5')]";
     private const string addedAtNodeSelector = "//div[contains(@class, 'vZJg9t') and .//span[text()='Data dodania']]//div[@data-cy='itemValue']";
     private const string updatedAtNodeSelector = "//div[contains(@class, 'vZJg9t') and .//span[text()='Aktualizacja']]//div[@data-cy='itemValue']";
+    private const string imageNodeSelector = "//img[@class='nrZPlr']";
     private const char roomsFloorAreaSeparator = '•';
     private const int roomsIndex = 1;
     private const int areaIndex = 2;
@@ -101,7 +102,9 @@ internal class MorizonParser : AdvertisementParser
             _floor = ParseFloor();
         }
 
-        return _floor?.Split('/').ElementAtOrDefault(0)?.Trim();
+        return _floor?.Split('/').ElementAtOrDefault(0)?.Trim() is var floor && floor?.ToLower() == "parter" ?
+            "0" :
+            floor;
     }
 
     public override string? ParseTotalFloors()
@@ -111,7 +114,9 @@ internal class MorizonParser : AdvertisementParser
             _floor = ParseFloor();
         }
 
-        return _floor?.Split('/').ElementAtOrDefault(1)?.Trim();
+        return _floor?.Split('/').ElementAtOrDefault(0)?.Trim() is var floor && floor?.ToLower() == "parter" ?
+            "0" :
+            floor;
     }
 
     public override (string? Count, string? Unit) ParseRooms()
@@ -163,5 +168,18 @@ internal class MorizonParser : AdvertisementParser
         }
 
         _floorRoomsArea = Document.DocumentNode.SelectSingleNode(floorRoomsAreaNodeSelector)?.InnerText;
+    }
+
+    public override IEnumerable<string>? ParseImage()
+    {
+        var a = "";
+
+        return Document.DocumentNode.SelectNodes(imageNodeSelector)
+            .Select(
+                node =>
+                {
+                    node.GetAttributeValue("src", a);
+                    return a;
+                });
     }
 }

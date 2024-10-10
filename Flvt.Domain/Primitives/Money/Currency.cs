@@ -6,6 +6,7 @@ public sealed record Currency
 {
     public static readonly Currency Pln = new("PLN");
     public static readonly Currency AltPln = new("zł");
+    public static readonly Currency Eur = new("EUR");
 
     [Newtonsoft.Json.JsonConstructor]
     [System.Text.Json.Serialization.JsonConstructor]
@@ -22,6 +23,7 @@ public sealed record Currency
     public static readonly IReadOnlyCollection<Currency> All =
     [
         Pln,
-        AltPln
+        AltPln,
+        Eur,
     ];
 }

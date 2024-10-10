@@ -22,6 +22,7 @@ internal sealed class OtodomParser : AdvertisementParser
     private string? _floor = string.Empty;
     private const string addedAtNodeSelector = "//div[@class='css-1821gv5 e82kd4s1']/p[contains(text(), 'Dodano:')]";
     private const string updatedAtNodeSelector = "//div[@class='css-1821gv5 e82kd4s1']/p[contains(text(), 'Aktualizacja:')]";
+    private const string imageNodeSelector = "//picture[@class='css-3a1d90 ek5ipw60']/img";
     private readonly List<HtmlNode> _roomsAreaNodes = []; 
 
     protected override string GetBaseUrl() => "https://www.otodom.pl";
@@ -113,7 +114,9 @@ internal sealed class OtodomParser : AdvertisementParser
             _floor = ParseFloor();
         }
 
-        return _floor?.Split('/').ElementAtOrDefault(0)?.Trim();
+        return _floor?.Split('/').ElementAtOrDefault(0)?.Trim() is var floor && floor?.ToLower() == "parter" ?
+            "0" :
+            floor;
     }
 
     public override string? ParseTotalFloors()
@@ -123,7 +126,9 @@ internal sealed class OtodomParser : AdvertisementParser
             _floor = ParseFloor();
         }
 
-        return _floor?.Split('/').ElementAtOrDefault(1)?.Trim();
+        return _floor?.Split('/').ElementAtOrDefault(0)?.Trim() is var floor && floor?.ToLower() == "parter" ?
+            "0" :
+            floor;
     }
 
     public override (string? Count, string? Unit) ParseRooms()
@@ -178,4 +183,17 @@ internal sealed class OtodomParser : AdvertisementParser
 
     private void PrepareRoomsArea() =>
         _roomsAreaNodes.AddRange(Document.DocumentNode.SelectNodes(roomsAreaNodeSelector));
+
+    public override IEnumerable<string>? ParseImage()
+    {
+        var a = "";
+
+        return Document.DocumentNode.SelectNodes(imageNodeSelector)
+            .Select(
+                node =>
+                {
+                    node.GetAttributeValue("src", a);
+                    return a;
+                });
+    }
 }

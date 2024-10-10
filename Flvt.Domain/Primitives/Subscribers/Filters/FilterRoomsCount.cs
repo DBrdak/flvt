@@ -23,4 +23,5 @@ public sealed record FilterRoomsCount
 
         return new FilterRoomsCount(value);
     }
+    public override string ToString() => $"{Value}";
 }

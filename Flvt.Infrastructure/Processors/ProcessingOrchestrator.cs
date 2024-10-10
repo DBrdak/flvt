@@ -22,7 +22,7 @@ internal sealed class ProcessingOrchestrator : IProcessingOrchestrator
 
     public async Task<Result<IEnumerable<ProcessedAdvertisement>>> ProcessAsync(IEnumerable<ScrapedAdvertisement> scrapedAdvertisements)
     {
-        var existingAdvertisementsGetResult = await _processedAdvertisementRepository.GetAllAsync(CancellationToken.None);
+        var existingAdvertisementsGetResult = await _processedAdvertisementRepository.GetAllAsync();
         List<ProcessedAdvertisement> processedAdvertisements = [];
 
         if (existingAdvertisementsGetResult.IsSuccess)
@@ -43,7 +43,7 @@ internal sealed class ProcessingOrchestrator : IProcessingOrchestrator
 
         _processedAdvertisements.AddRange(processingResult.Value);
 
-        var addResult = await _processedAdvertisementRepository.AddRangeAsync(_processedAdvertisements, CancellationToken.None);
+        var addResult = await _processedAdvertisementRepository.AddRangeAsync(_processedAdvertisements);
 
         if (addResult.IsFailure)
         {

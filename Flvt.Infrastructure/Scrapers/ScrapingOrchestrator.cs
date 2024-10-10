@@ -1,35 +1,42 @@
 ﻿using Flvt.Application.Abstractions;
+using Flvt.Domain.Primitives.Responses;
 using Flvt.Domain.Primitives.Subscribers.Filters;
 using Flvt.Domain.ScrapedAdvertisements;
+using Flvt.Infrastructure.Monitoring;
+using Flvt.Infrastructure.Scrapers.Morizon;
+using Flvt.Infrastructure.Scrapers.Olx;
 using Flvt.Infrastructure.Scrapers.Otodom;
+using Serilog;
 
 namespace Flvt.Infrastructure.Scrapers;
 
 internal sealed class ScrapingOrchestrator : IScrapingOrchestrator
 {
+    private readonly ScrapingMonitor _monitor;
 
-    public ScrapingOrchestrator()
+    public ScrapingOrchestrator(ScrapingMonitor monitor)
     {
+        _monitor = monitor;
     }
 
     public async Task<IEnumerable<ScrapedAdvertisement>> ScrapeAsync(Filter filter)
     {
-        //var morizonScraper = new MorizonScraper(filter);
+        var morizonScraper = new MorizonScraper(filter);
         var otodomScraper = new OtodomScraper(filter);
-        //var olxScraper = new OlxScraper(filter);
+        var olxScraper = new OlxScraper(filter);
 
-        //var morizonTask = morizonScraper.ScrapeAsync();
+        var morizonTask = morizonScraper.ScrapeAsync();
         var otodomTask = otodomScraper.ScrapeAsync();
-        //var olxTask = olxScraper.ScrapeAsync();
+        var olxTask = olxScraper.ScrapeAsync();
 
-        //await Task.WhenAll(morizonTask, otodomTask, olxTask);
-        await Task.WhenAll(otodomTask);
+        await Task.WhenAll(morizonTask, otodomTask, olxTask);
 
-        //var morizonAdvertisements = morizonTask.Result;
-        var otodomAdvertisements = otodomTask.Result;
-        //var olxAdvertisements = olxTask.Result;
+        var morizonAds = morizonTask.Result.ToList();
+        var otodomAds = otodomTask.Result.ToList();
+        var olxAds = olxTask.Result.ToList();
 
-        //return [..morizonAdvertisements, ..otodomAdvertisements, ..olxAdvertisements];
-        return [..otodomAdvertisements];
+        _monitor.AddMorizon(morizonAds).AddOtodom(otodomAds).AddOlx(olxAds);
+
+        return [..morizonAds, .. otodomAds, .. olxAds];
     }
 }

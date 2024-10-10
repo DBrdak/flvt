@@ -11,7 +11,7 @@ internal abstract class AdvertisementScraper
     private readonly Filter _filter;
     private readonly HtmlWeb _web;
     private readonly AdvertisementParser _advertisementParser;
-    private readonly HashSet<string> _advertisementsLinks = [];
+    private HashSet<string> _advertisementsLinks = [];
     private readonly List<ScrapedAdvertisement> _advertisements = [];
 
     protected AdvertisementScraper(Filter filter, AdvertisementParser advertisementParser)
@@ -30,7 +30,7 @@ internal abstract class AdvertisementScraper
         catch (Exception e)
         {
             Log.Logger.Error(
-                $"Exception occured when trying to scrape advertisement links: {JsonConvert.SerializeObject(e)}");
+                "Exception occured when trying to scrape advertisement link: {error}", e);
         }
 
         try
@@ -40,7 +40,7 @@ internal abstract class AdvertisementScraper
         catch (Exception e)
         {
             Log.Logger.Error(
-                $"Exception occured when trying to scrape advertisement content: {JsonConvert.SerializeObject(e)}");
+                "Exception occured when trying to scrape advertisement content, error: {error}", e);
         }
 
         return _advertisements;
@@ -98,7 +98,9 @@ internal abstract class AdvertisementScraper
         }
 
         Log.Warning(
-            $"Failed to create ScrapedAdvertisement, error: {createResult.Error}. Advertisement link: {advertisementLink}");
+            "Failed to create ScrapedAdvertisement, error: {error}. Advertisement link: {link}",
+            createResult.Error,
+            advertisementLink);
     }
 
     private async Task ScrapeAdvertisementsLinksAsync()

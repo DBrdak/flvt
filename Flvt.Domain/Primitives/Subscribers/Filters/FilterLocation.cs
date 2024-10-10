@@ -1,5 +1,6 @@
 ﻿using Flvt.Domain.Primitives.Responses;
 using Flvt.Domain.Primitives.Subscribers.Filters.Erros;
+using Newtonsoft.Json.Linq;
 
 namespace Flvt.Domain.Primitives.Subscribers.Filters;
 
@@ -39,4 +40,5 @@ public sealed record FilterLocation
             { } location => location,
             _ => FilterErrors.LocationNotSupported
         };
+    public override string ToString() => $"{City}";
 }

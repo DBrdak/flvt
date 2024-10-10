@@ -15,7 +15,7 @@ internal abstract class Repository<TEntity>
         Table = context.Set<TEntity>();
     }
 
-    public virtual async Task<Result<IEnumerable<TEntity>>> GetAllAsync(CancellationToken cancellationToken)
+    public virtual async Task<Result<IEnumerable<TEntity>>> GetAllAsync()
     {
         var config = new ScanOperationConfig
         {
@@ -28,7 +28,7 @@ internal abstract class Repository<TEntity>
         var docs = new List<Document>();
 
         do
-            docs.AddRange(await scanner.GetNextSetAsync(cancellationToken));
+            docs.AddRange(await scanner.GetNextSetAsync());
         while (!scanner.IsDone);
 
         var records = docs.Select(document => JsonConvert.DeserializeObject<TEntity>(document));
@@ -36,16 +36,14 @@ internal abstract class Repository<TEntity>
         return Result.Create(records);
     }
 
-    protected virtual async Task<Result<IEnumerable<TEntity>>> GetWhereAsync(
-        ScanFilter filter,
-        CancellationToken cancellationToken = default)
+    protected virtual async Task<Result<IEnumerable<TEntity>>> GetWhereAsync(ScanFilter filter)
     {
         var scanner = Table.Scan(filter);
 
         var docs = new List<Document>();
 
         do
-            docs.AddRange(await scanner.GetNextSetAsync(cancellationToken));
+            docs.AddRange(await scanner.GetNextSetAsync());
         while (!scanner.IsDone);
 
         var records = docs.Select(document => JsonConvert.DeserializeObject<TEntity>(document));
@@ -54,11 +52,9 @@ internal abstract class Repository<TEntity>
     }
 
 
-    public async Task<Result<TEntity>> GetByIdAsync(
-        string id,
-        CancellationToken cancellationToken = default)
+    public async Task<Result<TEntity>> GetByIdAsync(string id)
     {
-        var doc = await Table.GetItemAsync(new Primitive(id), cancellationToken);
+        var doc = await Table.GetItemAsync(new Primitive(id));
 
         if (doc is null)
         {
@@ -70,15 +66,13 @@ internal abstract class Repository<TEntity>
         return record;
     }
 
-    public async Task<Result<IEnumerable<TEntity>>> GetManyByIdAsync(
-        IEnumerable<string> ids,
-        CancellationToken cancellationToken = default)
+    public async Task<Result<IEnumerable<TEntity>>> GetManyByIdAsync(IEnumerable<string> ids)
     {
         var batch = Table.CreateBatchGet();
 
         ids.ToList().ForEach(id => batch.AddKey(new Primitive(id)));
 
-        await batch.ExecuteAsync(cancellationToken);
+        await batch.ExecuteAsync();
 
         var docs = batch.Results;
         var records = docs.Select(document => JsonConvert.DeserializeObject<TEntity>(document));
@@ -86,41 +80,35 @@ internal abstract class Repository<TEntity>
         return Result.Create(records);
     }
 
-    public async Task<Result> RemoveAsync(string entityId, CancellationToken cancellationToken = default)
+    public async Task<Result> RemoveAsync(string entityId)
     {
-        await Table.DeleteItemAsync(new Primitive(entityId), cancellationToken);
+        await Table.DeleteItemAsync(new Primitive(entityId));
 
         return Result.Success();
     }
 
-    public async Task<Result> RemoveRangeAsync(
-        IEnumerable<string> entitiesId,
-        CancellationToken cancellationToken = default)
+    public async Task<Result> RemoveRangeAsync(IEnumerable<string> entitiesId)
     {
         var batch = Table.CreateBatchWrite();
 
         entitiesId.ToList().ForEach(id => batch.AddKeyToDelete(new Primitive(id)));
 
-        await batch.ExecuteAsync(cancellationToken);
+        await batch.ExecuteAsync();
 
         return Result.Success();
     }
 
-    public async Task<Result<TEntity>> AddAsync(
-        TEntity entity,
-        CancellationToken cancellationToken = default)
+    public async Task<Result<TEntity>> AddAsync(TEntity entity)
     {
         var json = JsonConvert.SerializeObject(entity);
         var doc = Document.FromJson(json);
 
-        await Table.PutItemAsync(doc, cancellationToken);
+        await Table.PutItemAsync(doc);
 
         return Result.Success(entity);
     }
 
-    public async Task<Result> AddRangeAsync(
-        IEnumerable<TEntity> entities,
-        CancellationToken cancellationToken = default)
+    public async Task<Result> AddRangeAsync(IEnumerable<TEntity> entities)
     {
         var batch = Table.CreateBatchWrite();
 
@@ -129,7 +117,7 @@ internal abstract class Repository<TEntity>
 
         docs.ToList().ForEach(batch.AddDocumentToPut);
 
-        await batch.ExecuteAsync(cancellationToken);
+        await batch.ExecuteAsync();
 
         return Result.Success();
     }
@@ -138,13 +126,13 @@ internal abstract class Repository<TEntity>
         TEntity entity,
         CancellationToken cancellationToken = default)
     {
-        return await AddAsync(entity, cancellationToken);
+        return await AddAsync(entity);
     }
 
     public async Task<Result> UpdateRangeAsync(
         IEnumerable<TEntity> entities,
         CancellationToken cancellationToken = default)
     {
-        return await AddRangeAsync(entities, cancellationToken);
+        return await AddRangeAsync(entities);
     }
 }

@@ -5,16 +5,15 @@ using Flvt.Domain.ScrapedAdvertisements;
 
 namespace Flvt.Application.Advertisements.ScrapeAdvertisements;
 
-//TODO Scrape advertisements for all available locations
 internal sealed class ScrapeAdvertisementsCommandHandler : ICommandHandler<ScrapeAdvertisementsCommand>
 {
     private readonly IScrapingOrchestrator _scrapingOrchestrator;
-    private readonly IScrapedAdvertisementsRepository _scrapedAdvertisementsRepository;
+    private readonly IScrapedAdvertisementRepository _scrapedAdvertisementRepository;
 
-    public ScrapeAdvertisementsCommandHandler(IScrapingOrchestrator scrapingOrchestrator, IScrapedAdvertisementsRepository scrapedAdvertisementsRepository)
+    public ScrapeAdvertisementsCommandHandler(IScrapingOrchestrator scrapingOrchestrator, IScrapedAdvertisementRepository scrapedAdvertisementRepository)
     {
         _scrapingOrchestrator = scrapingOrchestrator;
-        _scrapedAdvertisementsRepository = scrapedAdvertisementsRepository;
+        _scrapedAdvertisementRepository = scrapedAdvertisementRepository;
     }
 
     public async Task<Result> Handle(ScrapeAdvertisementsCommand request, CancellationToken cancellationToken)
@@ -24,7 +23,7 @@ internal sealed class ScrapeAdvertisementsCommandHandler : ICommandHandler<Scrap
         
         var scrapedAdvertisements = await Task.WhenAll(scrapeTasks);
 
-        var addTasks = scrapedAdvertisements.Select(_scrapedAdvertisementsRepository.AddRangeAsync);
+        var addTasks = scrapedAdvertisements.Select(_scrapedAdvertisementRepository.AddRangeAsync);
 
         var addResults = await Task.WhenAll(addTasks);
 

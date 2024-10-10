@@ -1,7 +1,6 @@
-﻿using Flvt.Application.ProcessAdvertisements;
-using Flvt.Domain.Subscribers;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Flvt.Application;
+using Flvt.Application.Advertisements.ScrapeAdvertisements;
 using Flvt.Infrastructure;
 using MediatR;
 using Microsoft.Extensions.Configuration;
@@ -40,22 +39,17 @@ public class Service : IService
 
     public async Task Run()
     {
-        var filter = new Filter()
-            .InLocation("warszawa")
-            .ToArea(45)
-            .FromArea(30)
-            .ToPrice(2800)
-            .FromRooms(2)
-            .ToRooms(4)
-            .Build();
-        var cmd = new ProcessAdvertisementsCommand(
-            filter.Location,
-            filter.MinPrice,
-            filter.MaxPrice,
-            filter.MinRooms,
-            filter.MaxRooms,
-            filter.MinArea,
-            filter.MaxArea);
+        //var cmd = new ProcessAdvertisementsCommand(
+        //    "example",
+        //    "warszawa",
+        //    0,
+        //    3000,
+        //    2,
+        //    2,
+        //    30,
+        //    50);
+
+        var cmd = new ScrapeAdvertisementsCommand();
 
         var response = await _sender.Send(cmd);
     }

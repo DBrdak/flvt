@@ -1,4 +1,5 @@
-﻿using Amazon.DynamoDBv2;
+﻿using Amazon;
+using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DocumentModel;
 using Amazon.Runtime;
 using Flvt.Domain;
@@ -7,7 +8,7 @@ namespace Flvt.Infrastructure.Data;
 
 internal sealed class DataContext
 {
-    private readonly AmazonDynamoDBClient _client = new(new BasicAWSCredentials(XD.LOL2, XD.LOL3)); //TODO remove hardcoded credentials
+    private readonly AmazonDynamoDBClient _client = new(new BasicAWSCredentials(XD.LOL2, XD.LOL3), RegionEndpoint.EUWest1); //TODO remove hardcoded credentials
 
     private readonly AmazonDynamoDBException _connectionException =
         new("Could not connect to DynamoDB");
@@ -16,6 +17,8 @@ internal sealed class DataContext
 
     private Table ProcessedAdvertisements => Table.TryLoadTable(_client, nameof(ProcessedAdvertisements), out var table) ?
         table : throw _connectionException;
+    private Table ScrapedAdvertisements => Table.TryLoadTable(_client, nameof(ScrapedAdvertisements), out var table) ?
+        table : throw _connectionException;
     private Table Subscribers => Table.TryLoadTable(_client, nameof(Subscribers), out var table) ?
         table : throw _connectionException;
 
@@ -23,6 +26,7 @@ internal sealed class DataContext
         typeof(TEntity) switch
         {
             { Name: "ProcessedAdvertisement" } => ProcessedAdvertisements,
+            { Name: "ScrapedAdvertisement" } => ScrapedAdvertisements,
             { Name: "Subscriber" } => Subscribers,
             var type => throw InvalidTableException(type.Name)
         };

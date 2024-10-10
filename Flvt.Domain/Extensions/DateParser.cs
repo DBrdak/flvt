@@ -20,6 +20,19 @@ public static class DateParser
                 out parsedDate);
         }
 
+        if (!parseResult)
+        {
+            var culture = new CultureInfo("pl-PL");
+            var format = "dd MMMM yyyy";
+
+            parseResult = DateTime.TryParseExact(
+                date,
+                format,
+                culture,
+                DateTimeStyles.None,
+                out parsedDate);
+        }
+
         return parsedDate == default ?
             throw new ArgumentException($"Invalid date time format specified: {date}") :
             parsedDate;

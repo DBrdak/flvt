@@ -23,4 +23,5 @@ public sealed record FilterPrice
 
         return new FilterPrice(value);
     }
+    public override string ToString() => $"{Value}";
 }

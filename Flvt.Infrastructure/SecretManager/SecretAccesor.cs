@@ -1,16 +1,15 @@
 ﻿using Amazon;
 using Amazon.SecretsManager;
 using Amazon.SecretsManager.Model;
+using Flvt.Infrastructure.AWS.Contants;
 
 namespace Flvt.Infrastructure.SecretManager;
 
 internal sealed class SecretAccesor
 {
-    const string region = "eu-central-1";
-
     public static string GetSecret(string secretName)
     {
-        var client = new AmazonSecretsManagerClient(RegionEndpoint.GetBySystemName(region));
+        var client = new AmazonSecretsManagerClient(RegionEndpoint.GetBySystemName(CloudEnvironment.Region));
 
         var request = new GetSecretValueRequest
         {
@@ -25,7 +24,7 @@ internal sealed class SecretAccesor
 
     public static async Task<string> GetSecretAsync(string secretName)
     {
-        var client = new AmazonSecretsManagerClient(RegionEndpoint.GetBySystemName(region));
+        var client = new AmazonSecretsManagerClient(RegionEndpoint.GetBySystemName(CloudEnvironment.Region));
 
         var request = new GetSecretValueRequest
         {
