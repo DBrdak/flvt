@@ -6,23 +6,14 @@ namespace Flvt.Infrastructure.Scrapers.Morizon;
 
 internal class MorizonParser : AdvertisementParser
 {
-    private const string advertisementNodeSelector = "//a[contains(@class, 'q-Oe37')]";
-    private const string titleNodeSelector = "//div[contains(@class, 'SAxzxG')]";
-    private const string descriptionNodeSelector = "//div[contains(@class, '_0A-7u8')]";
-    private const string extraDescriptionNodeSelector = "//div[contains(@class, 'SQVgAz')]";
-    private const string priceNodeSelector = "//span[contains(@class, 'LphL0t')]";
-    private const string contactTypeNodeSelector = "//div[contains(@class, 'lf4Mw8')]";
-    private const string locationNodeSelector = "//h2[contains(@class, 'y1mnyH')]";
-    private const string floorRoomsAreaNodeSelector = "//div[contains(@class, 'Ca6gX5')]";
-    private const string addedAtNodeSelector = "//div[contains(@class, 'vZJg9t') and .//span[text()='Data dodania']]//div[@data-cy='itemValue']";
-    private const string updatedAtNodeSelector = "//div[contains(@class, 'vZJg9t') and .//span[text()='Aktualizacja']]//div[@data-cy='itemValue']";
-    private const string imageNodeSelector = "//img[@class='nrZPlr']";
-    private const char roomsFloorAreaSeparator = '•';
-    private const int roomsIndex = 1;
-    private const int areaIndex = 2;
-    private const int floorIndex = 3;
-    private string? _floorRoomsArea = string.Empty;
-    private string? _floor = string.Empty;
+    public MorizonParser() : base()
+    {
+    }
+
+    protected override string GetAdvertisementNodeSelector() =>
+        "//div[@class='card__outer']/a[@data-cy='propertyUrl']";
+
+    protected override string GetContentNodeSelector() => "//div[@id='slot-panel']";
 
     protected override string GetBaseUrl() => "https://www.morizon.pl";
 
@@ -48,7 +39,7 @@ internal class MorizonParser : AdvertisementParser
 
     public override List<string> ParseAdvertisementsLinks()
     {
-        var advertisements = Document.DocumentNode.SelectNodes(advertisementNodeSelector).ToList();
+        var advertisements = Document.DocumentNode.SelectNodes(GetAdvertisementNodeSelector()).ToList();
 
         return advertisements.Select(
                 ad => string.Concat(
@@ -59,127 +50,13 @@ internal class MorizonParser : AdvertisementParser
             .ToList();
     }
 
-    public override string? ParseDescription() =>
-        string.Join(" ",
-                "Title:", Document.DocumentNode.SelectSingleNode(titleNodeSelector),
-                "Description", Document.DocumentNode.SelectSingleNode(descriptionNodeSelector)
-                    ?.InnerText,
-                "Specification:", string.Join(
-                    " ",
-                    Document.DocumentNode.SelectNodes(extraDescriptionNodeSelector)
-                        .Select(node => node.InnerText)))
-            .Trim() is var result && string.IsNullOrWhiteSpace(result) ? null : result;
-
-    public override (string? Amount, string? Currency) ParsePrice()
+    public override string ParseContent()
     {
-        var price = Document.DocumentNode.SelectSingleNode(priceNodeSelector)
-            ?.InnerText.Trim();
-        var priceAmount = string.Join("", price?.Where(char.IsDigit) ?? "");
-        var priceCurrency = string.Join("", price?.Where(char.IsLetter) ?? "");
+        var contentNode = Document.DocumentNode.SelectSingleNode(GetContentNodeSelector());
+        //var photosHtml = contentNode.PreviousSibling.PreviousSibling.OuterHtml;
+        var contentHtml = contentNode?.ParentNode?.InnerHtml;
 
-       return (priceAmount, priceCurrency);
-    }
-
-    public override string ParseContactType() =>
-        Document.DocumentNode.SelectSingleNode(contactTypeNodeSelector)
-            ?.InnerText.Trim() ?? "agencja nieruchomości";
-
-    public override string? ParseLocation() =>
-        Document.DocumentNode.SelectSingleNode(locationNodeSelector)
-            ?.InnerText.Trim();
-
-    public string? ParseFloor()
-    {
-        PrepareFloorRoomsArea();
-
-        return _floorRoomsArea?.Split(roomsFloorAreaSeparator).ElementAtOrDefault(floorIndex)?.Trim();
-    }
-
-    public override string? ParseSpecificFloor()
-    {
-        if (_floor == string.Empty)
-        {
-            _floor = ParseFloor();
-        }
-
-        return _floor?.Split('/').ElementAtOrDefault(0)?.Trim() is var floor && floor?.ToLower() == "parter" ?
-            "0" :
-            floor;
-    }
-
-    public override string? ParseTotalFloors()
-    {
-        if (_floor == string.Empty)
-        {
-            _floor = ParseFloor();
-        }
-
-        return _floor?.Split('/').ElementAtOrDefault(0)?.Trim() is var floor && floor?.ToLower() == "parter" ?
-            "0" :
-            floor;
-    }
-
-    public override (string? Count, string? Unit) ParseRooms()
-    {
-        var roomsCount = _floorRoomsArea?.Split(roomsFloorAreaSeparator)
-            .ElementAtOrDefault(roomsIndex)
-            ?.Trim()
-            .Split(" ")
-            .ElementAtOrDefault(0);
-        var roomsUnit = _floorRoomsArea?.Split(roomsFloorAreaSeparator)
-            .ElementAtOrDefault(roomsIndex)
-            ?.Trim()
-            .Split(" ")
-            .ElementAtOrDefault(1);
-
-        return (roomsCount, roomsUnit);
-    }
-
-    public override (string? Value, string? Unit) ParseArea()
-    {
-        
-        var areaValue = _floorRoomsArea?.Split(roomsFloorAreaSeparator)
-            .ElementAtOrDefault(areaIndex)
-            ?.Trim()
-            .Split(" ")
-            .ElementAtOrDefault(0);
-        var areaUnit = _floorRoomsArea?.Split(roomsFloorAreaSeparator)
-            .ElementAtOrDefault(areaIndex)
-            ?.Trim()
-            .Split(" ")
-            .ElementAtOrDefault(1);
-
-        return (areaValue, areaUnit);
-    }
-
-    public override string? ParseAddedAt() =>
-        Document.DocumentNode.SelectSingleNode(addedAtNodeSelector)
-            ?.InnerText.Trim();
-
-    public override string? ParseUpdatedAt() =>
-        Document.DocumentNode.SelectSingleNode(updatedAtNodeSelector)
-            ?.InnerText.Trim();
-
-    private void PrepareFloorRoomsArea()
-    {
-        if (_floorRoomsArea != string.Empty)
-        {
-            return;
-        }
-
-        _floorRoomsArea = Document.DocumentNode.SelectSingleNode(floorRoomsAreaNodeSelector)?.InnerText;
-    }
-
-    public override IEnumerable<string>? ParseImage()
-    {
-        var a = "";
-
-        return Document.DocumentNode.SelectNodes(imageNodeSelector)
-            .Select(
-                node =>
-                {
-                    node.GetAttributeValue("src", a);
-                    return a;
-                });
+        //return string.Join('\n', photosHtml, contentHtml);
+        return contentHtml;
     }
 }

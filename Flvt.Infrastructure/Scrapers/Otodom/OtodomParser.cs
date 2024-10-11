@@ -7,23 +7,9 @@ namespace Flvt.Infrastructure.Scrapers.Otodom;
 
 internal sealed class OtodomParser : AdvertisementParser
 {
-    private const string advertisementNodeSelector = "//a[contains(@class, 'css-16vl3c1 e17g0c820')]";
-    private const string titleNodeSelector = "//div[contains(@class, 'css-1y950rh ehdsj770')]";
-    private const string descriptionNodeSelector = "//div[contains(@class, 'css-v0orps e14akrx11')]";
-    private const string extraDescriptionNodeSelector = "//div[contains(@class, 'css-1xbf5wd e1qhas4i0')]";
-    private const string priceNodeSelector = "//strong[@class='css-1o51x5a e1w5xgvx1']";
-    private const string contactTypeNodeSelector = "//div[contains(@class, 'css-t7cajz e1qhas4i1')]";
-    private const string contactTypeKeyword = "typ ogłoszeniodawcy";
-    private const string locationNodeSelector = "//a[contains(@class, 'css-1jjm9oe e42rcgs1')]";
-    private const string roomsAreaNodeSelector = "//div[@class='css-1ftqasz']";
-    private const string areaPattern = "m²";
-    private const string roomsKeyword = "pok";
-    private const string floorNodeSelector = "//div[contains(@class, 'css-t7cajz e1qhas4i1')]";
-    private string? _floor = string.Empty;
-    private const string addedAtNodeSelector = "//div[@class='css-1821gv5 e82kd4s1']/p[contains(text(), 'Dodano:')]";
-    private const string updatedAtNodeSelector = "//div[@class='css-1821gv5 e82kd4s1']/p[contains(text(), 'Aktualizacja:')]";
-    private const string imageNodeSelector = "//picture[@class='css-3a1d90 ek5ipw60']/img";
-    private readonly List<HtmlNode> _roomsAreaNodes = []; 
+    protected override string GetAdvertisementNodeSelector() => "//a[@data-cy='listing-item-link']";
+
+    protected override string GetContentNodeSelector() => "//div[@id='map']/../..";
 
     protected override string GetBaseUrl() => "https://www.otodom.pl";
 
@@ -61,7 +47,7 @@ internal sealed class OtodomParser : AdvertisementParser
 
     public override List<string> ParseAdvertisementsLinks()
     {
-        var advertisements = Document.DocumentNode.SelectNodes(advertisementNodeSelector).ToList();
+        var advertisements = Document.DocumentNode.SelectNodes(GetAdvertisementNodeSelector()).ToList();
 
         return advertisements.Select(
                 ad => string.Concat(
@@ -72,128 +58,6 @@ internal sealed class OtodomParser : AdvertisementParser
             .ToList();
     }
 
-    public override string? ParseDescription() =>
-        string.Join(" ",
-                "Title:", Document.DocumentNode.SelectSingleNode(titleNodeSelector).InnerText,
-                "Description:", Document.DocumentNode.SelectSingleNode(descriptionNodeSelector)
-                    ?.InnerText,
-                "Specification", Document.DocumentNode.SelectSingleNode(extraDescriptionNodeSelector)
-                    ?.InnerText)
-            .Trim() is var result && string.IsNullOrWhiteSpace(result) ? null : result;
-
-    public override (string? Amount, string? Currency) ParsePrice()
-    {
-        var price = Document.DocumentNode.SelectSingleNode(priceNodeSelector)
-            ?.InnerText.Trim();
-        var priceAmount = string.Join("", price?.Where(char.IsDigit) ?? "");
-        var priceCurrency = string.Join("", price?.Where(char.IsLetter) ?? "");
-
-        return (priceAmount, priceCurrency);
-    }
-
-    public override string? ParseContactType() =>
-        Document.DocumentNode.SelectNodes(contactTypeNodeSelector)
-            .FirstOrDefault(node => node.InnerText.ToLower().Contains(contactTypeKeyword))
-            ?.ChildNodes.ElementAtOrDefault(1)
-            ?.InnerText.Trim();
-
-    public override string? ParseLocation() =>
-        Document.DocumentNode.SelectSingleNode(locationNodeSelector)
-            ?.InnerText.Trim();
-
-    public string? ParseFloor() =>
-        Document.DocumentNode.SelectNodes(floorNodeSelector)
-            .FirstOrDefault(node => node.InnerText.ToLower().Contains("piętro"))
-            ?.ChildNodes.ElementAtOrDefault(1)
-            ?.InnerText.Trim();
-
-    public override string? ParseSpecificFloor()
-    {
-        if (_floor == string.Empty)
-        {
-            _floor = ParseFloor();
-        }
-
-        return _floor?.Split('/').ElementAtOrDefault(0)?.Trim() is var floor && floor?.ToLower() == "parter" ?
-            "0" :
-            floor;
-    }
-
-    public override string? ParseTotalFloors()
-    {
-        if (_floor == string.Empty)
-        {
-            _floor = ParseFloor();
-        }
-
-        return _floor?.Split('/').ElementAtOrDefault(0)?.Trim() is var floor && floor?.ToLower() == "parter" ?
-            "0" :
-            floor;
-    }
-
-    public override (string? Count, string? Unit) ParseRooms()
-    {
-        if (_roomsAreaNodes.Count == 0)
-        {
-            PrepareRoomsArea();
-        }
-
-        var rooms = _roomsAreaNodes.FirstOrDefault(node => node.InnerText.Contains(roomsKeyword))
-            ?.InnerText.Trim();
-
-        if (rooms is null)
-        {
-            return (null, null);
-        }
-
-        var roomsCount = rooms.Split(" ").ElementAtOrDefault(0);
-        var roomsUnit = rooms.Split(" ").ElementAtOrDefault(1);
-
-        return (roomsCount, roomsUnit);
-    }
-
-    public override (string? Value, string? Unit) ParseArea()
-    {
-        if (_roomsAreaNodes.Count == 0)
-        {
-            PrepareRoomsArea();
-        }
-
-        var area = _roomsAreaNodes.FirstOrDefault(node => node.InnerText.Contains(areaPattern))
-            ?.InnerText.Trim();
-
-        if (area is null)
-        {
-            return (null, null);
-        }
-
-        var areaValue = area[..area.IndexOf('m')];
-        var areaUnit = area.Substring(area.IndexOf('m'), 2);
-
-        return (areaValue, areaUnit);
-    }
-
-    public override string? ParseAddedAt() =>
-        Document.DocumentNode.SelectSingleNode(addedAtNodeSelector)
-            ?.InnerText.Trim().Split(" ").ElementAtOrDefault(1);
-
-    public override string? ParseUpdatedAt() =>
-        Document.DocumentNode.SelectSingleNode(updatedAtNodeSelector)
-            ?.InnerText.Trim().Split(" ").ElementAtOrDefault(1);
-
-    private void PrepareRoomsArea() =>
-        _roomsAreaNodes.AddRange(Document.DocumentNode.SelectNodes(roomsAreaNodeSelector));
-
-    public override IEnumerable<string>? ParseImage()
-    {
-        var a = "";
-
-        return Document.DocumentNode.SelectNodes(imageNodeSelector)
-            .Select(
-                node =>
-                {
-                    node.GetAttributeValue("src", a);
-                    return a;
-                });
-    }
+    public override string ParseContent() =>
+        Document.DocumentNode.SelectSingleNode(GetAdvertisementNodeSelector()).InnerHtml;
 }

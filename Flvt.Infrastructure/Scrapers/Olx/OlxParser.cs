@@ -9,21 +9,11 @@ namespace Flvt.Infrastructure.Scrapers.Olx;
 
 internal sealed class OlxParser : AdvertisementParser
 {
-    private const string advertisementNodeSelector = "//div[@class='css-u2ayx9']/a[@class='css-z3gu2d']";
-    private const string titleNodeSelector = "//div[@class='css-1kc83jo']";
-    private const string descriptionNodeSelector = "//div[@class='css-1m8mzwg']";
-    private const string extraDescriptionNodeSelector = "//div[@class='css-rn93um']";
-    private const string priceNodeSelector = "//h3[@class='css-90xrc0']";
-    private const string locationNodeSelector = "//div[@class='css-13l8eec']/div";
-    private const string locationCityClassName = "css-1cju8pu";
-    private const string locationStateClassName = "css-b5m1rv";
-    private const string attributesNodeSelector = "//p[@class='css-b5m1rv']";
-    private const string imageNodeSelector = "//img[@class='css-1bmvjcs']";
-    private readonly List<string> _attributes = [];
-    private const string areaKeyword = $"powierzchnia";
-    private const string roomsKeyword = "liczba pokoi";
-    private const string floorKeyword = "poziom";
-    private const string addedAtNodeSelector = "//span[@class='css-19yf5ek']";
+    protected override string GetAdvertisementNodeSelector() =>
+        "//div[@data-cy='l-card']//a[@href and @target='_blank']";
+
+    protected override string GetContentNodeSelector() => "//*[@data-testid='main' or @data-testid='aside']";
+
     protected override string GetBaseUrl() => "https://www.olx.pl";
 
     protected override string GetBaseQueryRelativeUrl() => "nieruchomosci/mieszkania/wynajem";
@@ -57,7 +47,7 @@ internal sealed class OlxParser : AdvertisementParser
 
     public override List<string> ParseAdvertisementsLinks()
     {
-        var advertisements = Document.DocumentNode.SelectNodes(advertisementNodeSelector).ToList();
+        var advertisements = Document.DocumentNode.SelectNodes(GetAdvertisementNodeSelector()).ToList();
         var relativeLinks = advertisements.Select(
             ad => ad.GetAttributeValue(
                 "href",
@@ -65,104 +55,12 @@ internal sealed class OlxParser : AdvertisementParser
             .Where(link => !link.ToLower().Contains("otodom"))
             .ToList();
 
-        return relativeLinks.Select(link => string.Concat(GetBaseUrl(), link)).ToList();
+        return relativeLinks.Distinct().Select(link => string.Concat(GetBaseUrl(), link)).ToList();
     }
 
-    public override string? ParseDescription() =>
-        string.Join(" ",
-                "Title:", Document.DocumentNode.SelectSingleNode(titleNodeSelector).InnerText,
-                "Description:", Document.DocumentNode.SelectSingleNode(descriptionNodeSelector)
-                    ?.InnerText,
-                "Specification", Document.DocumentNode.SelectSingleNode(extraDescriptionNodeSelector)
-                    ?.InnerText)
-            .Trim() is var result && string.IsNullOrWhiteSpace(result) ? null : result;
-
-    public override (string? Amount, string? Currency) ParsePrice()
-    {
-        var priceText = Document.DocumentNode.SelectSingleNode(priceNodeSelector)?.InnerText.Trim()
-            .Replace(" ", "");
-        var priceAmount = string.Join("", priceText?.Where(char.IsDigit) ?? "");
-        var priceCurrency = string.Join("", priceText?.Where(char.IsLetter) ?? "");
-
-        return (priceAmount, priceCurrency);
-    }
-
-    public override string? ParseContactType() => string.Empty;
-
-    public override string? ParseLocation() =>
+    public override string ParseContent() =>
         string.Join(
-            string.Empty,
-            Document.DocumentNode.SelectSingleNode(locationNodeSelector)
-                .ChildNodes.Where(
-                    node => node.HasClass(locationCityClassName) || node.HasClass(locationStateClassName))
-                .Select(node => node.InnerText.Trim()));
-
-    private void ParseAttributes()
-    {
-        _attributes.AddRange(
-            Document.DocumentNode.SelectNodes(attributesNodeSelector).Select(node => node.InnerText.ToLower().Trim()));
-    }
-
-    public override string? ParseSpecificFloor()
-    {
-        if (!_attributes.Any())
-        {
-            ParseAttributes();
-        }
-
-        return _attributes.FirstOrDefault(attr => attr.Contains(floorKeyword))?.Trim() is var floor &&
-               floor?.ToLower() == "parter" ?
-            "0" :
-            floor;
-    }
-
-    public override string? ParseTotalFloors() => string.Empty;
-
-    public override (string? Count, string? Unit) ParseRooms()
-    {
-        if (!_attributes.Any())
-        {
-            ParseAttributes();
-        }
-
-        var rooms =
-            _attributes.FirstOrDefault(attr => attr.Contains(roomsKeyword))?.Split(" ")[1] is var roomCount &&
-            roomCount?.ToLower() == "kawalerka" ?
-                "1" :
-                roomCount;
-
-        return (rooms, string.Empty);
-    }
-
-    public override (string? Value, string? Unit) ParseArea()
-    {
-        if (!_attributes.Any())
-        {
-            ParseAttributes();
-        }
-
-        var area = _attributes.FirstOrDefault(attr => attr.Contains(areaKeyword))?.Trim();
-        var value = area?.Split(" ")[1];
-        var unit = area?.Split(" ")[2];
-
-        return (value, unit);
-    }
-
-    public override string? ParseAddedAt() =>
-        Document.DocumentNode.SelectSingleNode(addedAtNodeSelector).InnerText.Trim();
-
-    public override string? ParseUpdatedAt() => string.Empty;
-
-    public override IEnumerable<string>? ParseImage()
-    {
-        var a = "";
-
-        return Document.DocumentNode.SelectNodes(imageNodeSelector)
-            .Select(
-                node =>
-                {
-                    node.GetAttributeValue("src", a);
-                    return a;
-                });
-    }
+            '\n',
+            Document.DocumentNode.SelectNodes(GetContentNodeSelector())
+                .Select(node => node.InnerHtml));
 }

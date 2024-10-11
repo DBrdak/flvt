@@ -25,18 +25,20 @@ internal sealed class ScrapingOrchestrator : IScrapingOrchestrator
         var otodomScraper = new OtodomScraper(filter);
         var olxScraper = new OlxScraper(filter);
 
-        var morizonTask = morizonScraper.ScrapeAsync();
-        var otodomTask = otodomScraper.ScrapeAsync();
-        var olxTask = olxScraper.ScrapeAsync();
+        var morizonTask = await morizonScraper.ScrapeAsync();
+        //var otodomTask = otodomScraper.ScrapeAsync();
+        //var olxTask = olxScraper.ScrapeAsync();
 
-        await Task.WhenAll(morizonTask, otodomTask, olxTask);
+        //await Task.WhenAll(morizonTask, otodomTask, olxTask);
 
-        var morizonAds = morizonTask.Result.ToList();
-        var otodomAds = otodomTask.Result.ToList();
-        var olxAds = olxTask.Result.ToList();
+        //var morizonAds = morizonTask.Result.ToList();
+        //var otodomAds = otodomTask.Result.ToList();
+        //var olxAds = olxTask.Result.ToList();
 
-        _monitor.AddMorizon(morizonAds).AddOtodom(otodomAds).AddOlx(olxAds);
+        //_monitor.AddMorizon(morizonAds).AddOtodom(otodomAds).AddOlx(olxAds);
 
-        return [..morizonAds, .. otodomAds, .. olxAds];
+        //return [..morizonAds, .. otodomAds, .. olxAds];
+
+        return morizonTask;
     }
 }

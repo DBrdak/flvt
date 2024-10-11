@@ -21,8 +21,6 @@ internal sealed class GPTOptionsSetup : IConfigureOptions<GPTOptions>
     {
         _configuration.GetSection(sectionName).Bind(options);
 
-        options.ApiKey = XD.LOL; // TODO Remove
-
         if (string.IsNullOrWhiteSpace(options.ApiKey))
         {
             options.ApiKey = SecretAccesor.GetSecret(secretName);

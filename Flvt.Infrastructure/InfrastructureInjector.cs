@@ -10,6 +10,8 @@ using Flvt.Infrastructure.Processors.AI;
 using Flvt.Infrastructure.Processors.AI.GPT;
 using Flvt.Infrastructure.Processors.AI.GPT.Options;
 using Flvt.Infrastructure.Scrapers;
+using Flvt.Infrastructure.Scrapers.Morizon;
+using Flvt.Infrastructure.Scrapers.Shared;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 

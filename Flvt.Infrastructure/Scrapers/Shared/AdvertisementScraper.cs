@@ -11,7 +11,7 @@ internal abstract class AdvertisementScraper
     private readonly Filter _filter;
     private readonly HtmlWeb _web;
     private readonly AdvertisementParser _advertisementParser;
-    private HashSet<string> _advertisementsLinks = [];
+    private readonly HashSet<string> _advertisementsLinks = [];
     private readonly List<ScrapedAdvertisement> _advertisements = [];
 
     protected AdvertisementScraper(Filter filter, AdvertisementParser advertisementParser)
@@ -35,72 +35,36 @@ internal abstract class AdvertisementScraper
 
         try
         {
-            await ScrapeAdvertisementsContentAsync();
+            await ScrapeAdvertisementsAsync();
         }
         catch (Exception e)
         {
             Log.Logger.Error(
-                "Exception occured when trying to scrape advertisement content, error: {error}", e);
+                "Exception occured when trying to scrape advertisement HTML content: {error}", e);
         }
 
         return _advertisements;
     }
 
-    private async Task ScrapeAdvertisementsContentAsync()
+    private async Task ScrapeAdvertisementsAsync()
     {
-        var tasks = new List<Task>();
-
-        foreach (var advertisementLink in _advertisementsLinks)
+        foreach (var link in _advertisementsLinks)
         {
-            var task = ScrapeAdvertisementContentAsync(advertisementLink);
-            tasks.Add(task);
+            try
+            {
+                var htmlDoc = await _web.LoadFromWebAsync(link);
+                _advertisementParser.SetHtmlDocument(htmlDoc);
+
+                var content = _advertisementParser.ParseContent();
+
+                _advertisements.Add(new(link, content));
+            }
+            catch (Exception e)
+            {
+                Log.Logger.Error(
+                    "Exception occured when trying to scrape advertisement: {error}", e);
+            }
         }
-
-        await Task.WhenAll(tasks);
-    }
-
-    private async Task ScrapeAdvertisementContentAsync(string advertisementLink)
-    {
-        var htmlDoc = await _web.LoadFromWebAsync(advertisementLink);
-        _advertisementParser.SetHtmlDocument(htmlDoc);
-
-        var location = _advertisementParser.ParseLocation();
-        var description = _advertisementParser.ParseDescription();
-        var contactType = _advertisementParser.ParseContactType();
-        var price = _advertisementParser.ParsePrice();
-        var specificFloor = _advertisementParser.ParseSpecificFloor();
-        var totalFloors = _advertisementParser.ParseTotalFloors();
-        var area = _advertisementParser.ParseArea();
-        var rooms = _advertisementParser.ParseRooms();
-        var addedAt = _advertisementParser.ParseAddedAt();
-        var updatedAt = _advertisementParser.ParseUpdatedAt();
-
-        var createResult = ScrapedAdvertisement.CreateFromScrapedContent(
-            advertisementLink,
-            location,
-            description,
-            contactType,
-            price.Amount,
-            price.Currency,
-            rooms.Count,
-            rooms.Unit,
-            area.Value,
-            area.Unit,
-            specificFloor, 
-            totalFloors,
-            addedAt,
-            updatedAt);
-
-        if (createResult.IsSuccess)
-        {
-            _advertisements.Add(createResult.Value);
-            return;
-        }
-
-        Log.Warning(
-            "Failed to create ScrapedAdvertisement, error: {error}. Advertisement link: {link}",
-            createResult.Error,
-            advertisementLink);
     }
 
     private async Task ScrapeAdvertisementsLinksAsync()
