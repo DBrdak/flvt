@@ -170,7 +170,7 @@ internal class MorizonParser : AdvertisementParser
         _floorRoomsArea = Document.DocumentNode.SelectSingleNode(floorRoomsAreaNodeSelector)?.InnerText;
     }
 
-    public override IEnumerable<string>? ParseImage()
+    public override IEnumerable<string>? ParsePhotos()
     {
         var a = "";
 

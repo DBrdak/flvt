@@ -21,6 +21,7 @@ public sealed class ProcessedAdvertisement
     public DateTime? UpdatedAt { get; init; }
     public string? AvailableFrom { get; init; }
     public bool? Pets { get; init; }
+    public IEnumerable<string> Photos { get; init; }
 
     public ProcessedAdvertisement(
         string link,
@@ -38,7 +39,8 @@ public sealed class ProcessedAdvertisement
         DateTime? addedAt,
         DateTime? updatedAt,
         string? availableFrom,
-        bool? pets)
+        bool? pets,
+        IEnumerable<string> photos)
     {
         Link = link;
         Address = address;
@@ -56,5 +58,6 @@ public sealed class ProcessedAdvertisement
         UpdatedAt = updatedAt;
         AvailableFrom = availableFrom;
         Pets = pets;
+        Photos = photos;
     }
 }

@@ -74,6 +74,7 @@ internal abstract class AdvertisementScraper
         var rooms = _advertisementParser.ParseRooms();
         var addedAt = _advertisementParser.ParseAddedAt();
         var updatedAt = _advertisementParser.ParseUpdatedAt();
+        var photos = _advertisementParser.ParsePhotos();
 
         var createResult = ScrapedAdvertisement.CreateFromScrapedContent(
             advertisementLink,
@@ -89,7 +90,8 @@ internal abstract class AdvertisementScraper
             specificFloor, 
             totalFloors,
             addedAt,
-            updatedAt);
+            updatedAt,
+            photos);
 
         if (createResult.IsSuccess)
         {

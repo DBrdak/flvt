@@ -24,12 +24,12 @@ public sealed record FilterLocation
             new("gdansk"),
             new("szczecin"),
             new("lodz"),
-            new("katowice"),
-            new("gliwice"),
-            new("zabrze"),
-            new("chorzow"),
-            new("tychy"),
-            new("gdynia")
+            new("katowice"),            
+            new("gdynia"),
+            new("lublin"),
+            new("bialystok"),
+            new("szczecin"),
+            new("torun")
         ];
 
     private FilterLocation(string city) => City = city;

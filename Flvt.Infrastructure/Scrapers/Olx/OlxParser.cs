@@ -153,7 +153,7 @@ internal sealed class OlxParser : AdvertisementParser
 
     public override string? ParseUpdatedAt() => string.Empty;
 
-    public override IEnumerable<string>? ParseImage()
+    public override IEnumerable<string>? ParsePhotos()
     {
         var a = "";
 

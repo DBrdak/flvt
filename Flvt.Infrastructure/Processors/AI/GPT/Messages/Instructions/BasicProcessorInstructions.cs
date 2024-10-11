@@ -55,6 +55,7 @@ internal sealed class BasicProcessorInstructions
             "updatedAt": <string>,
             "availableFrom": <string?>,
             "pets": <boolean?>,
+            "photos": <string[]>
         }
         """;
     private const string linkInstruction = "Link - copy this value form original object";
@@ -68,6 +69,7 @@ internal sealed class BasicProcessorInstructions
     private const string facilitiesInstruction = "Facilities - provide the facilities that are given in the advertisement. If you can't find any, leave the list empty.";
     private const string availableFromInstruction = "AvailableFrom - if provided in the advertisement write the date in the format \"YYYY-MM-DD\", if there is no exact date - provide just a month or \"from now\" but in the native language, if it is not given - skip this field.";
     private const string petsInstruction = "Pets - if put true if pets are allowed, false if not allowed and null if information is not provided";
+    private const string photosInstruction = "Photos - always should be copied.";
     private const string endingInstructions = "You should copy other fields as long as there is no error (e.g. missing field etc.). If there is any error, you can fix it if you have enough information to do so (e.g. missing field 'unit' in rooms - you can add it, etc.). Please note that, all currencies must be given in international currency code (you can adjust all curencies - even copied ones). Given that, start to process incoming messages based on the above instructions. In the response, you must return only a valid JSON object and nothing else.";
 
     private static readonly IReadOnlyCollection<string> _allSortedInstructions = new[]
@@ -87,6 +89,7 @@ internal sealed class BasicProcessorInstructions
         facilitiesInstruction,
         availableFromInstruction,
         petsInstruction,
+        photosInstruction,
         endingInstructions,
         "\n"
     };

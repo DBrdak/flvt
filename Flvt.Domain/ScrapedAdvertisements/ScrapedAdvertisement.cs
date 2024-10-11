@@ -20,6 +20,8 @@ public sealed class ScrapedAdvertisement
     public DateTime? UpdatedAt { get; init; }
     public DateTime? LastScrapedAt { get; init; }
     public IEnumerable<string> Photos { get; init; }
+    public bool IsProcessed { get; private set; }
+
 
     public ScrapedAdvertisement(
         string link,
@@ -33,7 +35,8 @@ public sealed class ScrapedAdvertisement
         DateTime? addedAt,
         DateTime? updatedAt,
         DateTime? lastScrapedAt,
-        IEnumerable<string> photos)
+        IEnumerable<string> photos,
+        bool isProcessed = false)
     {
         Link = link;
         Location = location;
@@ -47,6 +50,7 @@ public sealed class ScrapedAdvertisement
         UpdatedAt = updatedAt;
         LastScrapedAt = lastScrapedAt;
         Photos = photos;
+        IsProcessed = isProcessed;
     }
 
     public static Result<ScrapedAdvertisement> CreateFromScrapedContent(
@@ -96,4 +100,6 @@ public sealed class ScrapedAdvertisement
                 photos ?? [])
         };
     }
+
+    private void Process() => IsProcessed = true;
 }

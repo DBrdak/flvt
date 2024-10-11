@@ -22,12 +22,12 @@ internal static class OtodomLocationsDictionary
         { "gdansk", "pomorskie/gdansk" },
         { "szczecin", "zachodniopomorskie/szczecin" },
         { "lodz", "lodzkie/lodz" },
-        { "katowice", "slaskie/katowice" },
-        { "gliwice", "slaskie/gliwice" },
-        { "zabrze", "slaskie/zabrze" },
-        { "chorzow", "slaskie/chorzow" },
-        { "tychy", "slaskie/tychy" },
-        { "gdynia", "pomorskie/gdynia" }
+        { "katowice", "slaskie/katowice" },        
+        { "gdynia", "pomorskie/gdynia" },
+        { "lublin", "lubelskie/lublin" },
+        { "bialystok", "podlaskie/bialystok" },
+        { "szczecin", "zachodniopomorskie/szczecin" },
+        { "torun", "kujawsko-pomorskie/torun" },
     };
 
     public static string? OtodomLocation(this Filter filter) => 

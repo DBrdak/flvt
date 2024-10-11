@@ -184,7 +184,7 @@ internal sealed class OtodomParser : AdvertisementParser
     private void PrepareRoomsArea() =>
         _roomsAreaNodes.AddRange(Document.DocumentNode.SelectNodes(roomsAreaNodeSelector));
 
-    public override IEnumerable<string>? ParseImage()
+    public override IEnumerable<string>? ParsePhotos()
     {
         var a = "";
 
