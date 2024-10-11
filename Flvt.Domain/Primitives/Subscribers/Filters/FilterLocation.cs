@@ -22,7 +22,6 @@ public sealed record FilterLocation
             new("wroclaw"),
             new("poznan"),
             new("gdansk"),
-            new("szczecin"),
             new("lodz"),
             new("katowice"),            
             new("gdynia"),

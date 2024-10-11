@@ -18,6 +18,6 @@ internal sealed class GlobalFilterFactory
                 null,
                 null));
 
-        return filters.Select(filter => filter.Value).ToList();
+        return filters.Select(filter => filter.Value).ToList()[..1]; // TODO Testing
     }
 }

@@ -20,7 +20,6 @@ internal static class OtodomLocationsDictionary
         { "wroclaw", "dolnoslaskie/wroclaw" },
         { "poznan", "wielkopolskie/poznan" },
         { "gdansk", "pomorskie/gdansk" },
-        { "szczecin", "zachodniopomorskie/szczecin" },
         { "lodz", "lodzkie/lodz" },
         { "katowice", "slaskie/katowice" },        
         { "gdynia", "pomorskie/gdynia" },
