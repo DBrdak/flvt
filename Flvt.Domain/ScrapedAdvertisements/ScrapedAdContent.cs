@@ -1,3 +1,3 @@
 ﻿namespace Flvt.Domain.ScrapedAdvertisements;
 
-public abstract record ScrapedContent;
+public abstract record ScrapedAdContent;

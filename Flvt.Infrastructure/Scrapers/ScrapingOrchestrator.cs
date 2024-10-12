@@ -2,7 +2,6 @@
 using Flvt.Domain.Primitives.Subscribers.Filters;
 using Flvt.Domain.ScrapedAdvertisements;
 using Flvt.Infrastructure.Monitoring;
-using Flvt.Infrastructure.Scrapers.Morizon;
 using Flvt.Infrastructure.Scrapers.Olx;
 using Flvt.Infrastructure.Scrapers.Otodom;
 
@@ -19,24 +18,21 @@ internal sealed class ScrapingOrchestrator : IScrapingOrchestrator
 
     public async Task<IEnumerable<ScrapedAdvertisement>> ScrapeAsync(Filter filter)
     {
-        var morizonScraper = new MorizonScraper(filter);
-        var otodomScraper = new OtodomScraper(filter);
         var olxScraper = new OlxScraper(filter);
+        var otodomScraper = new OtodomScraper(filter);
 
-        //var morizonTask = await morizonScraper.ScrapeAsync();
-        var otodomTask = otodomScraper.ScrapeAsync();
-        //var olxTask = olxScraper.ScrapeAsync();
+        var olxTask = olxScraper.ScrapeAsync();
+        //var otodomTask = otodomScraper.ScrapeAsync();
 
-        //await Task.WhenAll(morizonTask, otodomTask, olxTask);
+        //await Task.WhenAll(otodomTask, olxTask);
 
-        //var morizonAds = morizonTask.Result.ToList();
-        //var otodomAds = otodomTask.Result.ToList();
         //var olxAds = olxTask.Result.ToList();
+        //var otodomAds = otodomTask.Result.ToList();
 
-        //_monitor.AddMorizon(morizonAds).AddOtodom(otodomAds).AddOlx(olxAds);
+        //_monitor.AddOlx(morizonAds).AddOtodom(otodomAds);
 
-        //return [..morizonAds, .. otodomAds, .. olxAds];
+        //return [..olxnAds, ..otodomAds];
 
-        return await otodomTask;
+        return await olxTask;
     }
 }

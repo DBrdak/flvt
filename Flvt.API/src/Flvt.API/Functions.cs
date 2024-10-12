@@ -69,7 +69,7 @@ public class Functions
                 Body = "Hello World",
                 Headers = new Dictionary<string, string>
                 {
-                    { "Content-Type", "text/plain" }
+                    { "AdContent-Type", "text/plain" }
                 }
             };
         }

@@ -1,5 +1,7 @@
-﻿using Flvt.Domain.Primitives.Subscribers.Filters;
+﻿using System.Net;
+using Flvt.Domain.Primitives.Subscribers.Filters;
 using Flvt.Domain.ScrapedAdvertisements;
+using Flvt.Infrastructure.Scrapers.Olx;
 using HtmlAgilityPack;
 using Serilog;
 
@@ -11,8 +13,6 @@ internal abstract class AdvertisementScraper
     public int SuccessfullyScrapedAds;
     public int UnsuccessfullyScrapedLinks;
     public int UnsuccessfullyScrapedAds;
-    public IReadOnlyCollection<ScrapedAdvertisement> Advertisements => _advertisements;
-    public IReadOnlyCollection<string> AdvertisementsLinks => _advertisementsLinks;
 
     private readonly Filter _filter;
     private readonly HtmlWeb _web;
@@ -47,7 +47,7 @@ internal abstract class AdvertisementScraper
         catch (Exception e)
         {
             Log.Logger.Error(
-                "Exception occured when trying to scrape advertisement Content content: {error}", e);
+                "Exception occured when trying to scrape advertisement AdContent adContent: {error}", e);
             UnsuccessfullyScrapedAds++;
         }
 
@@ -88,7 +88,7 @@ internal abstract class AdvertisementScraper
         do
         {
             var pageUrl = _advertisementParser.ParsePagedQueryUrl(queryUrl, page);
-            var htmlDoc = await _web.LoadFromWebAsync(pageUrl);
+            var htmlDoc = await _web.LoadFromWebAsync(pageUrl); // todo improve
             _advertisementParser.SetHtmlDocument(htmlDoc);
 
             var links = _advertisementParser.ParseAdvertisementsLinks();

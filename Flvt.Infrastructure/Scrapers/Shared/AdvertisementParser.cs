@@ -22,6 +22,7 @@ public abstract class AdvertisementParser
     public abstract string ParseQueryUrl(Filter filter);
     public abstract string ParsePagedQueryUrl(string baseQueryUrl, int page);
     public abstract List<string> ParseAdvertisementsLinks();
-    public abstract ScrapedContent ParseContent();
+    public abstract ScrapedAdContent ParseContent();
+
     public abstract IEnumerable<string> ParsePhotos();
 }

@@ -3,19 +3,19 @@
 public sealed class ScrapedAdvertisement
 {
     public string Link { get; init; }
-    public ScrapedContent Content { get; init; }
+    public ScrapedAdContent AdContent { get; init; }
     public IEnumerable<string> Photos { get; init; }
     public bool IsProcessed { get; private set; }
 
     public ScrapedAdvertisement(
         string link,
-        ScrapedContent content,
+        ScrapedAdContent adContent,
         IEnumerable<string> photos,
         bool isProcessed = false)
     {
         Link = link;
         Photos = photos;
-        Content = content;
+        AdContent = adContent;
         IsProcessed = isProcessed;
     }
 
