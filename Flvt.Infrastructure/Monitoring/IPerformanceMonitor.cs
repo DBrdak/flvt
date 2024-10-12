@@ -2,5 +2,5 @@
 
 internal interface IPerformanceMonitor : IAsyncDisposable
 {
-    protected Task ReportPerformanceAsync();
+    protected Task LogPerformanceAsync();
 }

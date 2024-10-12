@@ -1,9 +1,7 @@
 ﻿using Flvt.Domain.Extensions;
-using Flvt.Domain.Primitives.Advertisements;
 using Flvt.Domain.Primitives.Subscribers.Filters;
-using Flvt.Infrastructure.Scrapers.Otodom;
+using Flvt.Domain.ScrapedAdvertisements;
 using Flvt.Infrastructure.Scrapers.Shared;
-using HtmlAgilityPack;
 
 namespace Flvt.Infrastructure.Scrapers.Olx;
 
@@ -12,7 +10,7 @@ internal sealed class OlxParser : AdvertisementParser
     protected override string GetAdvertisementNodeSelector() =>
         "//div[@data-cy='l-card']//a[@href and @target='_blank']";
 
-    protected override string GetContentNodeSelector() => "//*[@data-testid='main' or @data-testid='aside']";
+    protected override string GetContentNodeSelector() => "//script[@type='application/ld+json']";
 
     protected override string GetBaseUrl() => "https://www.olx.pl";
 
@@ -58,9 +56,15 @@ internal sealed class OlxParser : AdvertisementParser
         return relativeLinks.Distinct().Select(link => string.Concat(GetBaseUrl(), link)).ToList();
     }
 
-    public override string ParseContent() =>
-        string.Join(
-            '\n',
-            Document.DocumentNode.SelectNodes(GetContentNodeSelector())
-                .Select(node => node.InnerHtml));
+    public override ScrapedContent ParseContent()
+    {
+        var node = Document.DocumentNode.SelectSingleNode(GetContentNodeSelector());
+
+        return null;
+    }
+
+    public override IEnumerable<string> ParsePhotos()
+    {
+        return [];
+    }
 }

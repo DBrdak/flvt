@@ -1,20 +1,19 @@
 ﻿using Flvt.Domain.Extensions;
 using Flvt.Domain.Primitives.Subscribers.Filters;
+using Flvt.Domain.ScrapedAdvertisements;
 using Flvt.Infrastructure.Scrapers.Shared;
 
 namespace Flvt.Infrastructure.Scrapers.Morizon;
 
 internal class MorizonParser : AdvertisementParser
 {
-    public MorizonParser() : base()
-    {
-    }
+    private const string photoStylesPattern = "^(x)?[sml]:fill_and_crop$";
+    private const string xlPhotoStyles = "xl:fill_and_crop";
 
     protected override string GetAdvertisementNodeSelector() =>
         "//div[@class='card__outer']/a[@data-cy='propertyUrl']";
 
-    protected override string GetContentNodeSelector() => "//div[@id='slot-panel']";
-
+    protected override string GetContentNodeSelector() => "//script[@id='__NUXT_DATA__']";
     protected override string GetBaseUrl() => "https://www.morizon.pl";
 
     protected override string GetBaseQueryRelativeUrl() => "do-wynajecia/mieszkania";
@@ -50,13 +49,15 @@ internal class MorizonParser : AdvertisementParser
             .ToList();
     }
 
-    public override string ParseContent()
+    public override ScrapedContent ParseContent()
     {
-        var contentNode = Document.DocumentNode.SelectSingleNode(GetContentNodeSelector());
-        //var photosHtml = contentNode.PreviousSibling.PreviousSibling.OuterHtml;
-        var contentHtml = contentNode?.ParentNode?.InnerHtml;
+        var node = Document.DocumentNode.SelectSingleNode(GetContentNodeSelector());
 
-        //return string.Join('\n', photosHtml, contentHtml);
-        return contentHtml;
+        return null;
+    }
+
+    public override IEnumerable<string> ParsePhotos()
+    {
+        return [];
     }
 }

@@ -1,6 +1,5 @@
 ﻿using Flvt.Domain.Primitives.Responses;
 using Flvt.Domain.Primitives.Subscribers.Filters.Erros;
-using Newtonsoft.Json.Linq;
 
 namespace Flvt.Domain.Primitives.Subscribers.Filters;
 

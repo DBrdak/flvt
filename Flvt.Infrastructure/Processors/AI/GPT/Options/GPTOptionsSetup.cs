@@ -1,5 +1,4 @@
-﻿using Flvt.Domain;
-using Flvt.Infrastructure.SecretManager;
+﻿using Flvt.Infrastructure.SecretManager;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 

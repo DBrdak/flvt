@@ -2,7 +2,6 @@ using Flvt.Application.Abstractions;
 using Flvt.Application.Messaging;
 using Flvt.Domain.Primitives.Responses;
 using Flvt.Domain.Primitives.Subscribers.Filters;
-using Flvt.Domain.Subscribers;
 
 namespace Flvt.Application.Advertisements.ProcessAdvertisements;
 

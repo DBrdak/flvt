@@ -7,7 +7,8 @@ namespace Flvt.Infrastructure.Scrapers.Shared;
 public abstract class AdvertisementParser
 {
     private HtmlDocument? _document;
-    protected HtmlDocument Document => _document ?? throw new NullReferenceException("HtmlDocument is not set.");
+    protected HtmlDocument Document =>
+        _document ?? throw new NullReferenceException("HtmlDocument is not set.");
 
     public void SetHtmlDocument(HtmlDocument htmlDocument)
     {
@@ -21,5 +22,6 @@ public abstract class AdvertisementParser
     public abstract string ParseQueryUrl(Filter filter);
     public abstract string ParsePagedQueryUrl(string baseQueryUrl, int page);
     public abstract List<string> ParseAdvertisementsLinks();
-    public abstract string ParseContent();
+    public abstract ScrapedContent ParseContent();
+    public abstract IEnumerable<string> ParsePhotos();
 }

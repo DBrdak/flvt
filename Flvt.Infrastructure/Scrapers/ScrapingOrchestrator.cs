@@ -1,12 +1,10 @@
 ﻿using Flvt.Application.Abstractions;
-using Flvt.Domain.Primitives.Responses;
 using Flvt.Domain.Primitives.Subscribers.Filters;
 using Flvt.Domain.ScrapedAdvertisements;
 using Flvt.Infrastructure.Monitoring;
 using Flvt.Infrastructure.Scrapers.Morizon;
 using Flvt.Infrastructure.Scrapers.Olx;
 using Flvt.Infrastructure.Scrapers.Otodom;
-using Serilog;
 
 namespace Flvt.Infrastructure.Scrapers;
 
@@ -25,8 +23,8 @@ internal sealed class ScrapingOrchestrator : IScrapingOrchestrator
         var otodomScraper = new OtodomScraper(filter);
         var olxScraper = new OlxScraper(filter);
 
-        var morizonTask = await morizonScraper.ScrapeAsync();
-        //var otodomTask = otodomScraper.ScrapeAsync();
+        //var morizonTask = await morizonScraper.ScrapeAsync();
+        var otodomTask = otodomScraper.ScrapeAsync();
         //var olxTask = olxScraper.ScrapeAsync();
 
         //await Task.WhenAll(morizonTask, otodomTask, olxTask);
@@ -39,6 +37,6 @@ internal sealed class ScrapingOrchestrator : IScrapingOrchestrator
 
         //return [..morizonAds, .. otodomAds, .. olxAds];
 
-        return morizonTask;
+        return await otodomTask;
     }
 }

@@ -1,5 +1,7 @@
 ﻿using System.Diagnostics;
-using Flvt.Domain.ScrapedAdvertisements;
+using Flvt.Infrastructure.Scrapers.Morizon;
+using Flvt.Infrastructure.Scrapers.Olx;
+using Flvt.Infrastructure.Scrapers.Otodom;
 using Serilog;
 
 namespace Flvt.Infrastructure.Monitoring;
@@ -7,9 +9,9 @@ namespace Flvt.Infrastructure.Monitoring;
 internal class ScrapingMonitor : IPerformanceMonitor
 {
     private readonly Stopwatch _stopwatch = new();
-    private readonly List<ScrapedAdvertisement> _morizonAds = new();
-    private readonly List<ScrapedAdvertisement> _otodomAds = new();
-    private readonly List<ScrapedAdvertisement> _olxAds = new();
+    private MorizonScraper? _morizonScraper;
+    private OtodomScraper? _otodomScraper;
+    private OlxScraper? _olxScraper;
 
     public ScrapingMonitor()
     {
@@ -20,39 +22,68 @@ internal class ScrapingMonitor : IPerformanceMonitor
     {
         _stopwatch.Stop();
 
-        await ReportPerformanceAsync();
+        await LogPerformanceAsync();
     }
 
-    public async Task ReportPerformanceAsync()
+    public async Task LogPerformanceAsync()
     {
         var elapsed = _stopwatch.Elapsed;
 
+        var morizonAdsCount = _morizonScraper?.SuccessfullyScrapedAds;
+        var morizonLinksCount = _morizonScraper?.SuccessfullyScrapedLinks;
+        var morizonTotalLinks = _morizonScraper?.SuccessfullyScrapedLinks + _morizonScraper?.UnsuccessfullyScrapedLinks;
+
+        var otodomAdsCount = _otodomScraper?.SuccessfullyScrapedAds;
+        var otodomLinksCount = _otodomScraper?.SuccessfullyScrapedLinks;
+        var otodomTotalLinks = _otodomScraper?.SuccessfullyScrapedLinks + _otodomScraper?.UnsuccessfullyScrapedLinks;
+
+        var olxAdsCount = _olxScraper?.SuccessfullyScrapedAds;
+        var olxLinksCount = _olxScraper?.SuccessfullyScrapedLinks;
+        var olxTotalLinks = _olxScraper?.SuccessfullyScrapedLinks + _olxScraper?.UnsuccessfullyScrapedLinks;
+
         Log.Information(
-            "Scraped {MorizonCount} Morizon ads, {OtodomCount} Otodom ads, {OlxCount} Olx ads, Total: {Total}. Operation time: {time} minutes",
-            _morizonAds.Count,
-            _otodomAds.Count,
-            _olxAds.Count,
-            _morizonAds.Count + _otodomAds.Count + _olxAds.Count,
+            """
+            Scraped [ads / links / totalLinks]:
+                - [MORIZON] {MorizonCount} / {MorizonLinks} / {MorizonTotalLinks}
+                - [OTODOM] {OtodomCount} / {OtodomLinks} / {OtodomTotalLinks}
+                - [OLX] {OlxCount} / {OlxLinks} / {OlxTotalLinks}
+            
+            Total: {Ads} / {Links} / {TotalLinks}. 
+            Operation time: {time} minutes
+            """,
+            morizonAdsCount,
+            morizonLinksCount,
+            morizonTotalLinks,
+            otodomAdsCount,
+            otodomLinksCount,
+            otodomTotalLinks,
+            olxAdsCount,
+            olxLinksCount,
+            olxTotalLinks,
+            morizonAdsCount + otodomAdsCount + olxAdsCount,
+            morizonLinksCount + otodomLinksCount + olxLinksCount,
+            morizonTotalLinks + otodomTotalLinks + olxTotalLinks,
             $"{elapsed.Minutes}:{elapsed.Seconds % 60}");
+
     }
 
-    public ScrapingMonitor AddMorizon(List<ScrapedAdvertisement> morizonAds)
+    public ScrapingMonitor AddMorizon(MorizonScraper morizonScraper)
     {
-        _morizonAds.AddRange(morizonAds);
+        _morizonScraper = morizonScraper;
 
         return this;
     }
 
-    public ScrapingMonitor AddOtodom(List<ScrapedAdvertisement> otodomAds)
+    public ScrapingMonitor AddOtodom(OtodomScraper otodomScraper)
     {
-        _otodomAds.AddRange(otodomAds);
+        _otodomScraper = otodomScraper;
 
         return this;
     }
 
-    public ScrapingMonitor AddOlx(List<ScrapedAdvertisement> olxAds)
+    public ScrapingMonitor AddOlx(OlxScraper olxScraper)
     {
-        _olxAds.AddRange(olxAds);
+        _olxScraper = olxScraper;
 
         return this;
     }

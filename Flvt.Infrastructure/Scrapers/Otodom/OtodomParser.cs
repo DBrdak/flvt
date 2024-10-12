@@ -1,15 +1,19 @@
 ﻿using Flvt.Domain.Extensions;
+using Flvt.Domain.Primitives.Advertisements;
 using Flvt.Domain.Primitives.Subscribers.Filters;
+using Flvt.Domain.ScrapedAdvertisements;
 using Flvt.Infrastructure.Scrapers.Shared;
-using HtmlAgilityPack;
+using Newtonsoft.Json;
 
 namespace Flvt.Infrastructure.Scrapers.Otodom;
 
 internal sealed class OtodomParser : AdvertisementParser
 {
+    private OtodomAdContent? _content;
+
     protected override string GetAdvertisementNodeSelector() => "//a[@data-cy='listing-item-link']";
 
-    protected override string GetContentNodeSelector() => "//div[@id='map']/../..";
+    protected override string GetContentNodeSelector() => "//script[@id='__NEXT_DATA__']";
 
     protected override string GetBaseUrl() => "https://www.otodom.pl";
 
@@ -58,6 +62,64 @@ internal sealed class OtodomParser : AdvertisementParser
             .ToList();
     }
 
-    public override string ParseContent() =>
-        Document.DocumentNode.SelectSingleNode(GetAdvertisementNodeSelector()).InnerHtml;
+    public override ScrapedContent ParseContent()
+    {
+        var nodeJson = Document.DocumentNode.SelectSingleNode(GetContentNodeSelector()).InnerHtml;
+
+        _content = OtodomAdContent.FromJson(nodeJson);
+
+        return _content;
+    }
+
+    public override IEnumerable<string> ParsePhotos() => _content?.Images.Select(image => image.Large) ?? [];
 }
+
+internal sealed record OtodomAdContent(
+    string AdvertiserType,
+    string CreatedAt,
+    string ModifiedAt,
+    string Description,
+    string[] Features,
+    string Title,
+    OtodomInformation[] TopInformation,
+    OtodomInformation[] AdditionalInformation,
+    string Status,
+    OtodomCharacteristics[] Characteristics,
+    OtodomImage[] Images,
+    OtodomLocation Location) : ScrapedContent
+{
+    public static OtodomAdContent FromJson(string json)
+    {
+        dynamic dirtyContent = JsonConvert.DeserializeObject(json);
+        var cleanJson = JsonConvert.SerializeObject(dirtyContent.props.pageProps.ad);
+
+        return JsonConvert.DeserializeObject<OtodomAdContent>(cleanJson);
+    }
+}
+
+internal sealed record OtodomLocation(
+    Coordinates Coordinates,
+    OtodomAddress Address
+    );
+
+internal sealed record OtodomAddress(
+    OtodomAddressUnit Street,
+    OtodomAddressUnit Subdistrict,
+    OtodomAddressUnit District,
+    OtodomAddressUnit City,
+    OtodomAddressUnit Municipality,
+    OtodomAddressUnit County,
+    OtodomAddressUnit Province);
+
+internal sealed record OtodomAddressUnit(string Name);
+
+internal sealed record OtodomImage(string Large);
+
+internal sealed record OtodomCharacteristics(
+    string Label,
+    string LocalizedValue);
+
+internal sealed record OtodomInformation(
+    string Label,
+    string[] Values,
+    string Unit);

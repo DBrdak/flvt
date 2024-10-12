@@ -1,13 +1,19 @@
 ﻿using Flvt.Domain.Primitives.Subscribers.Filters;
 using Flvt.Domain.ScrapedAdvertisements;
 using HtmlAgilityPack;
-using Newtonsoft.Json;
 using Serilog;
 
 namespace Flvt.Infrastructure.Scrapers.Shared;
 
 internal abstract class AdvertisementScraper
 {
+    public int SuccessfullyScrapedLinks;
+    public int SuccessfullyScrapedAds;
+    public int UnsuccessfullyScrapedLinks;
+    public int UnsuccessfullyScrapedAds;
+    public IReadOnlyCollection<ScrapedAdvertisement> Advertisements => _advertisements;
+    public IReadOnlyCollection<string> AdvertisementsLinks => _advertisementsLinks;
+
     private readonly Filter _filter;
     private readonly HtmlWeb _web;
     private readonly AdvertisementParser _advertisementParser;
@@ -31,6 +37,7 @@ internal abstract class AdvertisementScraper
         {
             Log.Logger.Error(
                 "Exception occured when trying to scrape advertisement link: {error}", e);
+            UnsuccessfullyScrapedLinks++;
         }
 
         try
@@ -40,8 +47,12 @@ internal abstract class AdvertisementScraper
         catch (Exception e)
         {
             Log.Logger.Error(
-                "Exception occured when trying to scrape advertisement HTML content: {error}", e);
+                "Exception occured when trying to scrape advertisement Content content: {error}", e);
+            UnsuccessfullyScrapedAds++;
         }
+
+        SuccessfullyScrapedAds = _advertisements.Count;
+        SuccessfullyScrapedLinks = _advertisementsLinks.Count;
 
         return _advertisements;
     }
@@ -52,12 +63,13 @@ internal abstract class AdvertisementScraper
         {
             try
             {
-                var htmlDoc = await _web.LoadFromWebAsync(link);
+                var htmlDoc = await _web.LoadFromWebAsync(link); // todo improve
                 _advertisementParser.SetHtmlDocument(htmlDoc);
 
                 var content = _advertisementParser.ParseContent();
+                var photos = _advertisementParser.ParsePhotos();
 
-                _advertisements.Add(new(link, content));
+                _advertisements.Add(new(link, content, photos));
             }
             catch (Exception e)
             {

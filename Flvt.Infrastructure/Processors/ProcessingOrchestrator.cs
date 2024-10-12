@@ -3,7 +3,6 @@ using Flvt.Domain.Primitives.Responses;
 using Flvt.Domain.ProcessedAdvertisements;
 using Flvt.Domain.ScrapedAdvertisements;
 using Flvt.Infrastructure.Processors.AI;
-using Serilog;
 
 namespace Flvt.Infrastructure.Processors;
 

@@ -8,7 +8,7 @@ internal sealed class GPTMonitor : IPerformanceMonitor, ICostsMonitor
 
     public void AddCompletion(ChatCompletion run) => _completions.Add(run);
 
-    public async Task ReportPerformanceAsync()
+    public async Task LogPerformanceAsync()
     {
     }
 
@@ -18,6 +18,6 @@ internal sealed class GPTMonitor : IPerformanceMonitor, ICostsMonitor
 
     public async ValueTask DisposeAsync()
     {
-        await Task.WhenAll(ReportPerformanceAsync(), ReportCostsAsync());
+        await Task.WhenAll(LogPerformanceAsync(), ReportCostsAsync());
     }
 }
