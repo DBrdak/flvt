@@ -21,15 +21,14 @@ internal sealed class AIProcessor
         IEnumerable<ScrapedAdvertisement> scrapedAdvertisements,
         CancellationToken cancellationToken)
     {
-        var messages = scrapedAdvertisements.Select(GPTMessageFactory.CreateBasicMessage).ToList()[..9];
+        var messages = scrapedAdvertisements.Select(GPTMessageFactory.CreateBasicMessages).ToList();
         List<Task<string?>> replyTasks = [];
-
-        foreach (var message in messages)
-        {
-            replyTasks.Add(_gptClient.CreateCompletionAsync(
-                message,
-                GPTModel.Mini4o));
-        }
+        
+        replyTasks.AddRange(
+            messages.Select(
+                message => _gptClient.CreateCompletionAsync(
+                    message,
+                    GPTModel.Mini4o)));
 
         var replyResults = await Task.WhenAll(replyTasks);
 
@@ -39,6 +38,10 @@ internal sealed class AIProcessor
             .Where(ad => ad is not null)
             .ToList();
 
-        return processedAdvertisements;
+        return processedAdvertisements!;
     }
+
+    public async Task<Dictionary<string, List<string>>> StartProcessingAdvertisementsInBatchAsync(
+        IEnumerable<ScrapedAdvertisement> scrapedAdvertisements) =>
+        await _gptClient.CreateCompletionBatchesAsync(scrapedAdvertisements);
 }

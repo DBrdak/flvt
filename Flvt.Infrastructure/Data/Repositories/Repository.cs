@@ -108,6 +108,16 @@ internal abstract class Repository<TEntity>
         return Result.Success(entity);
     }
 
+    public async Task<Result> AddVoidAsync(TEntity entity)
+    {
+        var json = JsonConvert.SerializeObject(entity);
+        var doc = Document.FromJson(json);
+
+        await Table.PutItemAsync(doc);
+
+        return Result.Success();
+    }
+
     public async Task<Result> AddRangeAsync(IEnumerable<TEntity> entities)
     {
         var batch = Table.CreateBatchWrite();
@@ -129,9 +139,7 @@ internal abstract class Repository<TEntity>
         return await AddAsync(entity);
     }
 
-    public async Task<Result> UpdateRangeAsync(
-        IEnumerable<TEntity> entities,
-        CancellationToken cancellationToken = default)
+    public async Task<Result> UpdateRangeAsync(IEnumerable<TEntity> entities)
     {
         return await AddRangeAsync(entities);
     }

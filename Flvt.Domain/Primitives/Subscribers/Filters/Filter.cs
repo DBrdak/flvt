@@ -1,4 +1,5 @@
 ﻿using Flvt.Domain.Primitives.Responses;
+using Newtonsoft.Json;
 
 namespace Flvt.Domain.Primitives.Subscribers.Filters;
 
@@ -13,8 +14,20 @@ public sealed record Filter
     public FilterArea? MinArea { get; private set; }
     public FilterArea? MaxArea { get; private set; }
     public Preferences? Preferences { get; init; }
+    [JsonIgnore]
+    public bool OnlyLast24H { get; init; } = false;
 
-    public Filter(FilterName name, FilterLocation location, FilterPrice? minPrice, FilterPrice? maxPrice, FilterRoomsCount? minRooms, FilterRoomsCount? maxRooms, FilterArea? minArea, FilterArea? maxArea, Preferences? preferences)
+    private Filter(
+        FilterName name,
+        FilterLocation location,
+        FilterPrice? minPrice,
+        FilterPrice? maxPrice,
+        FilterRoomsCount? minRooms,
+        FilterRoomsCount? maxRooms,
+        FilterArea? minArea,
+        FilterArea? maxArea,
+        Preferences? preferences,
+        bool onlyLast24H)
     {
         Name = name;
         Location = location;
@@ -25,6 +38,7 @@ public sealed record Filter
         MinArea = minArea;
         MaxArea = maxArea;
         Preferences = preferences;
+        OnlyLast24H = onlyLast24H;
     }
 
     public static Result<Filter> Create(
@@ -36,7 +50,8 @@ public sealed record Filter
         int? maxRooms,
         decimal? minArea,
         decimal? maxArea,
-        string? preferences)
+        string? preferences,
+        bool onlyLast24h = false)
     {
         var filterName = FilterName.Create(name);
 
@@ -124,6 +139,7 @@ public sealed record Filter
             filterMaxRooms?.Value,
             filterMinArea?.Value,
             filterMaxArea?.Value,
-            preferencesObject?.Value);
+            preferencesObject?.Value,
+            onlyLast24h);
     }
 }

@@ -16,7 +16,8 @@ internal sealed class GlobalFilterFactory
                 null,
                 null,
                 null,
-                null));
+                null/*, TODO Enable on production
+                onlyLast24h: true*/));
 
         return filters.Select(filter => filter.Value).ToList();
     }

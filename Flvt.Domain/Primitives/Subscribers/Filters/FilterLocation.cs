@@ -6,6 +6,9 @@ namespace Flvt.Domain.Primitives.Subscribers.Filters;
 public sealed record FilterLocation
 {
     public string City { get; init; }
+    /// <summary>
+    /// Warsaw agglomeration only (2024-10-13)
+    /// </summary>
     public static readonly IReadOnlyCollection<FilterLocation> SupportedCities =
         [
             new("warszawa"),
@@ -17,18 +20,18 @@ public sealed record FilterLocation
             new("legionowo"),
             new("pruszkow"),
             new("piastow"),
-            new("krakow"),
-            new("wroclaw"),
-            new("poznan"),
-            new("gdansk"),
-            new("szczecin"),
-            new("lodz"),
-            new("katowice"),
-            new("gdynia"),
-            new("lublin"),
-            new("bialystok"),
-            new("szczecin"),
-            new("torun")
+            //new("krakow"),
+            //new("wroclaw"),
+            //new("poznan"),
+            //new("gdansk"),
+            //new("szczecin"),
+            //new("lodz"),
+            //new("katowice"),
+            //new("gdynia"),
+            //new("lublin"),
+            //new("bialystok"),
+            //new("szczecin"),
+            //new("torun")
         ];
 
     private FilterLocation(string city) => City = city;

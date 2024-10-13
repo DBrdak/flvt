@@ -22,6 +22,7 @@ internal sealed class OtodomParser : AdvertisementParser
     public override string ParseQueryUrl(Filter filter)
     {
         var location = filter.OtodomLocation()?.ToLower().ReplacePolishCharacters();
+        var createdInLast24h = string.Empty;
 
         var minPrice = filter.MinPrice is null ? string.Empty : $"priceMin={filter.MinPrice}";
         var maxPrice = filter.MaxPrice is null ? string.Empty : $"priceMax={filter.MaxPrice}";
@@ -44,22 +45,27 @@ internal sealed class OtodomParser : AdvertisementParser
 
         var rooms = $"roomsNumber=[{string.Join(',', roomsValues)}]";
 
-        return $"{GetBaseUrl()}/{GetBaseQueryRelativeUrl()}/{location}/?{minPrice}&{maxPrice}&{minArea}&{maxArea}&{rooms}";
+        if (filter.OnlyLast24H)
+        {
+            createdInLast24h = "daysSinceCreated=1";
+        }
+
+        return $"{GetBaseUrl()}/{GetBaseQueryRelativeUrl()}/{location}/?{minPrice}&{maxPrice}&{minArea}&{maxArea}&{rooms}&{createdInLast24h}";
     }
 
     public override string ParsePagedQueryUrl(string baseQueryUrl, int page) => $"{baseQueryUrl}&page={page}";
 
     public override List<string> ParseAdvertisementsLinks()
     {
-        var advertisements = Document.DocumentNode.SelectNodes(GetAdvertisementNodeSelector()).ToList();
+        var advertisements = Document.DocumentNode.SelectNodes(GetAdvertisementNodeSelector())?.ToList();
 
-        return advertisements.Select(
+        return advertisements?.Select(
                 ad => string.Concat(
                     GetBaseUrl(),
                     ad.GetAttributeValue(
                         "href",
                         string.Empty)))
-            .ToList();
+            .ToList() ?? [];
     }
 
     public override ScrapedAdContent ParseContent()

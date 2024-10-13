@@ -7,7 +7,7 @@ public sealed class ProcessedAdvertisement
 {
     public string Link { get; init; }
     public Address Address { get; init; }
-    public Coordinates? Location { get; init; }
+    public Coordinates? Geolocation { get; init; }
     public string Description { get; init; }
     public string ContactType { get; init; }
     public Money Price { get; init; }
@@ -26,7 +26,7 @@ public sealed class ProcessedAdvertisement
     public ProcessedAdvertisement(
         string link,
         Address address,
-        Coordinates? location,
+        Coordinates? geolocation,
         string description,
         string contactType,
         Money price,
@@ -44,7 +44,7 @@ public sealed class ProcessedAdvertisement
     {
         Link = link;
         Address = address;
-        Location = location;
+        Geolocation = geolocation;
         Description = description;
         ContactType = contactType;
         Price = price;
@@ -60,4 +60,6 @@ public sealed class ProcessedAdvertisement
         Pets = pets;
         Photos = photos;
     }
+
+
 }

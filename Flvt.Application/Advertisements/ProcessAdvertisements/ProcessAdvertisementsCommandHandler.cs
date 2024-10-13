@@ -2,41 +2,31 @@ using Flvt.Application.Abstractions;
 using Flvt.Application.Messaging;
 using Flvt.Domain.Primitives.Responses;
 using Flvt.Domain.Primitives.Subscribers.Filters;
+using Flvt.Domain.ScrapedAdvertisements;
 
 namespace Flvt.Application.Advertisements.ProcessAdvertisements;
 
 internal sealed class ProcessAdvertisementsCommandHandler : ICommandHandler<ProcessAdvertisementsCommand>
 {
-    private readonly IScrapingOrchestrator _scrapingOrchestrator;
+    private readonly IScrapedAdvertisementRepository _scrapedAdvertisementRepository;
     private readonly IProcessingOrchestrator _processingOrchestrator;
 
-    public ProcessAdvertisementsCommandHandler(
-        IScrapingOrchestrator scrapingOrchestrator,
-        IProcessingOrchestrator processingOrchestrator)
+    public ProcessAdvertisementsCommandHandler(IProcessingOrchestrator processingOrchestrator, IScrapedAdvertisementRepository scrapedAdvertisementRepository)
     {
-        _scrapingOrchestrator = scrapingOrchestrator;
         _processingOrchestrator = processingOrchestrator;
+        _scrapedAdvertisementRepository = scrapedAdvertisementRepository;
     }
 
     public async Task<Result> Handle(ProcessAdvertisementsCommand request, CancellationToken cancellationToken)
     {
-        var filter = Filter.Create(
-            request.FilterName,
-            request.Location,
-            request.MinPrice,
-            request.MaxPrice,
-            request.MinRooms,
-            request.MaxRooms,
-            request.MinArea,
-            request.MaxArea,
-            null);
+        var scrapedAdvertisementsGetResult = await _scrapedAdvertisementRepository.GetUnprocessedAsync();
 
-        if (filter.IsFailure)
+        if (scrapedAdvertisementsGetResult.IsFailure)
         {
-            return filter.Error;
+            return scrapedAdvertisementsGetResult.Error;
         }
 
-        var scrapedAdvertisements = await _scrapingOrchestrator.ScrapeAsync(filter.Value);
+        var scrapedAdvertisements = scrapedAdvertisementsGetResult.Value;
 
         await _processingOrchestrator.ProcessAsync(scrapedAdvertisements);
 

@@ -26,7 +26,7 @@ internal static class OtodomLocationsDictionary
         { "lublin", "lubelskie/lublin" },
         { "bialystok", "podlaskie/bialystok" },
         { "szczecin", "zachodniopomorskie/szczecin" },
-        { "torun", "kujawsko-pomorskie/torun" },
+        { "torun", "kujawsko--pomorskie/torun" },
     };
 
     public static string? OtodomLocation(this Filter filter) => 

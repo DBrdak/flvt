@@ -4,6 +4,7 @@ using Flvt.Domain.ScrapedAdvertisements;
 using Flvt.Infrastructure.Monitoring;
 using Flvt.Infrastructure.Scrapers.Olx;
 using Flvt.Infrastructure.Scrapers.Otodom;
+using Serilog;
 
 namespace Flvt.Infrastructure.Scrapers;
 
@@ -18,21 +19,18 @@ internal sealed class ScrapingOrchestrator : IScrapingOrchestrator
 
     public async Task<IEnumerable<ScrapedAdvertisement>> ScrapeAsync(Filter filter)
     {
-        var olxScraper = new OlxScraper(filter);
+        Log.Logger.Information("Processing ads for filter: {filter}", filter);
+
         var otodomScraper = new OtodomScraper(filter);
 
-        var olxTask = olxScraper.ScrapeAsync();
-        //var otodomTask = otodomScraper.ScrapeAsync();
+        var otodomTask = otodomScraper.ScrapeAsync();
 
-        //await Task.WhenAll(otodomTask, olxTask);
+        await Task.WhenAll(otodomTask);
 
-        //var olxAds = olxTask.Result.ToList();
-        //var otodomAds = otodomTask.Result.ToList();
+        var otodomAds = otodomTask.Result.ToList();
 
-        //_monitor.AddOlx(morizonAds).AddOtodom(otodomAds);
+        _monitor.AddOtodom(otodomScraper);
 
-        //return [..olxnAds, ..otodomAds];
-
-        return await olxTask;
+        return [.. otodomAds];
     }
 }

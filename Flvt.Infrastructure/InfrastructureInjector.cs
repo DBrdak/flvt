@@ -33,6 +33,7 @@ public static class InfrastructureInjector
         services.AddScoped<IProcessedAdvertisementRepository, ProcessedAdvertisementRepository>();
         services.AddScoped<IScrapedAdvertisementRepository, ScrapedAdvertisementRepository>();
         services.AddScoped<ISubscriberRepository, SubscriberRepository>();
+        services.AddScoped<BatchRepository>();
 
         return services;
     }

@@ -1,6 +1,6 @@
 ﻿using Flvt.Domain.Primitives.Advertisements;
+using Flvt.Domain.Primitives.Subscribers;
 using Flvt.Domain.Primitives.Subscribers.Filters;
-using Flvt.Domain.Primitives.Users;
 
 namespace Flvt.Domain.Subscribers;
 

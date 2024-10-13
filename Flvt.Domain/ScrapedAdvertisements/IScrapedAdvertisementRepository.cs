@@ -7,4 +7,6 @@ public interface IScrapedAdvertisementRepository
     Task<Result<IEnumerable<ScrapedAdvertisement>>> GetAllAsync();
     Task<Result<IEnumerable<ScrapedAdvertisement>>> GetManyByLinkAsync(IEnumerable<string> links);
     Task<Result> AddRangeAsync(IEnumerable<ScrapedAdvertisement> advertisements);
+    Task<Result> UpdateRangeAsync(IEnumerable<ScrapedAdvertisement> advertisements);
+    Task<Result<IEnumerable<ScrapedAdvertisement>>> GetUnprocessedAsync();
 }

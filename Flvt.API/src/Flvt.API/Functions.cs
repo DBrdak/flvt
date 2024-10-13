@@ -37,15 +37,7 @@ public class Functions
     {
         using (LogContext.PushProperty("CorrelationId", requestContext.RequestContext.RequestId))
         {
-            var command = new ProcessAdvertisementsCommand(
-                filterName,
-                location,
-                minPrice,
-                maxPrice,
-                minRooms,
-                maxRooms,
-                minArea,
-                maxArea);
+            var command = new ProcessAdvertisementsCommand();
 
             var result = await _sender.Send(command);
 

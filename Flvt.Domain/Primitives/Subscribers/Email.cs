@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Flvt.Domain.Primitives.Responses;
 
-namespace Flvt.Domain.Primitives.Users;
+namespace Flvt.Domain.Primitives.Subscribers;
 
 public sealed record Email
 {

@@ -2,9 +2,10 @@
 
 public sealed record Address(
     string Country,
-    string State,
+    string Province,
     string Region,
     string City,
     string District,
+    string Subdistrict,
     string Street,
     string HouseNumber);

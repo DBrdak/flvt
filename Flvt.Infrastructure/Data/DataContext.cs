@@ -3,6 +3,10 @@ using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DocumentModel;
 using Amazon.Runtime;
 using Flvt.Domain;
+using Flvt.Domain.ProcessedAdvertisements;
+using Flvt.Domain.ScrapedAdvertisements;
+using Flvt.Domain.Subscribers;
+using Flvt.Infrastructure.Processors.AI.GPT.Domain.DataModels.Batches;
 
 namespace Flvt.Infrastructure.Data;
 
@@ -21,13 +25,16 @@ internal sealed class DataContext
         table : throw _connectionException;
     private Table Subscribers => Table.TryLoadTable(_client, nameof(Subscribers), out var table) ?
         table : throw _connectionException;
+    private Table Batches => Table.TryLoadTable(_client, nameof(Batches), out var table) ?
+        table : throw _connectionException;
 
     public Table Set<TEntity>() =>
         typeof(TEntity) switch
         {
-            { Name: "ProcessedAdvertisement" } => ProcessedAdvertisements,
-            { Name: "ScrapedAdvertisement" } => ScrapedAdvertisements,
-            { Name: "Subscriber" } => Subscribers,
+            { Name: nameof(ProcessedAdvertisement) } => ProcessedAdvertisements,
+            { Name: nameof(ScrapedAdvertisement) } => ScrapedAdvertisements,
+            { Name: nameof(Subscriber) } => Subscribers,
+            { Name: nameof(BatchDataModel) } => Batches,
             var type => throw InvalidTableException(type.Name)
         };
 }

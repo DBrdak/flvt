@@ -18,7 +18,7 @@ internal sealed class ScrapeAdvertisementsCommandHandler : ICommandHandler<Scrap
 
     public async Task<Result> Handle(ScrapeAdvertisementsCommand request, CancellationToken cancellationToken)
     {
-        var filters = GlobalFilterFactory.CreateFiltersForAllLocations();
+        var filters = GlobalFilterFactory.CreateFiltersForAllLocations()[..1];
         var scrapeTasks = filters.Select(_scrapingOrchestrator.ScrapeAsync).ToList();
         
         var scrapedAdvertisements = await Task.WhenAll(scrapeTasks);

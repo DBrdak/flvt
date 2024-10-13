@@ -11,7 +11,6 @@ internal abstract class AdvertisementScraper
 {
     public int SuccessfullyScrapedLinks;
     public int SuccessfullyScrapedAds;
-    public int UnsuccessfullyScrapedLinks;
     public int UnsuccessfullyScrapedAds;
 
     private readonly Filter _filter;
@@ -37,7 +36,6 @@ internal abstract class AdvertisementScraper
         {
             Log.Logger.Error(
                 "Exception occured when trying to scrape advertisement link: {error}", e);
-            UnsuccessfullyScrapedLinks++;
         }
 
         try
@@ -48,7 +46,6 @@ internal abstract class AdvertisementScraper
         {
             Log.Logger.Error(
                 "Exception occured when trying to scrape advertisement AdContent adContent: {error}", e);
-            UnsuccessfullyScrapedAds++;
         }
 
         SuccessfullyScrapedAds = _advertisements.Count;
@@ -63,7 +60,7 @@ internal abstract class AdvertisementScraper
         {
             try
             {
-                var htmlDoc = await _web.LoadFromWebAsync(link); // todo improve
+                var htmlDoc = await _web.LoadFromWebAsync(link);
                 _advertisementParser.SetHtmlDocument(htmlDoc);
 
                 var content = _advertisementParser.ParseContent();
@@ -82,20 +79,31 @@ internal abstract class AdvertisementScraper
     private async Task ScrapeAdvertisementsLinksAsync()
     {
         var page = 1;
-        bool isValidPage;
+        var isValidPage = true;
         var queryUrl = _advertisementParser.ParseQueryUrl(_filter);
+        var pageUrl = queryUrl;
 
         do
         {
-            var pageUrl = _advertisementParser.ParsePagedQueryUrl(queryUrl, page);
-            var htmlDoc = await _web.LoadFromWebAsync(pageUrl); // todo improve
-            _advertisementParser.SetHtmlDocument(htmlDoc);
+            try
+            {
+                pageUrl = _advertisementParser.ParsePagedQueryUrl(queryUrl, page);
 
-            var links = _advertisementParser.ParseAdvertisementsLinks();
+                var htmlDoc = await _web.LoadFromWebAsync(pageUrl);
 
-            isValidPage = links.Select(_advertisementsLinks.Add).ToList().Any(x => x);
+                _advertisementParser.SetHtmlDocument(htmlDoc);
 
-            page++;
+                var links = _advertisementParser.ParseAdvertisementsLinks();
+
+                isValidPage = links.Select(_advertisementsLinks.Add).ToList().Any(x => x);
+
+                page++;
+            }
+            catch (Exception e)
+            {
+                Log.Logger.Error(
+                    "Exception occured when trying to scrape advertisement links, on page: {url} - {error}", pageUrl, e);
+            }
         }
         while (isValidPage);
     }

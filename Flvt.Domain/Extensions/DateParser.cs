@@ -14,7 +14,7 @@ public static class DateParser
         {
             parseResult = DateTime.TryParseExact(
                 date,
-                "dd.MM.yyyy",
+                "d.MM.yyyy",
                 CultureInfo.InvariantCulture,
                 DateTimeStyles.None,
                 out parsedDate);
