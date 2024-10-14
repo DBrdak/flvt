@@ -2,7 +2,7 @@
 
 internal static class GPTResponseFormats
 {
-    public static string Text = "text";
-    public static string JsonObject = "json_object";
-    public static string JsonSchema = "json_schema";
+    //public static string Text = "text";
+    public static object JsonObject = new {Type = "json_object"};
+    //public static string JsonSchema = "json_schema";
 }

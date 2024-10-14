@@ -6,6 +6,11 @@ namespace Flvt.Application.Abstractions;
 
 public interface IProcessingOrchestrator
 {
-    Task<Result<IEnumerable<ProcessedAdvertisement>>> ProcessAsync(
+    Task<Result<List<ProcessedAdvertisement>>> ProcessAsync(
         IEnumerable<ScrapedAdvertisement> scrapedAdvertisements);
+
+    Task<Dictionary<string, List<ScrapedAdvertisement>>> StartProcessingAsync(
+        IEnumerable<ScrapedAdvertisement> scrapedAdvertisements);
+
+    Task<List<ProcessedAdvertisement>> RetrieveProcessedAdvertisementsAsync();
 }

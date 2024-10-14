@@ -4,6 +4,7 @@ using Flvt.Application.Advertisements.ScrapeAdvertisements;
 using Flvt.Infrastructure;
 using MediatR;
 using Microsoft.Extensions.Configuration;
+using Flvt.Application.Advertisements.ProcessAdvertisements;
 
 namespace Flvt.CLI;
 
@@ -49,7 +50,7 @@ public class Service : IService
         //    30,
         //    50);
 
-        var cmd = new ScrapeAdvertisementsCommand();
+        var cmd = new ProcessAdvertisementsCommand();
 
         var response = await _sender.Send(cmd);
     }

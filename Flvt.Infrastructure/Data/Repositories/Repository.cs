@@ -31,7 +31,7 @@ internal abstract class Repository<TEntity>
             docs.AddRange(await scanner.GetNextSetAsync());
         while (!scanner.IsDone);
 
-        var records = docs.Select(document => JsonConvert.DeserializeObject<TEntity>(document));
+        var records = docs.Select(document => JsonConvert.DeserializeObject<TEntity>(document.ToJson()));
 
         return Result.Create(records);
     }
@@ -46,7 +46,7 @@ internal abstract class Repository<TEntity>
             docs.AddRange(await scanner.GetNextSetAsync());
         while (!scanner.IsDone);
 
-        var records = docs.Select(document => JsonConvert.DeserializeObject<TEntity>(document));
+        var records = docs.Select(document => JsonConvert.DeserializeObject<TEntity>(document.ToJson()));
 
         return Result.Create(records);
     }
@@ -75,7 +75,7 @@ internal abstract class Repository<TEntity>
         await batch.ExecuteAsync();
 
         var docs = batch.Results;
-        var records = docs.Select(document => JsonConvert.DeserializeObject<TEntity>(document));
+        var records = docs.Select(document => JsonConvert.DeserializeObject<TEntity>(document.ToJson()));
 
         return Result.Create(records);
     }

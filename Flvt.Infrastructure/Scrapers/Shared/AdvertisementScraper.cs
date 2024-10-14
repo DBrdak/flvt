@@ -11,7 +11,7 @@ internal abstract class AdvertisementScraper
 {
     public int SuccessfullyScrapedLinks;
     public int SuccessfullyScrapedAds;
-    public int UnsuccessfullyScrapedAds;
+    private const int advertisementChunkSize = 500;
 
     private readonly Filter _filter;
     private readonly HtmlWeb _web;
@@ -40,7 +40,11 @@ internal abstract class AdvertisementScraper
 
         try
         {
-            await ScrapeAdvertisementsAsync();
+            var scrapeTasks = _advertisementsLinks
+                .Chunk(advertisementChunkSize)
+                .Select(ScrapeAdvertisementsAsync);
+
+            await Task.WhenAll(scrapeTasks);
         }
         catch (Exception e)
         {
@@ -54,9 +58,9 @@ internal abstract class AdvertisementScraper
         return _advertisements;
     }
 
-    private async Task ScrapeAdvertisementsAsync()
+    private async Task ScrapeAdvertisementsAsync(IEnumerable<string> links)
     {
-        foreach (var link in _advertisementsLinks)
+        foreach (var link in links)
         {
             try
             {
@@ -89,11 +93,7 @@ internal abstract class AdvertisementScraper
             {
                 pageUrl = _advertisementParser.ParsePagedQueryUrl(queryUrl, page);
 
-                var htmlDoc = await _web.LoadFromWebAsync(pageUrl);
-
-                _advertisementParser.SetHtmlDocument(htmlDoc);
-
-                var links = _advertisementParser.ParseAdvertisementsLinks();
+                var links = await ScrapeAdvertisementLinksFromPage(pageUrl);
 
                 isValidPage = links.Select(_advertisementsLinks.Add).ToList().Any(x => x);
 
@@ -106,5 +106,14 @@ internal abstract class AdvertisementScraper
             }
         }
         while (isValidPage);
+    }
+
+    private async Task<IEnumerable<string>> ScrapeAdvertisementLinksFromPage(string pageUrl)
+    {
+        var htmlDoc = await _web.LoadFromWebAsync(pageUrl);
+
+        _advertisementParser.SetHtmlDocument(htmlDoc);
+
+        return _advertisementParser.ParseAdvertisementsLinks();
     }
 }

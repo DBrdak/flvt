@@ -6,4 +6,5 @@ internal sealed class GPTPaths
     public const string UploadFile = "v1/files";
     public const string CreateBatch = "v1/batches";
     public static string RetrieveBatch(string batchId) => $"v1/batches/{batchId}";
+    public static string RetrieveFileContent(string fileId) => $"v1/files/{fileId}/content";
 }

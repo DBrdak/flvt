@@ -10,18 +10,24 @@ internal sealed record Batch(
     string Status,
     string OutputFileId,
     string ErrorFileId,
-    long CreatedAt,
-    object InProgressAt,
-    object ExpiresAt,
-    object FinalizingAt,
-    object CompletedAt,
-    object FailedAt,
-    object ExpiredAt,
-    object CancellingAt,
-    object CancelledAt,
+    long? CreatedAt,
+    long? InProgressAt,
+    long? ExpiresAt,
+    long? FinalizingAt,
+    long? CompletedAt,
+    long? FailedAt,
+    long? ExpiredAt,
+    long? CancellingAt,
+    long? CancelledAt,
     RequestCounts RequestCounts,
     Dictionary<string, string> Metadata
-);
+)
+{
+    public bool IsCompleted => CompletedAt is not null;
+
+    public bool IsFailed =>
+        CancelledAt is not null || FailedAt is not null || CancellingAt is not null || ExpiredAt is not null;
+}
 
 internal sealed record RequestCounts(
     int Total,

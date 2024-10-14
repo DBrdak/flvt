@@ -1,4 +1,5 @@
-﻿using Flvt.Infrastructure.Processors.AI.GPT.Domain.Chat.Completions;
+﻿using Flvt.Infrastructure.Processors.AI.GPT.Domain.Batches;
+using Flvt.Infrastructure.Processors.AI.GPT.Domain.Chat.Completions;
 
 namespace Flvt.Infrastructure.Monitoring;
 
@@ -13,6 +14,10 @@ internal sealed class GPTMonitor : IPerformanceMonitor, ICostsMonitor
     }
 
     public async Task ReportCostsAsync()
+    {
+    }
+
+    public void AddBatch(Batch batch)
     {
     }
 

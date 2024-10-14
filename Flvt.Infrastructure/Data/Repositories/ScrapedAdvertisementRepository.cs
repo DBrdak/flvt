@@ -1,4 +1,5 @@
 ﻿using Amazon.DynamoDBv2.DocumentModel;
+using Amazon.DynamoDBv2.Model;
 using Flvt.Domain.Primitives.Responses;
 using Flvt.Domain.ScrapedAdvertisements;
 
@@ -16,9 +17,14 @@ internal sealed class ScrapedAdvertisementRepository : Repository<ScrapedAdverti
     public async Task<Result<IEnumerable<ScrapedAdvertisement>>> GetUnprocessedAsync()
     {
         var scanFilter = new ScanFilter();
-        scanFilter.AddCondition(nameof(ScrapedAdvertisement.IsProcessed), ScanOperator.Equal, false);
-        scanFilter.AddCondition(nameof(ScrapedAdvertisement.ProcessingStartedAt), ScanOperator.IsNull);
-        scanFilter.AddCondition(nameof(ScrapedAdvertisement.BatchId), ScanOperator.IsNull);
+        scanFilter.AddCondition(
+            nameof(ScrapedAdvertisement.IsProcessed),
+            ScanOperator.Equal,
+            new DynamoDBBool(false));
+        scanFilter.AddCondition(
+            nameof(ScrapedAdvertisement.ProcessingStartedAt),
+            ScanOperator.Equal,
+            new DynamoDBNull());
 
         return await GetWhereAsync(scanFilter);
     }

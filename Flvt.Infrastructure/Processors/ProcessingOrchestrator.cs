@@ -5,86 +5,182 @@ using Flvt.Domain.ProcessedAdvertisements;
 using Flvt.Domain.ScrapedAdvertisements;
 using Flvt.Infrastructure.Data.Repositories;
 using Flvt.Infrastructure.Processors.AI;
+using Flvt.Infrastructure.Processors.AI.GPT.Domain.Batches;
 using Flvt.Infrastructure.Processors.AI.GPT.Domain.DataModels.Batches;
+using Flvt.Infrastructure.Processors.AI.GPT.Domain.Responses;
 using Serilog;
 
 namespace Flvt.Infrastructure.Processors;
 
 internal sealed class ProcessingOrchestrator : IProcessingOrchestrator
 {
-    private readonly IProcessedAdvertisementRepository _processedAdvertisementRepository;
     private readonly IScrapedAdvertisementRepository _scrapedAdvertisementRepository;
+    private readonly IProcessedAdvertisementRepository _processedAdvertisementRepository;
     private readonly BatchRepository _batchRepository;
     private readonly AIProcessor _aiProcessor;
+    private const int maximumBatchSize = 500;
 
     public ProcessingOrchestrator(
-        IProcessedAdvertisementRepository processedAdvertisementRepository,
         AIProcessor aiProcessor,
+        BatchRepository batchRepository,
         IScrapedAdvertisementRepository scrapedAdvertisementRepository,
-        BatchRepository batchRepository)
+        IProcessedAdvertisementRepository processedAdvertisementRepository)
     {
-        _processedAdvertisementRepository = processedAdvertisementRepository;
         _aiProcessor = aiProcessor;
-        _scrapedAdvertisementRepository = scrapedAdvertisementRepository;
         _batchRepository = batchRepository;
+        _scrapedAdvertisementRepository = scrapedAdvertisementRepository;
+        _processedAdvertisementRepository = processedAdvertisementRepository;
     }
 
-    public async Task<Result<IEnumerable<ProcessedAdvertisement>>> ProcessAsync(
+    public async Task<Result<List<ProcessedAdvertisement>>> ProcessAsync(
         IEnumerable<ScrapedAdvertisement> scrapedAdvertisements)
     {
-        var processingResult = await _aiProcessor.ProcessBasicAdvertisementAsync(
-            scrapedAdvertisements,
-            CancellationToken.None);
+        var advertisementsChunks = scrapedAdvertisements.Chunk(maximumBatchSize);
 
-        if (processingResult.IsFailure)
+        var processingTasks = advertisementsChunks.Select(_aiProcessor.ProcessBasicAdvertisementAsync);
+        var processingResults = await Task.WhenAll(processingTasks);
+
+        if (Result.Aggregate(processingResults) is var processingResult && processingResult.IsFailure)
         {
             return processingResult.Error;
         }
 
-        var processedAdvertisements = processingResult.Value;
+        var processedAdvertisements = processingResults.SelectMany(result => result.Value).ToList();
 
-        var addResult = await _processedAdvertisementRepository.AddRangeAsync(processedAdvertisements);
+        return Result.Create(processedAdvertisements);
+    }
 
-        if (addResult.IsFailure)
+    public async Task<Dictionary<string, List<ScrapedAdvertisement>>> StartProcessingAsync(
+        IEnumerable<ScrapedAdvertisement> scrapedAdvertisements)
+    {
+        var advertisementsInBatches = await _aiProcessor.StartProcessingAdvertisementsInBatchAsync(scrapedAdvertisements);
+
+        var saveTasks = advertisementsInBatches.Select(SaveBatchAsync);
+
+        var saveResults = await Task.WhenAll(saveTasks);
+
+        if (Result.Aggregate(saveResults) is var saveResult && saveResult.IsFailure)
         {
-            Log.Logger.Error("Failed to add processed advertisements to the database: {error}", addResult.Error);
+            Log.Logger.Fatal("Failed to save batch: {error}", saveResult.Error);
         }
+
+        return advertisementsInBatches.ToDictionary(
+            batch => batch.BatchId,
+            batch => batch.AdvertisementsInBatchAsync);
+    }
+
+    public async Task<List<ProcessedAdvertisement>> RetrieveProcessedAdvertisementsAsync()
+    {
+        var batchesGetResult = await _batchRepository.GetAllAsync();
+
+        if (batchesGetResult.IsFailure)
+        {
+            Log.Logger.Fatal("Failed to retrieve batches: {error}", batchesGetResult.Error);
+            return [];
+        }
+
+        var dataBatches = batchesGetResult.Value.ToList();
+
+        var gptBatches = await _aiProcessor.RetrieveBatchesAsync(dataBatches);
+
+        var completedBatches = GetCompletedBatches(gptBatches, dataBatches);
+        var failedBatchesIds = GetAndReportFailedBatches(gptBatches, dataBatches);
+
+        var deleteTasks = failedBatchesIds.Select(RemoveFailedBatchAsync);
+        var processTasks =
+            completedBatches.Select(agg => _aiProcessor.RetrieveProcessedAdvertisements(agg.GPTBatch));
+
+        await Task.WhenAll(deleteTasks);
+        var groupedProcessedAdvertisements = await Task.WhenAll(processTasks);
+        var processedAdvertisements = groupedProcessedAdvertisements
+            .Where(ads => ads is not null)
+            .SelectMany(ad => ad!)
+            .ToList();
+
+        await _batchRepository.RemoveRangeAsync(completedBatches.Select(batch => batch.DataBatch.BatchId));
 
         return processedAdvertisements;
     }
 
-    public async Task<Result> StartProcessingAsync(
-        IEnumerable<ScrapedAdvertisement> scrapedAdvertisements)
+    private async Task RemoveFailedBatchAsync(BatchAggregate batchAggregate)
     {
-        var advertisementsInBatches = await _aiProcessor.StartProcessingAdvertisementsInBatchAsync(
-            scrapedAdvertisements);
+        var processingAdvertisementsGetResult =
+            await _scrapedAdvertisementRepository.GetManyByLinkAsync(
+                batchAggregate.DataBatch.ProcessingAdvertisementsLinks);
 
-        var saveTasks = advertisementsInBatches.Select(pair => SaveBatchAsync(pair.Key, pair.Value));
-
-        var results = await Task.WhenAll(saveTasks);
-
-        return Result.Aggregate(results);
-    }
-
-    private async Task<Result> SaveBatchAsync(string batchId, List<string> advertisementsLinks)
-    {
-        var advertisementsGetResult =
-            await _scrapedAdvertisementRepository.GetManyByLinkAsync(advertisementsLinks);
-
-        if (advertisementsGetResult.IsFailure)
+        if (processingAdvertisementsGetResult.IsFailure)
         {
-            return advertisementsGetResult.Error;
+            Log.Logger.Error(
+                "Failed to retrieve advertisements processed by failed batch {batchId}, error: {error}",
+                batchAggregate.DataBatch.BatchId,
+                processingAdvertisementsGetResult.Error);
+            return;
         }
 
-        var advertisements = advertisementsGetResult.Value.ToList();
+        var processingAdvertisements = processingAdvertisementsGetResult.Value.ToList();
 
-        advertisements.ForEach(ad => ad.AddToBatch(batchId));
+        processingAdvertisements.ForEach(p => p.Process());
 
-        var batchAddTask = _batchRepository.AddVoidAsync(new BatchDataModel(batchId));
-        var advertisementUpdateTask = _scrapedAdvertisementRepository.UpdateRangeAsync(advertisements);
+        var advertisementsUpdateResult = await _scrapedAdvertisementRepository.UpdateRangeAsync(processingAdvertisements);
 
-        var results = await Task.WhenAll(batchAddTask, advertisementUpdateTask);
+        if (advertisementsUpdateResult.IsFailure)
+        {
+            Log.Logger.Fatal(
+                "Failed to update advertisements processed by failed batch {batchId}, error: {error}",
+                batchAggregate.DataBatch.BatchId,
+                advertisementsUpdateResult.Error);
+            return;
+        }
 
-        return Result.Aggregate(results);
+        var batchRemoveResult = await _batchRepository.RemoveAsync(batchAggregate.DataBatch.BatchId);
+
+        if (batchRemoveResult.IsFailure)
+        {
+            Log.Logger.Error(
+                "Failed to remove failed batch {batchId}, error: {error}",
+                batchAggregate.DataBatch.BatchId,
+                batchRemoveResult.Error);
+        }
     }
+
+    private List<BatchAggregate> GetCompletedBatches(List<Batch> batches, List<BatchDataModel> batchesData)
+    {
+        var completedBatches = batches.Where(batch => batch.IsCompleted).ToList();
+
+        var aggregates =  from batch in completedBatches
+            let batchData = batchesData.First(data => data.BatchId == batch.Id)
+            select new BatchAggregate(
+                batch,
+                batchData);
+
+        return aggregates.ToList();
+    }
+
+    private List<BatchAggregate> GetAndReportFailedBatches(List<Batch> batches, List<BatchDataModel> batchesData)
+    {
+        var failedBatches = batches.Where(batch => batch.IsFailed).ToList();
+
+        foreach (var batch in failedBatches)
+        {
+            Log.Logger.Error(
+                "Batch {batchId} failed to file {fileId} with error: {error}",
+                batch.Id,
+                string.Concat("https://platform.openai.com/storage/files/", batch.ErrorFileId),
+                batch.Errors);
+        }
+
+        var aggregates = from batch in failedBatches
+            let batchData = batchesData.First(data => data.BatchId == batch.Id)
+            select new BatchAggregate(
+                batch,
+                batchData);
+
+        return aggregates.ToList();
+    }
+
+    private async Task<Result> SaveBatchAsync(AdvertisementsBatch batch) =>
+        await _batchRepository.AddVoidAsync(
+            new(
+                batch.BatchId,
+                batch.AdvertisementsInBatchAsync.Select(ad => ad.Link)));
 }
