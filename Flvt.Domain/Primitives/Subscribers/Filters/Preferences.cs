@@ -5,11 +5,11 @@ namespace Flvt.Domain.Primitives.Subscribers.Filters;
 //TODO Implement
 public sealed record Preferences
 {
-    public string Value { get; init; }
+    public string Name { get; init; }
 
-    private Preferences(string value)
+    private Preferences(string name)
     {
-        Value = value;
+        Name = name;
     }
 
     public static Result<Preferences> Create(string value)

@@ -8,7 +8,7 @@ internal sealed class BatchFileFactory
 {
     public static ByteArrayContent CreateJsonlFile(IEnumerable<BatchMessageLine> batchMessages)
     {
-        var tasks = string.Join('\n', GPTJsonConvert.Serialize(batchMessages));
+        var tasks = string.Join('\n', batchMessages.Select(GPTJsonConvert.Serialize));
 
         var fileBytes = Encoding.UTF8.GetBytes(tasks);
         var fileContent = new ByteArrayContent(fileBytes);

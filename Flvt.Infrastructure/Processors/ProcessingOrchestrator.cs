@@ -97,7 +97,7 @@ internal sealed class ProcessingOrchestrator : IProcessingOrchestrator
             .SelectMany(ad => ad!)
             .ToList();
 
-        await _batchRepository.RemoveRangeAsync(completedBatches.Select(batch => batch.DataBatch.BatchId));
+        await _batchRepository.RemoveRangeAsync(completedBatches.Select(batch => batch.DataBatch.Id));
 
         return processedAdvertisements;
     }
@@ -112,7 +112,7 @@ internal sealed class ProcessingOrchestrator : IProcessingOrchestrator
         {
             Log.Logger.Error(
                 "Failed to retrieve advertisements processed by failed batch {batchId}, error: {error}",
-                batchAggregate.DataBatch.BatchId,
+                batchAggregate.DataBatch.Id,
                 processingAdvertisementsGetResult.Error);
             return;
         }
@@ -127,18 +127,18 @@ internal sealed class ProcessingOrchestrator : IProcessingOrchestrator
         {
             Log.Logger.Fatal(
                 "Failed to update advertisements processed by failed batch {batchId}, error: {error}",
-                batchAggregate.DataBatch.BatchId,
+                batchAggregate.DataBatch.Id,
                 advertisementsUpdateResult.Error);
             return;
         }
 
-        var batchRemoveResult = await _batchRepository.RemoveAsync(batchAggregate.DataBatch.BatchId);
+        var batchRemoveResult = await _batchRepository.RemoveAsync(batchAggregate.DataBatch.Id);
 
         if (batchRemoveResult.IsFailure)
         {
             Log.Logger.Error(
                 "Failed to remove failed batch {batchId}, error: {error}",
-                batchAggregate.DataBatch.BatchId,
+                batchAggregate.DataBatch.Id,
                 batchRemoveResult.Error);
         }
     }
@@ -148,7 +148,7 @@ internal sealed class ProcessingOrchestrator : IProcessingOrchestrator
         var completedBatches = batches.Where(batch => batch.IsCompleted).ToList();
 
         var aggregates =  from batch in completedBatches
-            let batchData = batchesData.First(data => data.BatchId == batch.Id)
+            let batchData = batchesData.First(data => data.Id == batch.Id)
             select new BatchAggregate(
                 batch,
                 batchData);
@@ -170,7 +170,7 @@ internal sealed class ProcessingOrchestrator : IProcessingOrchestrator
         }
 
         var aggregates = from batch in failedBatches
-            let batchData = batchesData.First(data => data.BatchId == batch.Id)
+            let batchData = batchesData.First(data => data.Id == batch.Id)
             select new BatchAggregate(
                 batch,
                 batchData);

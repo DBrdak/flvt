@@ -13,6 +13,7 @@ public sealed record Filter
     public FilterRoomsCount? MaxRooms { get; private set; }
     public FilterArea? MinArea { get; private set; }
     public FilterArea? MaxArea { get; private set; }
+    public Frequency Frequency { get; init; }
     public Preferences? Preferences { get; init; }
     [JsonIgnore]
     public bool OnlyLast24H { get; init; } = false;
@@ -40,6 +41,19 @@ public sealed record Filter
         Preferences = preferences;
         OnlyLast24H = onlyLast24H;
     }
+
+    public static Filter CreateForInternalScan(FilterLocation location) =>
+        new Filter(
+            FilterName.Create($"Scan-{DateTime.UtcNow}").Value,
+            location,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            true);
 
     public static Result<Filter> Create(
         string name,
@@ -141,5 +155,25 @@ public sealed record Filter
             filterMaxArea?.Value,
             preferencesObject?.Value,
             onlyLast24h);
+    }
+}
+
+public sealed record Frequency
+{
+    public long Value { get; init; }
+
+    private Frequency(int value)
+    {
+        Value = value;
+    }
+
+    public static Result<Frequency> Create(int value)
+    {
+        if (value < 1)
+        {
+            return new Error("Frequency value must be greater than 0.");
+        }
+
+        return new Frequency(value);
     }
 }

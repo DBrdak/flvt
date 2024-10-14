@@ -1,7 +1,6 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Transform: "AWS::Serverless-2016-10-31"
-Description: "This template is partially managed by Amazon.Lambda.Annotations (v1.5.2.0)."
-
+Description: This template is partially managed by Amazon.Lambda.Annotations (v1.5.2.0).
 Resources:
   FlvtApi:
     Type: AWS::Serverless::HttpApi
@@ -14,52 +13,63 @@ Resources:
         AllowMethods:
           - POST
         MaxAge: 600
-        AllowCredentials: false 
+        AllowCredentials: false
       DefaultRouteSettings:
         DetailedMetricsEnabled: true
-  ProcessedAdvertisement:
-    Type: "AWS::Serverless::Function"
+  ProcessAdvertisementsStartProcessing:
+    Type: AWS::Serverless::Function
     Metadata:
-      Tool: "Amazon.Lambda.Annotations"
-      SyncedEvents:
-        - "RootPost"
-      SyncedEventProperties:
-        RootPost:
-          - "Path"
-          - "Method"
+      Tool: Amazon.Lambda.Annotations
     Properties:
-      Runtime: "dotnet8"
-      CodeUri: "."
+      FunctionName: StartProcessing
+      Runtime: dotnet8
+      CodeUri: .
       MemorySize: 3008
-      EphemeralStorage:
-        Size: 3008
-      Timeout: 30
-      Role: !Ref arn:aws:iam::975049887576:role/FullAccess
-      PackageType: "Zip"
-      Handler: "Flvt.API::Flvt.API.Functions_ProcessNewAdvertisements_Generated::ProcessNewAdvertisements"
+      Timeout: 900
+      Policies: ''
+      Role: arn:aws:iam::975049887576:role/FullAccess
+      PackageType: Zip
+      Handler: Flvt.API::Flvt.API.Functions.Background.ProcessAdvertisements_StartProcessing_Generated::StartProcessing
       Events:
-      RootGet:
-        Type: HttpApi
-        Properties:
-          Path: /v1
-          Method: POST
-          ApiId: !Ref FlvtApi
-
-  ProcessAdvertisementsForUsers:
-    Type: "AWS::Serverless::Function"
+        ScheduleRule:
+          Type: Schedule
+          Properties:
+            Name: StartProcessingSchedule
+          Schedule: 'cron(0 1/6 * * ? *)'
+  ProcessAdvertisementsEndProcessing:
+    Type: AWS::Serverless::Function
     Metadata:
-      Tool: "Amazon.Lambda.Annotations"
+      Tool: Amazon.Lambda.Annotations
     Properties:
-      Runtime: "dotnet8"
-      CodeUri: "."
-      MemorySize: 512
-      Timeout: 30
-      Policies:
-        - "AWSLambdaBasicExecutionRole"
-      PackageType: "Zip"
-      Handler: "Flvt.API::Flvt.API.Functions_ProcessAdvertisementsForUsers_Generated::ProcessAdvertisementsForUsers"
-  FlvtLogs:
-    Type: AWS::Logs::LogGroup
+      FunctionName: EndProcessing
+      Runtime: dotnet8
+      CodeUri: .
+      MemorySize: 3008
+      Timeout: 900
+      Role: arn:aws:iam::975049887576:role/FullAccess
+      PackageType: Zip
+      Handler: Flvt.API::Flvt.API.Functions.Background.ProcessAdvertisements_EndProcessing_Generated::EndProcessing
+      Events:
+        ScheduleRule:
+          Type: Schedule
+          Properties:
+            Name: EndProcessingSchedule
+            Schedule: 'cron(0 2/6 * * ? *)'
+  ScrapAdvertisementsScrapAll:
+    Type: AWS::Serverless::Function
+    Metadata:
+      Tool: Amazon.Lambda.Annotations
     Properties:
-      LogGroupName: flvt
-      RetentionInDays: 90
+      Runtime: dotnet8
+      CodeUri: .
+      MemorySize: 3008
+      Timeout: 900
+      Role: arn:aws:iam::975049887576:role/FullAccess
+      PackageType: Zip
+      Handler: Flvt.API::Flvt.API.Functions.Background.ScrapAdvertisements_ScrapAll_Generated::ScrapAll
+      Events:
+        ScheduleRule:
+          Type: Schedule
+          Properties:
+            Name: ScrapingSchedule
+            Schedule: 'cron(0 0/6 * * ? *)'

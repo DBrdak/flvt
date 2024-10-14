@@ -5,6 +5,7 @@ using Flvt.Infrastructure;
 using MediatR;
 using Microsoft.Extensions.Configuration;
 using Flvt.Application.Advertisements.ProcessAdvertisements;
+using Flvt.Application.Advertisements.StartProcessingAdvertisements;
 
 namespace Flvt.CLI;
 
@@ -50,7 +51,7 @@ public class Service : IService
         //    30,
         //    50);
 
-        var cmd = new ProcessAdvertisementsCommand();
+        var cmd = new StartProcessingAdvertisementsCommand();
 
         var response = await _sender.Send(cmd);
     }

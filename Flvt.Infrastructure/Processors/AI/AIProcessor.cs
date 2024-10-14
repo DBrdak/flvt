@@ -63,7 +63,7 @@ internal sealed class AIProcessor
 
     public async Task<List<Batch>> RetrieveBatchesAsync(IEnumerable<BatchDataModel> batches)
     {
-        var batchesRetrieveTasks = batches.Select(batch => _gptClient.RetrieveBatchAsync(batch.BatchId));
+        var batchesRetrieveTasks = batches.Select(batch => _gptClient.RetrieveBatchAsync(batch.Id));
 
         var batchesRetrieveResults = await Task.WhenAll(batchesRetrieveTasks);
 
