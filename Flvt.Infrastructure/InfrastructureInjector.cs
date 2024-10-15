@@ -9,6 +9,7 @@ using Flvt.Infrastructure.Processors;
 using Flvt.Infrastructure.Processors.AI;
 using Flvt.Infrastructure.Processors.AI.GPT;
 using Flvt.Infrastructure.Processors.AI.GPT.Options;
+using Flvt.Infrastructure.Queues;
 using Flvt.Infrastructure.Scrapers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -17,33 +18,25 @@ namespace Flvt.Infrastructure;
 
 public static class InfrastructureInjector
 {
-    public static IServiceCollection AddInfrastructure(this IServiceCollection services)
-    {
-        services.AddRepositories();
-        services.AddScrapers();
-        services.AddProcessors();
-        services.AddMonitoring();
+    public static IServiceCollection AddInfrastructure(this IServiceCollection services) =>
+        services.AddRepositories()
+            .AddScrapers()
+            .AddProcessors()
+            .AddMonitoring()
+            .AddQueues();
 
-        return services;
-    }
+    private static IServiceCollection AddQueues(this IServiceCollection services) =>
+        services.AddScoped<IQueuePublisher, QueuePublisher>();
 
-    private static IServiceCollection AddRepositories(this IServiceCollection services)
-    {
-        services.AddScoped<DataContext>();
-        services.AddScoped<IProcessedAdvertisementRepository, ProcessedAdvertisementRepository>();
-        services.AddScoped<IScrapedAdvertisementRepository, ScrapedAdvertisementRepository>();
-        services.AddScoped<ISubscriberRepository, SubscriberRepository>();
-        services.AddScoped<BatchRepository>();
+    private static IServiceCollection AddRepositories(this IServiceCollection services) =>
+        services.AddScoped<DataContext>()
+            .AddScoped<IProcessedAdvertisementRepository, ProcessedAdvertisementRepository>()
+            .AddScoped<IScrapedAdvertisementRepository, ScrapedAdvertisementRepository>()
+            .AddScoped<ISubscriberRepository, SubscriberRepository>()
+            .AddScoped<BatchRepository>();
 
-        return services;
-    }
-
-    private static IServiceCollection AddScrapers(this IServiceCollection services)
-    {
+    private static IServiceCollection AddScrapers(this IServiceCollection services) => 
         services.AddScoped<IScrapingOrchestrator, ScrapingOrchestrator>();
-
-        return services;
-    }
 
     private static IServiceCollection AddProcessors(this IServiceCollection services)
     {
@@ -67,11 +60,8 @@ public static class InfrastructureInjector
         return services;
     }
 
-    private static IServiceCollection AddMonitoring(this IServiceCollection services)
-    {
-        services.AddScoped<GPTMonitor>();
-        services.AddScoped<ScrapingMonitor>();
-
-        return services;
-    }
+    private static IServiceCollection AddMonitoring(this IServiceCollection services) =>
+        services
+            .AddScoped<GPTMonitor>()
+            .AddScoped<ScrapingMonitor>();
 }

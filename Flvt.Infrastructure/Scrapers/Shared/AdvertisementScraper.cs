@@ -1,7 +1,6 @@
-﻿using System.Net;
-using Flvt.Domain.Primitives.Subscribers.Filters;
+﻿using Flvt.Domain.Primitives.Subscribers.Filters;
 using Flvt.Domain.ScrapedAdvertisements;
-using Flvt.Infrastructure.Scrapers.Olx;
+using Flvt.Infrastructure.Utlis.Extensions;
 using HtmlAgilityPack;
 using Serilog;
 
@@ -11,7 +10,7 @@ internal abstract class AdvertisementScraper
 {
     public int SuccessfullyScrapedLinks;
     public int SuccessfullyScrapedAds;
-    private const int advertisementChunkSize = 500;
+    private const int advertisementChunkSize = 250;
 
     private readonly Filter _filter;
     private readonly HtmlWeb _web;
@@ -64,7 +63,7 @@ internal abstract class AdvertisementScraper
         {
             try
             {
-                var htmlDoc = await _web.LoadFromWebAsync(link);
+                var htmlDoc = await _web.SafelyLoadFromUrlAsync(link, _advertisementParser);
                 _advertisementParser.SetHtmlDocument(htmlDoc);
 
                 var content = _advertisementParser.ParseContent();
@@ -110,7 +109,7 @@ internal abstract class AdvertisementScraper
 
     private async Task<IEnumerable<string>> ScrapeAdvertisementLinksFromPage(string pageUrl)
     {
-        var htmlDoc = await _web.LoadFromWebAsync(pageUrl);
+        var htmlDoc = await _web.SafelyLoadFromUrlAsync(pageUrl, _advertisementParser);
 
         _advertisementParser.SetHtmlDocument(htmlDoc);
 

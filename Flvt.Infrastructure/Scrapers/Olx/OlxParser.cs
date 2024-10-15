@@ -2,7 +2,7 @@
 using Flvt.Domain.Primitives.Subscribers.Filters;
 using Flvt.Domain.ScrapedAdvertisements;
 using Flvt.Infrastructure.Scrapers.Shared;
-using Newtonsoft.Json;
+using HtmlAgilityPack;
 
 namespace Flvt.Infrastructure.Scrapers.Olx;
 
@@ -77,5 +77,10 @@ internal sealed class OlxParser : AdvertisementParser
     }
 
     public override IEnumerable<string> ParsePhotos() => _adContent?.Info.Image ?? [];
+
+    public override bool IsRateLimitExceeded(HtmlDocument htmlDocument)
+    {
+        return false;
+    }
 }
 

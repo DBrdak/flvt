@@ -9,16 +9,18 @@ internal sealed class ScrapeAdvertisementsCommandHandler : ICommandHandler<Scrap
 {
     private readonly IScrapingOrchestrator _scrapingOrchestrator;
     private readonly IScrapedAdvertisementRepository _scrapedAdvertisementRepository;
+    private readonly IQueuePublisher _queuePublisher;
 
-    public ScrapeAdvertisementsCommandHandler(IScrapingOrchestrator scrapingOrchestrator, IScrapedAdvertisementRepository scrapedAdvertisementRepository)
+    public ScrapeAdvertisementsCommandHandler(IScrapingOrchestrator scrapingOrchestrator, IScrapedAdvertisementRepository scrapedAdvertisementRepository, IQueuePublisher queuePublisher)
     {
         _scrapingOrchestrator = scrapingOrchestrator;
         _scrapedAdvertisementRepository = scrapedAdvertisementRepository;
+        _queuePublisher = queuePublisher;
     }
 
     public async Task<Result> Handle(ScrapeAdvertisementsCommand request, CancellationToken cancellationToken)
     {
-        var filters = GlobalFilterFactory.CreateFiltersForAllLocations()[1..2];
+        var filters = GlobalFilterFactory.CreateFiltersForAllLocations();
         var scrapeTasks = filters.Select(_scrapingOrchestrator.ScrapeAsync).ToList();
         
         var scrapedAdvertisements = await Task.WhenAll(scrapeTasks);
@@ -31,6 +33,8 @@ internal sealed class ScrapeAdvertisementsCommandHandler : ICommandHandler<Scrap
         {
             return result.Error;
         }
+
+        await _queuePublisher.PublishNewAdvertisements(cancellationToken);
 
         return Result.Success();
     }

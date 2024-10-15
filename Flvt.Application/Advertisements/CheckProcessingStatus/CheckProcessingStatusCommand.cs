@@ -2,4 +2,4 @@ using Flvt.Application.Messaging;
 
 namespace Flvt.Application.Advertisements.CheckProcessingStatus;
 
-public sealed record CheckProcessingResultsCommand : ICommand;
+public sealed record CheckProcessingStatusCommand : ICommand;

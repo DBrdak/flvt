@@ -1,12 +1,11 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Flvt.Application;
 using Flvt.Application.Advertisements.CheckProcessingStatus;
+using Flvt.Application.Advertisements.EndProcessing;
 using Flvt.Application.Advertisements.ScrapeAdvertisements;
 using Flvt.Infrastructure;
 using MediatR;
 using Microsoft.Extensions.Configuration;
-using Flvt.Application.Advertisements.ProcessAdvertisements;
-using Flvt.Application.Advertisements.StartProcessingAdvertisements;
 
 namespace Flvt.CLI;
 
@@ -42,19 +41,10 @@ public class Service : IService
 
     public async Task Run()
     {
-        //var cmd = new ProcessAdvertisementsCommand(
-        //    "example",
-        //    "warszawa",
-        //    0,
-        //    3000,
-        //    2,
-        //    2,
-        //    30,
-        //    50);
-
-        //var cmd = new ScrapeAdvertisementsCommand();
+        var cmd = new ScrapeAdvertisementsCommand();
         //var cmd = new StartProcessingAdvertisementsCommand();
-        var cmd = new CheckProcessingResultsCommand();
+        //var cmd = new CheckProcessingStatusCommand();
+        //var cmd = new EndProcessingCommand();
 
         var response = await _sender.Send(cmd);
     }

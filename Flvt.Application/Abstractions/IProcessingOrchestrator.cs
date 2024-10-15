@@ -13,4 +13,6 @@ public interface IProcessingOrchestrator
         IEnumerable<ScrapedAdvertisement> scrapedAdvertisements);
 
     Task<List<ProcessedAdvertisement>> RetrieveProcessedAdvertisementsAsync();
+
+    Task<bool> CheckIfAnyBatchFinishedAsync();
 }

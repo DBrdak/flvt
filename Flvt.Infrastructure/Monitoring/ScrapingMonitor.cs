@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using Flvt.Infrastructure.Scrapers.Olx;
 using Flvt.Infrastructure.Scrapers.Otodom;
 using Serilog;
 

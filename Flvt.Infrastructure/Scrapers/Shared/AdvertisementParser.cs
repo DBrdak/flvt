@@ -23,6 +23,6 @@ public abstract class AdvertisementParser
     public abstract string ParsePagedQueryUrl(string baseQueryUrl, int page);
     public abstract List<string> ParseAdvertisementsLinks();
     public abstract ScrapedAdContent ParseContent();
-
     public abstract IEnumerable<string> ParsePhotos();
+    public abstract bool IsRateLimitExceeded(HtmlDocument htmlDocument);
 }

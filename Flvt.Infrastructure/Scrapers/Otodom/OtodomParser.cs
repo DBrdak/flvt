@@ -1,9 +1,8 @@
 ﻿using Flvt.Domain.Extensions;
-using Flvt.Domain.Primitives.Advertisements;
 using Flvt.Domain.Primitives.Subscribers.Filters;
 using Flvt.Domain.ScrapedAdvertisements;
 using Flvt.Infrastructure.Scrapers.Shared;
-using Newtonsoft.Json;
+using HtmlAgilityPack;
 
 namespace Flvt.Infrastructure.Scrapers.Otodom;
 
@@ -32,7 +31,8 @@ internal sealed class OtodomParser : AdvertisementParser
 
         if (filter.MinRooms is null && filter.MaxRooms is null)
         {
-            return $"{GetBaseUrl()}/{GetBaseQueryRelativeUrl()}/{location}/?{minPrice}{maxPrice}{minArea}{maxArea}";
+            return
+                $"{GetBaseUrl()}/{GetBaseQueryRelativeUrl()}/{location}/?{minPrice}&{maxPrice}&{minArea}&{maxArea}&{createdInLast24h}";
         }
 
         List<string> roomsValues = [];
@@ -78,4 +78,12 @@ internal sealed class OtodomParser : AdvertisementParser
     }
 
     public override IEnumerable<string> ParsePhotos() => _content?.Images.Select(image => image.Large) ?? [];
+
+    public override bool IsRateLimitExceeded(HtmlDocument htmlDocument) =>
+        htmlDocument
+            .DocumentNode
+            .SelectSingleNode("//title")
+            .InnerText
+            .ToLower() is var title &&
+        title.Contains("error: the request could not be satisfied");
 }

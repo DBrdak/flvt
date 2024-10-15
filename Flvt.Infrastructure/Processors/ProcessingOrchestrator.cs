@@ -1,5 +1,4 @@
-﻿using Amazon.DynamoDBv2.Model.Internal.MarshallTransformations;
-using Flvt.Application.Abstractions;
+﻿using Flvt.Application.Abstractions;
 using Flvt.Domain.Primitives.Responses;
 using Flvt.Domain.ProcessedAdvertisements;
 using Flvt.Domain.ScrapedAdvertisements;
@@ -15,7 +14,6 @@ namespace Flvt.Infrastructure.Processors;
 internal sealed class ProcessingOrchestrator : IProcessingOrchestrator
 {
     private readonly IScrapedAdvertisementRepository _scrapedAdvertisementRepository;
-    private readonly IProcessedAdvertisementRepository _processedAdvertisementRepository;
     private readonly BatchRepository _batchRepository;
     private readonly AIProcessor _aiProcessor;
     private const int maximumBatchSize = 500;
@@ -23,13 +21,11 @@ internal sealed class ProcessingOrchestrator : IProcessingOrchestrator
     public ProcessingOrchestrator(
         AIProcessor aiProcessor,
         BatchRepository batchRepository,
-        IScrapedAdvertisementRepository scrapedAdvertisementRepository,
-        IProcessedAdvertisementRepository processedAdvertisementRepository)
+        IScrapedAdvertisementRepository scrapedAdvertisementRepository)
     {
         _aiProcessor = aiProcessor;
         _batchRepository = batchRepository;
         _scrapedAdvertisementRepository = scrapedAdvertisementRepository;
-        _processedAdvertisementRepository = processedAdvertisementRepository;
     }
 
     public async Task<Result<List<ProcessedAdvertisement>>> ProcessAsync(
@@ -76,9 +72,48 @@ internal sealed class ProcessingOrchestrator : IProcessingOrchestrator
             batch => batch.AdvertisementsInBatchAsync);
     }
 
+    public async Task<bool> CheckIfAnyBatchFinishedAsync()
+    {
+        var batchesGetResult = await _batchRepository.GetUnfinishedBatchesAsync();
+
+        if (batchesGetResult.IsFailure)
+        {
+            Log.Logger.Fatal("Failed to retrieve unfinished batches: {error}", batchesGetResult.Error);
+            return false;
+        }
+
+        var unfinishedBatches = batchesGetResult.Value.ToList();
+
+        var gptBatches = await _aiProcessor.RetrieveBatchesAsync(unfinishedBatches);
+
+        var finishedBatches = gptBatches.Where(batch => batch.IsFailed || batch.IsCompleted);
+
+        var batchesToUpdate = unfinishedBatches.Where(
+            batch => finishedBatches
+                .Any(finishedBatch => finishedBatch.Id == batch.Id))
+            .ToList();
+
+        if (!batchesToUpdate.Any())
+        {
+            return false;
+        }
+
+        batchesToUpdate.ForEach(batch => batch.FinishBatch());
+
+        var updateTasks = await _batchRepository.UpdateRangeAsync(batchesToUpdate);
+
+        if (updateTasks.IsFailure)
+        {
+            Log.Logger.Fatal("Failed to update finished batches: {error}", updateTasks.Error);
+            return false;
+        }
+
+        return true;
+    }
+
     public async Task<List<ProcessedAdvertisement>> RetrieveProcessedAdvertisementsAsync()
     {
-        var batchesGetResult = await _batchRepository.GetAllAsync();
+        var batchesGetResult = await _batchRepository.GetFinishedBatchesAsync();
 
         if (batchesGetResult.IsFailure)
         {

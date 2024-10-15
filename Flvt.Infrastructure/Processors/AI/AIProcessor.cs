@@ -3,7 +3,6 @@ using Flvt.Domain.ProcessedAdvertisements;
 using Flvt.Domain.ScrapedAdvertisements;
 using Flvt.Infrastructure.Processors.AI.GPT;
 using Flvt.Infrastructure.Processors.AI.GPT.Domain.Batches;
-using Flvt.Infrastructure.Processors.AI.GPT.Domain.Chat.Completions;
 using Flvt.Infrastructure.Processors.AI.GPT.Domain.DataModels.Batches;
 using Flvt.Infrastructure.Processors.AI.GPT.Domain.Responses;
 using Flvt.Infrastructure.Processors.AI.GPT.Messages;

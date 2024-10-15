@@ -1,8 +1,8 @@
 ﻿using Amazon.Lambda.Annotations;
 using Flvt.Application.Advertisements.CheckProcessingStatus;
+using Flvt.Application.Advertisements.EndProcessing;
 using Flvt.Application.Advertisements.StartProcessingAdvertisements;
 using MediatR;
-using Serilog.Context;
 
 namespace Flvt.API.Functions.Background;
 
@@ -15,23 +15,24 @@ public sealed class ProcessAdvertisements : BaseFunction
     [LambdaFunction(ResourceName = $"{nameof(ProcessAdvertisements)}{nameof(StartProcessing)}")]
     public async Task StartProcessing()
     {
-        using (LogContext.PushProperty("CorrelationId", Guid.NewGuid()))
-        {
-            var command = new StartProcessingAdvertisementsCommand();
+        var command = new StartProcessingAdvertisementsCommand();
 
-            _ = await Sender.Send(command);
-        }
+        _ = await Sender.Send(command);
     }
 
+    [LambdaFunction(ResourceName = $"{nameof(ProcessAdvertisements)}{nameof(CheckProcessingStatus)}")]
+    public async Task CheckProcessingStatus()
+    {
+        var command = new CheckProcessingStatusCommand();
+
+        _ = await Sender.Send(command);
+    }
 
     [LambdaFunction(ResourceName = $"{nameof(ProcessAdvertisements)}{nameof(EndProcessing)}")]
     public async Task EndProcessing()
     {
-        using (LogContext.PushProperty("CorrelationId", Guid.NewGuid()))
-        {
-            var command = new CheckProcessingResultsCommand();
+        var command = new EndProcessingCommand();
 
-            _ = await Sender.Send(command);
-        }
+        _ = await Sender.Send(command);
     }
 }

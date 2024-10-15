@@ -1,5 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-using System.Text;
+﻿using System.Text;
 using Flvt.Domain.ScrapedAdvertisements;
 using Flvt.Infrastructure.Monitoring;
 using Flvt.Infrastructure.Processors.AI.GPT.Domain.Batches;

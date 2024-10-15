@@ -1,5 +1,4 @@
 ﻿using Amazon.DynamoDBv2.DocumentModel;
-using Amazon.DynamoDBv2.Model;
 using Flvt.Domain.Primitives.Responses;
 using Flvt.Domain.ScrapedAdvertisements;
 
