@@ -28,4 +28,6 @@ public sealed class ScrapedAdvertisement
     public void Process() => IsProcessed = true;
     public void StartProcessing() =>
         ProcessingStartedAt = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+    public void ProcessFailed() => 
+        ProcessingStartedAt = null;
 }

@@ -64,6 +64,13 @@ internal sealed class ProcessingOrchestrator : IProcessingOrchestrator
             Log.Logger.Fatal("Failed to save batch: {error}", saveResult.Error);
         }
 
+        advertisementsInBatches
+            .ForEach(
+                pair => pair.AdvertisementsInBatchAsync
+                    .ForEach(
+                        ad => ad
+                            .StartProcessing()));
+
         return advertisementsInBatches.ToDictionary(
             batch => batch.BatchId,
             batch => batch.AdvertisementsInBatchAsync);
@@ -87,17 +94,21 @@ internal sealed class ProcessingOrchestrator : IProcessingOrchestrator
         var failedBatchesIds = GetAndReportFailedBatches(gptBatches, dataBatches);
 
         var deleteTasks = failedBatchesIds.Select(RemoveFailedBatchAsync);
-        var processTasks =
-            completedBatches.Select(agg => _aiProcessor.RetrieveProcessedAdvertisements(agg.GPTBatch));
+        var processTasks = completedBatches
+            .Select(agg => _aiProcessor
+                .RetrieveProcessedAdvertisements(agg.GPTBatch));
 
         await Task.WhenAll(deleteTasks);
         var groupedProcessedAdvertisements = await Task.WhenAll(processTasks);
+
         var processedAdvertisements = groupedProcessedAdvertisements
             .Where(ads => ads is not null)
             .SelectMany(ad => ad!)
             .ToList();
 
-        await _batchRepository.RemoveRangeAsync(completedBatches.Select(batch => batch.DataBatch.Id));
+        await _batchRepository
+            .RemoveRangeAsync(completedBatches
+                .Select(batch => batch.DataBatch.Id));
 
         return processedAdvertisements;
     }
@@ -119,7 +130,7 @@ internal sealed class ProcessingOrchestrator : IProcessingOrchestrator
 
         var processingAdvertisements = processingAdvertisementsGetResult.Value.ToList();
 
-        processingAdvertisements.ForEach(p => p.Process());
+        processingAdvertisements.ForEach(p => p.ProcessFailed());
 
         var advertisementsUpdateResult = await _scrapedAdvertisementRepository.UpdateRangeAsync(processingAdvertisements);
 
@@ -180,7 +191,6 @@ internal sealed class ProcessingOrchestrator : IProcessingOrchestrator
 
     private async Task<Result> SaveBatchAsync(AdvertisementsBatch batch) =>
         await _batchRepository.AddVoidAsync(
-            new(
-                batch.BatchId,
+            new(batch.BatchId,
                 batch.AdvertisementsInBatchAsync.Select(ad => ad.Link)));
 }

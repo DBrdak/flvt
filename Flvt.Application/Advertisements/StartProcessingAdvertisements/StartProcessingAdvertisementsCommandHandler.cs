@@ -27,8 +27,10 @@ internal sealed class StartProcessingAdvertisementsCommandHandler : ICommandHand
 
         var scrapedAdvertisements = scrapedAdvertisementsGetResult.Value;
 
-        await _processingOrchestrator.StartProcessingAsync(scrapedAdvertisements);
+        var processingAdvertisements = await _processingOrchestrator.StartProcessingAsync(scrapedAdvertisements);
 
-        return Result.Success();
+        var addTasks = processingAdvertisements.Select(pair => _scrapedAdvertisementRepository.AddRangeAsync(pair.Value));
+
+        return Result.Aggregate(await Task.WhenAll(addTasks));
     }
 }

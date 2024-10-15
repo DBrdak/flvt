@@ -55,21 +55,16 @@ Resources:
           Properties:
             Name: EndProcessingSchedule
             Schedule: 'cron(0 2/6 * * ? *)'
-  ScrapAdvertisementsScrapAll:
+  ScrapeAdvertisementsScrapAll:
     Type: AWS::Serverless::Function
     Metadata:
       Tool: Amazon.Lambda.Annotations
     Properties:
       Runtime: dotnet8
       CodeUri: .
-      MemorySize: 3008
-      Timeout: 900
-      Role: arn:aws:iam::975049887576:role/FullAccess
+      MemorySize: 512
+      Timeout: 30
+      Policies:
+        - AWSLambdaBasicExecutionRole
       PackageType: Zip
-      Handler: Flvt.API::Flvt.API.Functions.Background.ScrapAdvertisements_ScrapAll_Generated::ScrapAll
-      Events:
-        ScheduleRule:
-          Type: Schedule
-          Properties:
-            Name: ScrapingSchedule
-            Schedule: 'cron(0 0/6 * * ? *)'
+      Handler: Flvt.API::Flvt.API.Functions.Background.ScrapeAdvertisements_ScrapAll_Generated::ScrapAll

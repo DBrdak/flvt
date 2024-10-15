@@ -5,14 +5,14 @@ using Serilog.Context;
 
 namespace Flvt.API.Functions.Background;
 
-public sealed class ScrapAdvertisements : BaseFunction
+public sealed class ScrapeAdvertisements : BaseFunction
 {
-    public ScrapAdvertisements(ISender sender) : base(sender)
+    public ScrapeAdvertisements(ISender sender) : base(sender)
     {
     }
 
 
-    [LambdaFunction(ResourceName = $"{nameof(ScrapAdvertisements)}{nameof(ScrapAll)}")]
+    [LambdaFunction(ResourceName = $"{nameof(ScrapeAdvertisements)}{nameof(ScrapAll)}")]
     public async Task ScrapAll()
     {
         using (LogContext.PushProperty("CorrelationId", Guid.NewGuid()))

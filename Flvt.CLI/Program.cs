@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Flvt.Application;
+using Flvt.Application.Advertisements.CheckProcessingStatus;
 using Flvt.Application.Advertisements.ScrapeAdvertisements;
 using Flvt.Infrastructure;
 using MediatR;
@@ -51,7 +52,9 @@ public class Service : IService
         //    30,
         //    50);
 
-        var cmd = new StartProcessingAdvertisementsCommand();
+        //var cmd = new ScrapeAdvertisementsCommand();
+        //var cmd = new StartProcessingAdvertisementsCommand();
+        var cmd = new CheckProcessingResultsCommand();
 
         var response = await _sender.Send(cmd);
     }

@@ -80,7 +80,7 @@ internal sealed class BasicProcessorInstructions
     private const string priceNotesInstruction =
         "PriceNotes - if you find information about variable or extra costs, add it here. You can use only nouns (e.g. electricity, water, etc.) translated to native language. DO NOT include costs included in the other fields like Price, Fee or Deposit (e.g. rent to the housing association - czynsz SHOULD NOT BE INCLUDED).";
     private const string depositInstruction =
-        "Deposit - if deposit amount is given specify it here, skip if no info.";
+        "Deposit - if deposit amount is given specify it here, set the deposit to null (whole field) if you find no information about it.";
     private const string feeInstruction =
         "Fee - amount that needs to be paid to real estate agency, skip it if it is private offer or no fee is required.";
     private const string facilitiesInstruction =

@@ -10,6 +10,7 @@ using Flvt.Infrastructure.Processors.AI.GPT.Messages;
 using Flvt.Infrastructure.Processors.AI.GPT.Utils;
 using Newtonsoft.Json;
 using Serilog;
+using Serilog.Context;
 
 namespace Flvt.Infrastructure.Processors.AI;
 
@@ -75,48 +76,82 @@ internal sealed class AIProcessor
 
     public async Task<List<ProcessedAdvertisement>?> RetrieveProcessedAdvertisements(Batch batch)
     {
-        var fileContent = await _gptClient.RetrieveFileContentAsync(batch.OutputFileId);
-
-        if (fileContent is null)
+        using (LogContext.PushProperty("BatchId", batch.Id))
         {
-            return null;
+            var fileContent = await _gptClient.RetrieveFileContentAsync(batch.OutputFileId);
+
+            if (fileContent is null)
+            {
+                Log.Logger.Error("Failed to retrieve file content for batch");
+                return null;
+            }
+
+            using var stream = new MemoryStream(fileContent);
+            using var reader = new StreamReader(stream);
+            List<Task<string?>> linesTasks = [];
+
+            while (!reader.EndOfStream)
+            {
+                linesTasks.Add(reader.ReadLineAsync());
+            }
+
+            var lines = await Task.WhenAll(linesTasks);
+
+            var processedAdvertisements = lines
+                .Where(line => line is not null)
+                .Select(l => l!)
+                .Select(ReadLine);
+
+            return processedAdvertisements
+                .Where(ad => ad is not null)
+                .Select(ad => ad!)
+                .ToList();
         }
-
-        using var stream = new MemoryStream(fileContent);
-        using var reader = new StreamReader(stream);
-        List<Task<string?>> linesTasks = [];
-
-        while (reader.EndOfStream)
-        {
-            linesTasks.Add(reader.ReadLineAsync());
-        }
-
-        var lines = await Task.WhenAll(linesTasks);
-
-        var processedAdvertisements = lines
-            .Where(line => line is not null)
-            .Select(l => l!)
-            .Select(ReadLine);
-
-        return processedAdvertisements
-            .Where(ad => ad is not null)
-            .Select(ad => ad!)
-            .ToList();
     }
 
     private ProcessedAdvertisement? ReadLine(string line)
     {
         var output = GPTJsonConvert.DeserializeObject<BatchOutput>(line);
-        var completion = output.Response.Body as ChatCompletion;
-        
-        var response = completion?.Choices.FirstOrDefault(choice => choice.Message.Role == "assistant");
 
-        if (response is null)
+        if (output is null)
         {
-            Log.Logger.Error("Invalid GPT response - missing chat reply");
+            Log.Logger.Error("Failed to deserialize GPT output line: {line}", line);
             return null;
         }
 
-        return JsonConvert.DeserializeObject<ProcessedAdvertisement>(response.Message.Content);
+        if (!string.IsNullOrWhiteSpace(output?.Error))
+        {
+            Log.Logger.Error(
+                "GPT failed to process completion in batch, error: {error}, output line: {line}",
+                output?.Error,
+                line);
+        }
+
+        var completion = ChatCompletionBatchResponse.FromBatchResponse(output?.Response);
+
+        var response = completion?.Body.Choices.FirstOrDefault(choice => choice.Message.Role == "assistant");
+
+        if (response is null)
+        {
+            Log.Logger.Error("Invalid GPT response - missing chat reply in line: {line}", line);
+            return null;
+        }
+
+        return TryDeserializeProcessedAdvertisement(response.Message.Content);
+    }
+
+    private ProcessedAdvertisement? TryDeserializeProcessedAdvertisement(string content)
+    {
+        try
+        {
+            return JsonConvert.DeserializeObject<ProcessedAdvertisement>(content) ??
+                   throw new NullReferenceException(
+                       "ProcessedAdvertisement deserialization returned null value");
+        }
+        catch (Exception e)
+        {
+            Log.Logger.Error("Failed to deserialize ProcessedAdvertisement, content: {content}, error: {error}", content, e.Message);
+            return null;
+        }
     }
 }

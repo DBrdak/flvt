@@ -157,7 +157,7 @@ internal sealed class GPTClient
 
         var file = BatchFileFactory.CreateJsonlFile(lines);
 
-        form.Add(file, "file", "@ads_batch.jsonl");
+        form.Add(file, "file", $"ads_batch_{DateTime.UtcNow:dd/MM/yyyy HH:mm:ss}.jsonl");
         form.Add(new StringContent(purpose), "purpose");
 
         var response = await _httpClient.TryPostAsync(GPTPaths.UploadFile, form);
