@@ -26,14 +26,6 @@ internal class QueuePublisher : IQueuePublisher
         return await PublishMessageAsync(queueName, null, cancellationToken);
     }
 
-    public async Task<Result> PublishNewAdvertisements(CancellationToken cancellationToken)
-    {
-        var queueName = _configuration["queueNames:newAdvertisements"] ??
-                        throw new ArgumentNullException("queueNames:newAdvertisements");
-
-        return await PublishMessageAsync(queueName, null, cancellationToken);
-    }
-
     private async Task<Result> PublishMessageAsync(string queueName, object? message, CancellationToken cancellationToken)
     {
         var getQueueUrlResult = await GetQueueAsync(queueName, cancellationToken);

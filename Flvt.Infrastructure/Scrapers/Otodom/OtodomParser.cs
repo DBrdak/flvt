@@ -21,7 +21,7 @@ internal sealed class OtodomParser : AdvertisementParser
     public override string ParseQueryUrl(Filter filter)
     {
         var location = filter.OtodomLocation()?.ToLower().ReplacePolishCharacters();
-        var createdInLast24h = string.Empty;
+        var createdInLast24H = filter.OnlyLast24H ? "daysSinceCreated=1" : string.Empty;
 
         var minPrice = filter.MinPrice is null ? string.Empty : $"priceMin={filter.MinPrice}";
         var maxPrice = filter.MaxPrice is null ? string.Empty : $"priceMax={filter.MaxPrice}";
@@ -32,7 +32,7 @@ internal sealed class OtodomParser : AdvertisementParser
         if (filter.MinRooms is null && filter.MaxRooms is null)
         {
             return
-                $"{GetBaseUrl()}/{GetBaseQueryRelativeUrl()}/{location}/?{minPrice}&{maxPrice}&{minArea}&{maxArea}&{createdInLast24h}";
+                $"{GetBaseUrl()}/{GetBaseQueryRelativeUrl()}/{location}/?{minPrice}&{maxPrice}&{minArea}&{maxArea}&{createdInLast24H}";
         }
 
         List<string> roomsValues = [];
@@ -45,12 +45,7 @@ internal sealed class OtodomParser : AdvertisementParser
 
         var rooms = $"roomsNumber=[{string.Join(',', roomsValues)}]";
 
-        if (filter.OnlyLast24H)
-        {
-            createdInLast24h = "daysSinceCreated=1";
-        }
-
-        return $"{GetBaseUrl()}/{GetBaseQueryRelativeUrl()}/{location}/?{minPrice}&{maxPrice}&{minArea}&{maxArea}&{rooms}&{createdInLast24h}";
+        return $"{GetBaseUrl()}/{GetBaseQueryRelativeUrl()}/{location}/?{minPrice}&{maxPrice}&{minArea}&{maxArea}&{rooms}&{createdInLast24H}";
     }
 
     public override string ParsePagedQueryUrl(string baseQueryUrl, int page) => $"{baseQueryUrl}&page={page}";

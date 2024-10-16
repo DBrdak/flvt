@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using Flvt.Infrastructure.Scrapers.Otodom;
+using Flvt.Infrastructure.Scrapers.Shared;
 using Serilog;
 
 namespace Flvt.Infrastructure.Monitoring;
@@ -7,10 +8,11 @@ namespace Flvt.Infrastructure.Monitoring;
 internal class ScrapingMonitor : IPerformanceMonitor
 {
     private readonly Stopwatch _stopwatch = new();
-    private OtodomScraper? _otodomScraper;
+    private readonly AdvertisementScraper? _scraper;
 
-    public ScrapingMonitor()
+    public ScrapingMonitor(AdvertisementScraper? scraper)
     {
+        _scraper = scraper;
         _stopwatch.Start();
     }
 
@@ -25,29 +27,22 @@ internal class ScrapingMonitor : IPerformanceMonitor
     {
         var elapsed = _stopwatch.Elapsed;
 
-        var otodomAdsCount = _otodomScraper?.SuccessfullyScrapedAds;
-        var otodomLinksCount = _otodomScraper?.SuccessfullyScrapedLinks;
+        var otodomAdsCount = _scraper?.SuccessfullyScrapedAds;
+        var otodomLinksCount = _scraper?.SuccessfullyScrapedLinks;
 
         Log.Information(
             """
-            Scraped [ads / links]:
-                - [OTODOM] {OtodomCount} / {OtodomLinks}
+            Scraped [ads / links]: {OtodomCount} / {OtodomLinks} from {scraper}
             
             Total: {Ads} / {Links}. 
             Operation time: {time} minutes
             """,
             otodomAdsCount,
             otodomLinksCount,
+            _scraper?.GetType().Name,
             otodomAdsCount,
             otodomLinksCount,
             $"{elapsed.Minutes}:{elapsed.Seconds % 60}");
 
-    }
-
-    public ScrapingMonitor AddOtodom(OtodomScraper otodomScraper)
-    {
-        _otodomScraper = otodomScraper;
-
-        return this;
     }
 }

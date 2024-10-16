@@ -6,13 +6,15 @@ using Flvt.Domain;
 using Flvt.Domain.ProcessedAdvertisements;
 using Flvt.Domain.ScrapedAdvertisements;
 using Flvt.Domain.Subscribers;
+using Flvt.Infrastructure.AWS.Contants;
 using Flvt.Infrastructure.Processors.AI.GPT.Domain.DataModels.Batches;
 
 namespace Flvt.Infrastructure.Data;
 
 internal sealed class DataContext
 {
-    private readonly AmazonDynamoDBClient _client = new(); //TODO remove hardcoded credentials
+    private readonly AmazonDynamoDBClient _client = new (
+        /*new BasicAWSCredentials(XD.LOL2, XD.LOL3), CloudEnvironment.RegionEndpoint*/); //TODO remove hardcoded credentials
 
     private readonly AmazonDynamoDBException _connectionException =
         new("Could not connect to DynamoDB");

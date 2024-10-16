@@ -9,4 +9,9 @@ public interface IScrapedAdvertisementRepository
     Task<Result> AddRangeAsync(IEnumerable<ScrapedAdvertisement> advertisements);
     Task<Result> UpdateRangeAsync(IEnumerable<ScrapedAdvertisement> advertisements);
     Task<Result<IEnumerable<ScrapedAdvertisement>>> GetUnprocessedAsync();
+
+    void StartBatchWrite();
+    void AddItemToBatchWrite(ScrapedAdvertisement scrapedAdvertisement);
+    void AddManyItemsToBatchWrite(IEnumerable<ScrapedAdvertisement> scrapedAdvertisement);
+    Task<Result> ExecuteBatchWriteAsync();
 }

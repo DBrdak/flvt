@@ -29,8 +29,13 @@ internal sealed class StartProcessingAdvertisementsCommandHandler : ICommandHand
 
         var processingAdvertisements = await _processingOrchestrator.StartProcessingAsync(scrapedAdvertisements);
 
-        var addTasks = processingAdvertisements.Select(pair => _scrapedAdvertisementRepository.AddRangeAsync(pair.Value));
+        _scrapedAdvertisementRepository.StartBatchWrite();
 
-        return Result.Aggregate(await Task.WhenAll(addTasks));
+        processingAdvertisements
+            .Select(pa => pa.Value)
+            .ToList()
+            .ForEach(_scrapedAdvertisementRepository.AddManyItemsToBatchWrite);
+
+        return await _scrapedAdvertisementRepository.ExecuteBatchWriteAsync();
     }
 }

@@ -18,13 +18,6 @@ Resources:
         DetailedMetricsEnabled: true
     Metadata:
       SamResourceId: FlvtApi
-  NewScrapedAdvertisementsQueue:
-    Type: AWS::SQS::Queue
-    Properties:
-      QueueName: NewScrapedAdvertisementsQueue
-      VisibilityTimeout: 900
-    Metadata:
-      SamResourceId: NewScrapedAdvertisementsQueue
   FinishedBatchesQueue:
     Type: AWS::SQS::Queue
     Properties:
@@ -32,6 +25,34 @@ Resources:
       VisibilityTimeout: 900
     Metadata:
       SamResourceId: FinishedBatchesQueue
+  ScrapeAdvertisementsScrapAll:
+    Type: AWS::Serverless::Function
+    Metadata:
+      SamResourceId: ScrapeAdvertisementsScrapAll
+      Tool: Amazon.Lambda.Annotations
+    Properties:
+      FunctionName: ScrapAll
+      Runtime: dotnet8
+      CodeUri: s3://flvt/3cad6cea036cf5d68cceb828c4d7d1df
+      MemorySize: 3008
+      Timeout: 900
+      Role: arn:aws:iam::975049887576:role/FullAccess
+      PackageType: Zip
+      Handler: Flvt.API::Flvt.API.Functions.Background.ScrapeAdvertisements_ScrapAll_Generated::ScrapAll
+      Events:
+        ScheduleRule:
+          Type: Schedule
+          Properties:
+            Name: ScrapAllSchedule
+            Schedule: cron(0 0/6 * * ? *)
+      EventInvokeConfig:
+        DestinationConfig:
+          OnSuccess:
+            Type: Lambda
+            Destination:
+              Fn::GetAtt:
+              - ProcessAdvertisementsStartProcessing
+              - Arn
   ProcessAdvertisementsStartProcessing:
     Type: AWS::Serverless::Function
     Metadata:
@@ -40,20 +61,32 @@ Resources:
     Properties:
       FunctionName: StartProcessing
       Runtime: dotnet8
-      CodeUri: s3://flvt/385986ba00773520b17e93365b71bdbd
+      CodeUri: s3://flvt/3cad6cea036cf5d68cceb828c4d7d1df
       MemorySize: 3008
       Timeout: 300
       Role: arn:aws:iam::975049887576:role/FullAccess
       PackageType: Zip
       Handler: Flvt.API::Flvt.API.Functions.Background.ProcessAdvertisements_StartProcessing_Generated::StartProcessing
+  ProcessAdvertisementsCheckProcessingStatus:
+    Type: AWS::Serverless::Function
+    Metadata:
+      SamResourceId: ProcessAdvertisementsCheckProcessingStatus
+      Tool: Amazon.Lambda.Annotations
+    Properties:
+      FunctionName: CheckProcessingStatus
+      Runtime: dotnet8
+      CodeUri: s3://flvt/3cad6cea036cf5d68cceb828c4d7d1df
+      MemorySize: 3008
+      Timeout: 120
+      Role: arn:aws:iam::975049887576:role/FullAccess
+      PackageType: Zip
+      Handler: Flvt.API::Flvt.API.Functions.Background.ProcessAdvertisements_CheckProcessingStatus_Generated::CheckProcessingStatus
       Events:
-        SqsEvent:
-          Type: SQS
+        ScheduleRule:
+          Type: Schedule
           Properties:
-            Queue:
-              Fn::GetAtt:
-              - FinishedBatchesQueue
-              - Arn
+            Name: CheckProcessingStatusSchedule
+            Schedule: rate(30 minutes)
   ProcessAdvertisementsEndProcessing:
     Type: AWS::Serverless::Function
     Metadata:
@@ -62,7 +95,7 @@ Resources:
     Properties:
       FunctionName: EndProcessing
       Runtime: dotnet8
-      CodeUri: s3://flvt/385986ba00773520b17e93365b71bdbd
+      CodeUri: s3://flvt/3cad6cea036cf5d68cceb828c4d7d1df
       MemorySize: 3008
       Timeout: 300
       Role: arn:aws:iam::975049887576:role/FullAccess
@@ -76,43 +109,3 @@ Resources:
               Fn::GetAtt:
               - FinishedBatchesQueue
               - Arn
-  ScrapeAdvertisementsScrapAll:
-    Type: AWS::Serverless::Function
-    Metadata:
-      SamResourceId: ScrapeAdvertisementsScrapAll
-      Tool: Amazon.Lambda.Annotations
-    Properties:
-      FunctionName: ScrapAll
-      Runtime: dotnet8
-      CodeUri: s3://flvt/385986ba00773520b17e93365b71bdbd
-      MemorySize: 3008
-      Timeout: 900
-      Role: arn:aws:iam::975049887576:role/FullAccess
-      PackageType: Zip
-      Handler: Flvt.API::Flvt.API.Functions.Background.ScrapeAdvertisements_ScrapAll_Generated::ScrapAll
-      Events:
-        ScheduleRule:
-          Type: Schedule
-          Properties:
-            Name: ScrapAllSchedule
-            Schedule: cron(0 0/6 * * ? *)
-  ProcessAdvertisementsCheckProcessingStatus:
-    Type: AWS::Serverless::Function
-    Metadata:
-      SamResourceId: ProcessAdvertisementsCheckProcessingStatus
-      Tool: Amazon.Lambda.Annotations
-    Properties:
-      FunctionName: CheckProcessingStatus
-      Runtime: dotnet8
-      CodeUri: s3://flvt/385986ba00773520b17e93365b71bdbd
-      MemorySize: 3008
-      Timeout: 120
-      Role: arn:aws:iam::975049887576:role/FullAccess
-      PackageType: Zip
-      Handler: Flvt.API::Flvt.API.Functions.Background.ProcessAdvertisements_CheckProcessingStatus_Generated::CheckProcessingStatus
-      Events:
-        ScheduleRule:
-          Type: Schedule
-          Properties:
-            Name: CheckProcessingStatusSchedule
-            Schedule: rate(30 minutes)

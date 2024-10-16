@@ -51,7 +51,7 @@ internal sealed class ProcessingOrchestrator : IProcessingOrchestrator
     {
         var advertisementsInBatches = await _aiProcessor.StartProcessingAdvertisementsInBatchAsync(scrapedAdvertisements);
 
-        var saveTasks = advertisementsInBatches.Select(SaveBatchAsync);
+        var saveTasks = SaveBatchAsync(advertisementsInBatches);
 
         var saveResults = await Task.WhenAll(saveTasks);
 
@@ -224,8 +224,8 @@ internal sealed class ProcessingOrchestrator : IProcessingOrchestrator
         return aggregates.ToList();
     }
 
-    private async Task<Result> SaveBatchAsync(AdvertisementsBatch batch) =>
-        await _batchRepository.AddVoidAsync(
-            new(batch.BatchId,
-                batch.AdvertisementsInBatchAsync.Select(ad => ad.Link)));
+    private async Task<Result> SaveBatchAsync(IEnumerable<AdvertisementsBatch> batches) =>
+        await _batchRepository.AddRangeVoidAsync(
+            batches.Select(
+                b => new BatchDataModel(b.BatchId, b.AdvertisementsInBatchAsync.Select(ad => ad.Link))));
 }

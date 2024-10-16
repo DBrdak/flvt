@@ -1,5 +1,7 @@
 ﻿using Amazon.DynamoDBv2.DocumentModel;
+using Amazon.DynamoDBv2.Model;
 using Flvt.Domain.Primitives.Responses;
+using Flvt.Infrastructure.Processors.AI.GPT.Domain.Batches;
 using Newtonsoft.Json;
 
 namespace Flvt.Infrastructure.Data.Repositories;
@@ -8,6 +10,8 @@ internal abstract class Repository<TEntity>
 {
     protected readonly Table Table;
     protected readonly DataContext Context;
+    private DocumentBatchWrite? _batchWrite;
+    private DocumentBatchGet? _batchGet;
 
     protected Repository(DataContext context)
     {
@@ -69,7 +73,7 @@ internal abstract class Repository<TEntity>
     public async Task<Result<IEnumerable<TEntity>>> GetManyByIdAsync(IEnumerable<string> ids)
     {
         var batch = Table.CreateBatchGet();
-
+        
         ids.ToList().ForEach(id => batch.AddKey(new Primitive(id)));
 
         await batch.ExecuteAsync();
@@ -108,12 +112,16 @@ internal abstract class Repository<TEntity>
         return Result.Success(entity);
     }
 
-    public async Task<Result> AddVoidAsync(TEntity entity)
+    public async Task<Result> AddRangeVoidAsync(IEnumerable<TEntity> entities)
     {
-        var json = JsonConvert.SerializeObject(entity);
-        var doc = Document.FromJson(json);
+        var batch = Table.CreateBatchWrite();
 
-        await Table.PutItemAsync(doc);
+        var jsons = entities.Select(entity => JsonConvert.SerializeObject(entity));
+        var docs = jsons.Select(Document.FromJson);
+
+        docs.ToList().ForEach(batch.AddDocumentToPut);
+
+        await batch.ExecuteAsync();
 
         return Result.Success();
     }
@@ -142,5 +150,74 @@ internal abstract class Repository<TEntity>
     public async Task<Result> UpdateRangeAsync(IEnumerable<TEntity> entities)
     {
         return await AddRangeAsync(entities);
+    }
+
+    public void StartBatchWrite() => _batchWrite = Table.CreateBatchWrite();
+
+    public void AddItemToBatchWrite(TEntity entity)
+    {
+        if (_batchWrite is null)
+        {
+            throw new InvalidOperationException("Batch write was not started");
+        }
+
+        var json = JsonConvert.SerializeObject(entity);
+        var doc = Document.FromJson(json);
+
+        _batchWrite.AddDocumentToPut(doc);
+    }
+
+    public void AddManyItemsToBatchWrite(IEnumerable<TEntity> entities)
+    {
+        if (_batchWrite is null)
+        {
+            throw new InvalidOperationException("Batch write was not started");
+        }
+
+        var jsons = entities.Select(e => JsonConvert.SerializeObject(e));
+        var docs = jsons.Select(Document.FromJson).ToList();
+
+        docs.ForEach(_batchWrite.AddDocumentToPut);
+    }
+
+    public async Task<Result> ExecuteBatchWriteAsync()
+    {
+        if (_batchWrite is null)
+        {
+            throw new InvalidOperationException("Batch write was not started");
+        }
+
+        await _batchWrite.ExecuteAsync();
+        _batchWrite = null;
+
+        return Result.Success();
+    }
+
+    public void StartBatchGet() => _batchGet = Table.CreateBatchGet();
+
+    public void AddItemToBatchGet(string id)
+    {
+        if (_batchGet is null)
+        {
+            throw new InvalidOperationException("Batch get was not started");
+        }
+
+        _batchGet.AddKey(id);;
+    }
+
+    public async Task<Result<IEnumerable<TEntity>>> ExecuteBatchGetAsync()
+    {
+        if (_batchGet is null)
+        {
+            throw new InvalidOperationException("Batch get was not started");
+        }
+
+        await _batchGet.ExecuteAsync();
+
+        var docs = _batchGet.Results;
+        var records = docs.Select(document => JsonConvert.DeserializeObject<TEntity>(document.ToJson()));
+        _batchGet = null;
+
+        return Result.Create(records);
     }
 }

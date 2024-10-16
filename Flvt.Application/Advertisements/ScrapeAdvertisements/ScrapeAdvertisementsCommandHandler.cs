@@ -9,13 +9,13 @@ internal sealed class ScrapeAdvertisementsCommandHandler : ICommandHandler<Scrap
 {
     private readonly IScrapingOrchestrator _scrapingOrchestrator;
     private readonly IScrapedAdvertisementRepository _scrapedAdvertisementRepository;
-    private readonly IQueuePublisher _queuePublisher;
 
-    public ScrapeAdvertisementsCommandHandler(IScrapingOrchestrator scrapingOrchestrator, IScrapedAdvertisementRepository scrapedAdvertisementRepository, IQueuePublisher queuePublisher)
+    public ScrapeAdvertisementsCommandHandler(
+        IScrapingOrchestrator scrapingOrchestrator,
+        IScrapedAdvertisementRepository scrapedAdvertisementRepository)
     {
         _scrapingOrchestrator = scrapingOrchestrator;
         _scrapedAdvertisementRepository = scrapedAdvertisementRepository;
-        _queuePublisher = queuePublisher;
     }
 
     public async Task<Result> Handle(ScrapeAdvertisementsCommand request, CancellationToken cancellationToken)
@@ -25,17 +25,12 @@ internal sealed class ScrapeAdvertisementsCommandHandler : ICommandHandler<Scrap
         
         var scrapedAdvertisements = await Task.WhenAll(scrapeTasks);
 
-        var addTasks = scrapedAdvertisements.Select(_scrapedAdvertisementRepository.AddRangeAsync);
+        _scrapedAdvertisementRepository.StartBatchWrite();
 
-        var addResults = await Task.WhenAll(addTasks);
+        scrapedAdvertisements
+            .ToList()
+            .ForEach(_scrapedAdvertisementRepository.AddManyItemsToBatchWrite);
 
-        if (Result.Aggregate(addResults) is var result && result.IsFailure)
-        {
-            return result.Error;
-        }
-
-        await _queuePublisher.PublishNewAdvertisements(cancellationToken);
-
-        return Result.Success();
+        return await _scrapedAdvertisementRepository.ExecuteBatchWriteAsync();
     }
 }

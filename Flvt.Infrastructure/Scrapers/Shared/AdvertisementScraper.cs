@@ -1,5 +1,6 @@
 ﻿using Flvt.Domain.Primitives.Subscribers.Filters;
 using Flvt.Domain.ScrapedAdvertisements;
+using Flvt.Infrastructure.Monitoring;
 using Flvt.Infrastructure.Utlis.Extensions;
 using HtmlAgilityPack;
 using Serilog;
@@ -17,12 +18,16 @@ internal abstract class AdvertisementScraper
     private readonly AdvertisementParser _advertisementParser;
     private readonly HashSet<string> _advertisementsLinks = [];
     private readonly List<ScrapedAdvertisement> _advertisements = [];
+    private readonly ScrapingMonitor _monitor;
 
-    protected AdvertisementScraper(Filter filter, AdvertisementParser advertisementParser)
+    protected AdvertisementScraper(
+        Filter filter,
+        AdvertisementParser advertisementParser)
     {
         _filter = filter;
         _advertisementParser = advertisementParser;
         _web = new HtmlWeb();
+        _monitor = new ScrapingMonitor(this);
     }
 
     public async Task<IEnumerable<ScrapedAdvertisement>> ScrapeAsync()
@@ -53,6 +58,7 @@ internal abstract class AdvertisementScraper
 
         SuccessfullyScrapedAds = _advertisements.Count;
         SuccessfullyScrapedLinks = _advertisementsLinks.Count;
+        await _monitor.DisposeAsync();
 
         return _advertisements;
     }

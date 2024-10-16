@@ -48,7 +48,7 @@ internal sealed class AIProcessor
     public async Task<List<AdvertisementsBatch>> StartProcessingAdvertisementsInBatchAsync(
         IEnumerable<ScrapedAdvertisement> advertisements)
     {
-        var advertisementsChunks = advertisements.Chunk(GPTLimits.MaxBatchTasks / 2);
+        var advertisementsChunks = advertisements.Chunk(GPTLimits.MaxBatchTasks / 250);
 
         var fileCreateTasks = advertisementsChunks.Select(_gptClient.CreateBatchFilesAsync).ToList();
 

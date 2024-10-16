@@ -9,11 +9,9 @@ namespace Flvt.Infrastructure.Scrapers;
 
 internal sealed class ScrapingOrchestrator : IScrapingOrchestrator
 {
-    private readonly ScrapingMonitor _monitor;
 
-    public ScrapingOrchestrator(ScrapingMonitor monitor)
+    public ScrapingOrchestrator()
     {
-        _monitor = monitor;
     }
 
     public async Task<IEnumerable<ScrapedAdvertisement>> ScrapeAsync(Filter filter)
@@ -27,8 +25,6 @@ internal sealed class ScrapingOrchestrator : IScrapingOrchestrator
         await Task.WhenAll(otodomTask);
 
         var otodomAds = otodomTask.Result.ToList();
-
-        _monitor.AddOtodom(otodomScraper);
 
         return [.. otodomAds];
     }
