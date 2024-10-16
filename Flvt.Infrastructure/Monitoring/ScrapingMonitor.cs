@@ -2,6 +2,7 @@
 using Flvt.Infrastructure.Scrapers.Otodom;
 using Flvt.Infrastructure.Scrapers.Shared;
 using Serilog;
+using Serilog.Extensions.Logging;
 
 namespace Flvt.Infrastructure.Monitoring;
 
@@ -14,6 +15,8 @@ internal class ScrapingMonitor : IPerformanceMonitor
     {
         _scraper = scraper;
         _stopwatch.Start();
+        var a = Log.Logger.ForContext("Monitor", "Performance");
+        a.Error("");
     }
 
     public async ValueTask DisposeAsync()
