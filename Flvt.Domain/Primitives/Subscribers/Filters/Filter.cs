@@ -16,7 +16,7 @@ public sealed record Filter
     public Frequency Frequency { get; init; }
     public Preferences? Preferences { get; init; }
     [JsonIgnore]
-    public bool OnlyLast24H { get; init; } = false;
+    public bool OnlyLast24H { get; init; }
 
     private Filter(
         FilterName name,
