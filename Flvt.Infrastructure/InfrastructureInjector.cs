@@ -13,6 +13,7 @@ using Flvt.Infrastructure.Queues;
 using Flvt.Infrastructure.Scrapers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Serilog;
 
 namespace Flvt.Infrastructure;
 
@@ -55,7 +56,8 @@ public static class InfrastructureInjector
 
                     httpClient.BaseAddress = new Uri(gptOptions.Url);
                 })
-            .AddHttpMessageHandler<GPTDelegatingHandler>();
+            .AddHttpMessageHandler<GPTDelegatingHandler>()
+            .AddDefaultLogger();
 
         return services;
     }

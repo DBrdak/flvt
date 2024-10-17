@@ -44,7 +44,7 @@ public sealed record Filter
 
     public static Filter CreateForInternalScan(FilterLocation location) =>
         new Filter(
-            FilterName.Create($"Scan-{DateTime.UtcNow}").Value,
+            FilterName.Create($"Scan-{DateTime.UtcNow:yyyy/MM//dd HH:mm:ss.fff}").Value,
             location,
             null,
             null,

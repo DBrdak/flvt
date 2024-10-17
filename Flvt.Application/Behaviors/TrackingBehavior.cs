@@ -15,57 +15,36 @@ public sealed class TrackingBehavior<TRequest, TResponse> : IPipelineBehavior<TR
         RequestHandlerDelegate<TResponse> next,
         CancellationToken cancellationToken)
     {
-        using (LogContext.PushProperty("CorrelationId", Guid.NewGuid()))
+        using (LogContext.PushProperty("CorrelationId", $"{Guid.NewGuid()}"))
         {
-            using (LogContext.PushProperty("Request", typeof(TRequest).Name))
+            TResponse? response = null;
+            Log.Logger.Information("Started processing {request}", typeof(TRequest).Name);
+            var timer = new Stopwatch();
+
+            timer.Start();
+
+            try
             {
-                return await TrackRequest(request, next, cancellationToken);
+                response = await next();
             }
-        }
-    }
+            catch (Exception e)
+            {
+                Log.Logger.Error(
+                    "An error occurred while processing {request}: {error}",
+                    typeof(TRequest).Name,
+                    e);
+            }
 
-    private async Task<TResponse> TrackRequest(
-        TRequest request,
-        RequestHandlerDelegate<TResponse> next,
-        CancellationToken cancellationToken)
-    {
+            timer.Stop();
 
-        TResponse? response = null;
-        Log.Logger.Information("Started processing {request}", typeof(TRequest).Name);
-        var timer = new Stopwatch();
-
-        timer.Start();
-
-        try
-        {
-            response = await next();
-        }
-        catch (Exception e)
-        {
-            Log.Logger.Error(
-                "An error occurred while processing {request}: {error}",
+            Log.Logger.Information(
+                "Processing {request} took {time}ms",
                 typeof(TRequest).Name,
-                e);
+                timer.ElapsedMilliseconds);
+
+            await Log.CloseAndFlushAsync();
+
+            return response ?? (TResponse)Error.Exception;
         }
-
-        timer.Stop();
-
-        switch (timer.ElapsedMilliseconds)
-        {
-            case <= 2_000:
-                Log.Logger.Information(
-                    "Processing {request} took {time}ms",
-                    typeof(TRequest).Name,
-                    timer.ElapsedMilliseconds);
-                break;
-            case > 2_000:
-                Log.Logger.Warning(
-                    "Processing {request} took {time}ms",
-                    typeof(TRequest).Name,
-                    timer.ElapsedMilliseconds);
-                break;
-        }
-
-        return response ?? (TResponse)Error.Exception;
     }
 }

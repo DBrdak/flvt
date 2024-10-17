@@ -11,6 +11,7 @@ internal abstract class AdvertisementScraper
 {
     public int SuccessfullyScrapedLinks;
     public int SuccessfullyScrapedAds;
+    public Filter Filter => _filter;
     private const int advertisementChunkSize = 250;
 
     private readonly Filter _filter;

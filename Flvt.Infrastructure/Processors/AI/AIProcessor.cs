@@ -1,6 +1,7 @@
 ﻿using Flvt.Domain.Primitives.Responses;
 using Flvt.Domain.ProcessedAdvertisements;
 using Flvt.Domain.ScrapedAdvertisements;
+using Flvt.Infrastructure.Monitoring;
 using Flvt.Infrastructure.Processors.AI.GPT;
 using Flvt.Infrastructure.Processors.AI.GPT.Domain.Batches;
 using Flvt.Infrastructure.Processors.AI.GPT.Domain.DataModels.Batches;
@@ -16,10 +17,12 @@ namespace Flvt.Infrastructure.Processors.AI;
 internal sealed class AIProcessor
 {
     private readonly GPTClient _gptClient;
+    private readonly GPTMonitor _monitor;
 
-    public AIProcessor(GPTClient gptClient)
+    public AIProcessor(GPTClient gptClient, GPTMonitor monitor)
     {
         _gptClient = gptClient;
+        _monitor = monitor;
     }
 
     public async Task<Result<List<ProcessedAdvertisement>>> ProcessBasicAdvertisementAsync(
@@ -48,7 +51,7 @@ internal sealed class AIProcessor
     public async Task<List<AdvertisementsBatch>> StartProcessingAdvertisementsInBatchAsync(
         IEnumerable<ScrapedAdvertisement> advertisements)
     {
-        var advertisementsChunks = advertisements.Chunk(GPTLimits.MaxBatchTasks / 250);
+        var advertisementsChunks = advertisements.Chunk(GPTLimits.MaxBatchTasks / 250).Take(10);//todo temp
 
         var fileCreateTasks = advertisementsChunks.Select(_gptClient.CreateBatchFilesAsync).ToList();
 
@@ -77,6 +80,8 @@ internal sealed class AIProcessor
     {
         using (LogContext.PushProperty("BatchId", batch.Id))
         {
+            _monitor.AddBatch(batch);
+
             var fileContent = await _gptClient.RetrieveFileContentAsync(batch.OutputFileId);
 
             if (fileContent is null)
@@ -136,6 +141,8 @@ internal sealed class AIProcessor
             return null;
         }
 
+        _monitor.AddCompletion(completion!.Body);
+
         return TryDeserializeProcessedAdvertisement(response.Message.Content);
     }
 
@@ -149,7 +156,10 @@ internal sealed class AIProcessor
         }
         catch (Exception e)
         {
-            Log.Logger.Error("Failed to deserialize ProcessedAdvertisement, content: {content}, error: {error}", content, e.Message);
+            Log.Logger.Error(
+                "Failed to deserialize ProcessedAdvertisement, content: {content}, error: {error}",
+                content,
+                e.Message);
             return null;
         }
     }

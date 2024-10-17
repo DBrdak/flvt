@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Options;
+using Serilog;
 
 namespace Flvt.Infrastructure.Processors.AI.GPT.Options;
 
@@ -11,10 +12,12 @@ internal sealed class GPTDelegatingHandler : DelegatingHandler
         _gptOptions = gptOptions.Value;
     }
 
-    protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+    protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
     {
         request.Headers.Add("Authorization", $"Bearer {_gptOptions.ApiKey}");
 
-        return base.SendAsync(request, cancellationToken);
+        var response = await base.SendAsync(request, cancellationToken);
+
+        return response;
     }
 }

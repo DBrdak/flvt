@@ -10,13 +10,13 @@ internal class ScrapingMonitor : IPerformanceMonitor
 {
     private readonly Stopwatch _stopwatch = new();
     private readonly AdvertisementScraper? _scraper;
+    private readonly ILogger _logger;
 
     public ScrapingMonitor(AdvertisementScraper? scraper)
     {
+        _logger = Log.Logger.ForContext(GetType());
         _scraper = scraper;
         _stopwatch.Start();
-        var a = Log.Logger.ForContext("Monitor", "Performance");
-        a.Error("");
     }
 
     public async ValueTask DisposeAsync()
@@ -30,22 +30,35 @@ internal class ScrapingMonitor : IPerformanceMonitor
     {
         var elapsed = _stopwatch.Elapsed;
 
-        var otodomAdsCount = _scraper?.SuccessfullyScrapedAds;
-        var otodomLinksCount = _scraper?.SuccessfullyScrapedLinks;
+        var accuracy = string.Empty;
+        var percentageAccuracy = 1.0m;
 
-        Log.Information(
+        if (_scraper?.SuccessfullyScrapedAds is var successfullyScrapedAds &&
+            _scraper?.SuccessfullyScrapedLinks is var successfullyScrapedLinks &&
+            successfullyScrapedAds is not null &&
+            successfullyScrapedLinks is not null && successfullyScrapedLinks != 0)
+        {
+            percentageAccuracy = (decimal)(successfullyScrapedAds / successfullyScrapedAds);
+        }
+
+        accuracy = percentageAccuracy.ToString("P");
+
+        _logger.Information(
             """
-            Scraped [ads / links]: {OtodomCount} / {OtodomLinks} from {scraper}
-            
-            Total: {Ads} / {Links}. 
-            Operation time: {time} minutes
+            === Scraper performance analysis ===
+            Website: {website}
+            Scraped advertisements: {adsCount} 
+            Scraped links: {linksCount}
+            Accuracy: {accuracy}
+            Time: {time} ms
+            Filters: {filter}
             """,
-            otodomAdsCount,
-            otodomLinksCount,
-            _scraper?.GetType().Name,
-            otodomAdsCount,
-            otodomLinksCount,
-            $"{elapsed.Minutes}:{elapsed.Seconds % 60}");
+            _scraper?.GetType().Name.Replace("Scraper", ""),
+            _scraper?.SuccessfullyScrapedAds,
+            _scraper?.SuccessfullyScrapedLinks,
+            accuracy,
+            elapsed.Milliseconds,
+            _scraper?.Filter);
 
     }
 }

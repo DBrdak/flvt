@@ -22,7 +22,7 @@ internal class BatchRepository : Repository<BatchDataModel>
     public async Task<Result<IEnumerable<BatchDataModel>>> GetUnfinishedBatchesAsync()
     {
         var filter = new ScanFilter();
-        filter.AddCondition(nameof(BatchDataModel.IsFinished), ScanOperator.Equal, new DynamoDBBool(true));
+        filter.AddCondition(nameof(BatchDataModel.IsFinished), ScanOperator.Equal, new DynamoDBBool(false));
 
         return await GetWhereAsync(filter);
     }

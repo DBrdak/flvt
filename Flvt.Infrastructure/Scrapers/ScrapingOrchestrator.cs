@@ -10,10 +10,6 @@ namespace Flvt.Infrastructure.Scrapers;
 internal sealed class ScrapingOrchestrator : IScrapingOrchestrator
 {
 
-    public ScrapingOrchestrator()
-    {
-    }
-
     public async Task<IEnumerable<ScrapedAdvertisement>> ScrapeAsync(Filter filter)
     {
         Log.Logger.Information("Processing ads for filter: {filter}", filter);

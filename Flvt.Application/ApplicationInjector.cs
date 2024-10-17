@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
+using Serilog.Events;
 using Serilog.Formatting.Json;
 
 namespace Flvt.Application;
@@ -28,10 +29,19 @@ public static class ApplicationInjector
             .BuildServiceProvider()
             .GetRequiredService<IConfiguration>();
 
-        Log.Logger = new LoggerConfiguration()
-            .WriteTo.Seq(config["seq:uri"])
-            .WriteTo.Console()
-            .CreateLogger();
+        Log.Logger = config["seq:uri"] switch
+        {
+            not null => new LoggerConfiguration()
+                .WriteTo.Seq(
+                    config["seq:uri"],
+                    apiKey: config["seq:key"],
+                    restrictedToMinimumLevel: LogEventLevel.Debug)
+                .WriteTo.Console()
+                .CreateLogger(),
+            _ => new LoggerConfiguration()
+                .WriteTo.Console()
+                .CreateLogger()
+        };
 
         return services;
     }

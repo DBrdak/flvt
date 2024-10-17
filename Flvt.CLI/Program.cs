@@ -3,6 +3,7 @@ using Flvt.Application;
 using Flvt.Application.Advertisements.CheckProcessingStatus;
 using Flvt.Application.Advertisements.EndProcessing;
 using Flvt.Application.Advertisements.ScrapeAdvertisements;
+using Flvt.Application.Advertisements.StartProcessingAdvertisements;
 using Flvt.Infrastructure;
 using MediatR;
 using Microsoft.Extensions.Configuration;
@@ -41,8 +42,8 @@ public class Service : IService
 
     public async Task Run()
     {
-        var cmd = new ScrapeAdvertisementsCommand();
-        //var cmd = new StartProcessingAdvertisementsCommand();
+        //var cmd = new ScrapeAdvertisementsCommand();
+        var cmd = new StartProcessingAdvertisementsCommand();
         //var cmd = new CheckProcessingStatusCommand();
         //var cmd = new EndProcessingCommand();
 

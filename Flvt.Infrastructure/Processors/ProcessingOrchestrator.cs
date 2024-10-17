@@ -93,6 +93,8 @@ internal sealed class ProcessingOrchestrator : IProcessingOrchestrator
                 .Any(finishedBatch => finishedBatch.Id == batch.Id))
             .ToList();
 
+        Log.Logger.Information("Found {count} batches to update", batchesToUpdate.Count);
+
         if (!batchesToUpdate.Any())
         {
             return false;
@@ -211,7 +213,7 @@ internal sealed class ProcessingOrchestrator : IProcessingOrchestrator
             Log.Logger.Error(
                 "Batch {batchId} failed to file {fileId} with error: {error}",
                 batch.Id,
-                string.Concat("https://platform.openai.com/storage/files/", batch.ErrorFileId),
+                string.Concat("https://platform.openai.com/storage/files/", batch.OutputFileId, batch.ErrorFileId),
                 batch.Errors);
         }
 

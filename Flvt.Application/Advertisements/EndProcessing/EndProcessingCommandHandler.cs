@@ -34,10 +34,8 @@ internal sealed class EndProcessingCommandHandler : ICommandHandler<EndProcessin
             return scrapedAdvertisementsGetResult.Error;
         }
 
-        scrapedAdvertisementsGetResult.Value.ToList().ForEach(a => a.Process());
-
         var addResult = await _processedAdvertisementRepository.AddRangeAsync(processedAdvertisements);
-        var updateResult = await _scrapedAdvertisementRepository.UpdateRangeAsync(scrapedAdvertisementsGetResult.Value);
+        var updateResult = await _scrapedAdvertisementRepository.RemoveRangeAsync(scrapedAdvertisementsGetResult.Value.Select(ad => ad.Link));
 
         return Result.Aggregate([addResult, updateResult]);
     }

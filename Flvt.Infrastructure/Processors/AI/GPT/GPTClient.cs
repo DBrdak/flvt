@@ -1,6 +1,5 @@
 ﻿using System.Text;
 using Flvt.Domain.ScrapedAdvertisements;
-using Flvt.Infrastructure.Monitoring;
 using Flvt.Infrastructure.Processors.AI.GPT.Domain.Batches;
 using Flvt.Infrastructure.Processors.AI.GPT.Domain.Batches.Create;
 using Flvt.Infrastructure.Processors.AI.GPT.Domain.Batches.Create.Request;
@@ -17,12 +16,10 @@ namespace Flvt.Infrastructure.Processors.AI.GPT;
 internal sealed class GPTClient
 {
     private readonly HttpClient _httpClient;
-    private readonly GPTMonitor _monitor;
 
     public GPTClient(HttpClient httpClient)
     {
         _httpClient = httpClient;
-        _monitor = new ();
     }
 
     public async Task<string?> CreateCompletionAsync(IEnumerable<Message> message, GPTModel model)
@@ -55,7 +52,6 @@ internal sealed class GPTClient
             return null;
         }
 
-        _monitor.AddCompletion(completion);
         var chatResponse = completion.Choices.FirstOrDefault()?.Message.Content;
 
         if (chatResponse is null)
@@ -89,8 +85,6 @@ internal sealed class GPTClient
 
             return null;
         }
-
-        _monitor.AddBatch(batch);
 
         return batch;
     }
@@ -156,7 +150,7 @@ internal sealed class GPTClient
 
         var file = BatchFileFactory.CreateJsonlFile(lines);
 
-        form.Add(file, "file", $"ads_batch_{DateTime.UtcNow:dd/MM/yyyy HH:mm:ss}.jsonl");
+        form.Add(file, "file", $"{DateTime.UtcNow:dd/MM/yyyy HH:mm:ss.fff}.jsonl");
         form.Add(new StringContent(purpose), "purpose");
 
         var response = await _httpClient.TryPostAsync(GPTPaths.UploadFile, form);

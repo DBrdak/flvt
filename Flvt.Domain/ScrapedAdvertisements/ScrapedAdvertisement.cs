@@ -1,4 +1,6 @@
-﻿namespace Flvt.Domain.ScrapedAdvertisements;
+﻿using Newtonsoft.Json;
+
+namespace Flvt.Domain.ScrapedAdvertisements;
 
 public sealed class ScrapedAdvertisement
 {

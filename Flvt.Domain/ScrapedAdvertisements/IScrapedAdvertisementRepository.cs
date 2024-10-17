@@ -14,4 +14,6 @@ public interface IScrapedAdvertisementRepository
     void AddItemToBatchWrite(ScrapedAdvertisement scrapedAdvertisement);
     void AddManyItemsToBatchWrite(IEnumerable<ScrapedAdvertisement> scrapedAdvertisement);
     Task<Result> ExecuteBatchWriteAsync();
+
+    Task<Result> RemoveRangeAsync(IEnumerable<string> scrapedAdvertisementsIds);
 }
