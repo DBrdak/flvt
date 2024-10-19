@@ -27,9 +27,9 @@ internal sealed class GPTMessageFactory
             scrapedAdvertisement.Link,
             new CompletionCreateRequest(
                 Messages: CreateBasicMessages(scrapedAdvertisement).ToList(),
-                Model: GPTModel.Mini4oPrimitive,
+                Model: GPTModel.Mini4o.Value,
                 Temperature: GPTFineTuneDefaults.LowTemperature,
-                TopP: GPTFineTuneDefaults.HighTopP,
+                TopP: GPTFineTuneDefaults.MaxTopP,
                 ResponseFormat: GPTResponseFormats.JsonObject,
                 Store: true));
 }

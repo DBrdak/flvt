@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Options;
-using Serilog;
 
 namespace Flvt.Infrastructure.Processors.AI.GPT.Options;
 

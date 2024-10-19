@@ -1,8 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Flvt.Application;
-using Flvt.Application.Advertisements.CheckProcessingStatus;
-using Flvt.Application.Advertisements.EndProcessing;
-using Flvt.Application.Advertisements.ScrapeAdvertisements;
+using Flvt.Application.Advertisements.ProcessAdvertisements;
 using Flvt.Application.Advertisements.StartProcessingAdvertisements;
 using Flvt.Infrastructure;
 using MediatR;
@@ -43,9 +41,11 @@ public class Service : IService
     public async Task Run()
     {
         //var cmd = new ScrapeAdvertisementsCommand();
-        var cmd = new StartProcessingAdvertisementsCommand();
+        //var cmd = new StartProcessingAdvertisementsCommand();
         //var cmd = new CheckProcessingStatusCommand();
         //var cmd = new EndProcessingCommand();
+
+        var cmd = new ProcessAdvertisementsCommand();
 
         var response = await _sender.Send(cmd);
     }

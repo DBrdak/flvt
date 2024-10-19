@@ -1,5 +1,4 @@
-﻿using Amazon;
-using Amazon.DynamoDBv2;
+﻿using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DocumentModel;
 using Amazon.Runtime;
 using Flvt.Domain;

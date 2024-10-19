@@ -1,7 +1,5 @@
 ﻿using Amazon.DynamoDBv2.DocumentModel;
-using Amazon.DynamoDBv2.Model;
 using Flvt.Domain.Primitives.Responses;
-using Flvt.Infrastructure.Processors.AI.GPT.Domain.Batches;
 using Newtonsoft.Json;
 
 namespace Flvt.Infrastructure.Data.Repositories;

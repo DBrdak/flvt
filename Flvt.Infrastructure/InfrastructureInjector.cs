@@ -13,7 +13,6 @@ using Flvt.Infrastructure.Queues;
 using Flvt.Infrastructure.Scrapers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using Serilog;
 
 namespace Flvt.Infrastructure;
 
@@ -64,6 +63,6 @@ public static class InfrastructureInjector
 
     private static IServiceCollection AddMonitoring(this IServiceCollection services) =>
         services
-            .AddScoped<GPTMonitor>()
+            .AddTransient<GPTMonitor>()
             .AddScoped<ScrapingMonitor>();
 }

@@ -35,7 +35,7 @@ internal sealed class AIProcessor
             messages.Select(
                 message => _gptClient.CreateCompletionAsync(
                     message,
-                    GPTModel.Mini4o)));
+                    GPTModel.Mini4oFineTuned)));
 
         var replyResults = await Task.WhenAll(replyTasks);
 
@@ -105,6 +105,8 @@ internal sealed class AIProcessor
                 .Where(line => line is not null)
                 .Select(l => l!)
                 .Select(ReadLine);
+
+            await _monitor.DisposeAsync();
 
             return processedAdvertisements
                 .Where(ad => ad is not null)

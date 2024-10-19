@@ -28,7 +28,7 @@ internal sealed class GPTClient
             Messages: message.ToList(),
             Model: model.Value,
             ResponseFormat: GPTResponseFormats.JsonObject,
-            TopP: GPTFineTuneDefaults.HighTopP,
+            TopP: GPTFineTuneDefaults.MaxTopP,
             Temperature: GPTFineTuneDefaults.LowTemperature,
             Store: true);
 

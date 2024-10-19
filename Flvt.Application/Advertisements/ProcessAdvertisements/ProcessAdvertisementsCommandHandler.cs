@@ -18,7 +18,7 @@ internal sealed class ProcessAdvertisementsCommandHandler : ICommandHandler<Proc
 
     public async Task<Result> Handle(ProcessAdvertisementsCommand request, CancellationToken cancellationToken)
     {
-        var scrapedAdvertisementsGetResult = await _scrapedAdvertisementRepository.GetUnprocessedAsync();
+        var scrapedAdvertisementsGetResult = await _scrapedAdvertisementRepository.GetManyByLinkAsync(["https://www.otodom.pl/pl/oferta/przytulne-mieszkanie-z-ogrodkiem-48m-ID4dHBU"]);
 
         if (scrapedAdvertisementsGetResult.IsFailure)
         {
@@ -27,7 +27,7 @@ internal sealed class ProcessAdvertisementsCommandHandler : ICommandHandler<Proc
 
         var scrapedAdvertisements = scrapedAdvertisementsGetResult.Value;
 
-        await _processingOrchestrator.ProcessAsync(scrapedAdvertisements);
+        await _processingOrchestrator.ProcessAsync(scrapedAdvertisements.Take(10));
 
         return Result.Success();
     }

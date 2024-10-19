@@ -1,8 +1,6 @@
 ﻿using System.Diagnostics;
-using Flvt.Infrastructure.Scrapers.Otodom;
 using Flvt.Infrastructure.Scrapers.Shared;
 using Serilog;
-using Serilog.Extensions.Logging;
 
 namespace Flvt.Infrastructure.Monitoring;
 

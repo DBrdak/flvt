@@ -1,7 +1,6 @@
 ﻿using Flvt.Application.Abstractions;
 using Flvt.Domain.Primitives.Subscribers.Filters;
 using Flvt.Domain.ScrapedAdvertisements;
-using Flvt.Infrastructure.Monitoring;
 using Flvt.Infrastructure.Scrapers.Otodom;
 using Serilog;
 
