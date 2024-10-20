@@ -1,8 +1,8 @@
 ﻿using System.Text.RegularExpressions;
+using Flvt.Domain.Primitives.Filters.Erros;
 using Flvt.Domain.Primitives.Responses;
-using Flvt.Domain.Primitives.Subscribers.Filters.Erros;
 
-namespace Flvt.Domain.Primitives.Subscribers.Filters;
+namespace Flvt.Domain.Primitives.Filters;
 
 public sealed record FilterName
 {

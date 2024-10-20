@@ -1,7 +1,7 @@
-﻿using Flvt.Domain.Primitives.Responses;
-using Flvt.Domain.Primitives.Subscribers.Filters.Erros;
+﻿using Flvt.Domain.Primitives.Filters.Erros;
+using Flvt.Domain.Primitives.Responses;
 
-namespace Flvt.Domain.Primitives.Subscribers.Filters;
+namespace Flvt.Domain.Primitives.Filters;
 
 public sealed record FilterArea
 {

@@ -1,7 +1,7 @@
 ﻿using Flvt.Domain.Primitives.Responses;
 using Newtonsoft.Json;
 
-namespace Flvt.Domain.Primitives.Subscribers.Filters;
+namespace Flvt.Domain.Primitives.Filters;
 
 public sealed record Filter
 {
@@ -155,25 +155,5 @@ public sealed record Filter
             filterMaxArea?.Value,
             preferencesObject?.Value,
             onlyLast24h);
-    }
-}
-
-public sealed record Frequency
-{
-    public long Value { get; init; }
-
-    private Frequency(int value)
-    {
-        Value = value;
-    }
-
-    public static Result<Frequency> Create(int value)
-    {
-        if (value < 1)
-        {
-            return new Error("Frequency value must be greater than 0.");
-        }
-
-        return new Frequency(value);
     }
 }

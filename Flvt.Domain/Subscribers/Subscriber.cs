@@ -1,7 +1,7 @@
 ﻿using Flvt.Domain.Primitives.Advertisements;
+using Flvt.Domain.Primitives.Filters;
+using Flvt.Domain.Primitives.Money;
 using Flvt.Domain.Primitives.Responses;
-using Flvt.Domain.Primitives.Subscribers;
-using Flvt.Domain.Primitives.Subscribers.Filters;
 
 namespace Flvt.Domain.Subscribers;
 
@@ -12,11 +12,12 @@ public sealed class Subscriber
     public List<Filter> Filters { get; init; }
     public Country Country { get; init; }
 
-    private Subscriber(Email email, List<Filter> filters, Country country)
+    private Subscriber(Email email, List<Filter> filters, Country country, SubscribtionTier tier)
     {
         Email = email;
         Filters = filters;
         Country = country;
+        Tier = tier;
     }
 
     public static Result<Subscriber> Register(string email, string countryCode)
@@ -35,36 +36,20 @@ public sealed class Subscriber
             return countryResult.Error;
         }
 
-        return new Subscriber(emailResult.Value, new List<Filter>(), countryResult.Value);
+        return new Subscriber(emailResult.Value, new List<Filter>(), countryResult.Value, SubscribtionTier.Basic);
     }
 
-    public void AddBasicFilter()
+    public void AddBasicFilter(
+        string city,
+        Money minPrice,
+        Money maxPrice,
+        int minRooms,
+        int maxRooms,
+        int minFloor,
+        int maxFloor,
+        decimal minArea,
+        decimal maxArea)
     {
 
     }
-}
-
-public sealed class SubscribtionTier
-{
-    public string Value { get; init; }
-
-    public SubscribtionTier(string value) => Value = value;
-
-    public static SubscribtionTier Basic => new ("Basic");
-    public static SubscribtionTier Silver => new ("Silver");
-    public static SubscribtionTier Gold => new ("Gold");
-    public static SubscribtionTier Platinum => new ("Platinum");
-    public static SubscribtionTier Ruby => new ("Ruby");
-    public static SubscribtionTier Sapphire => new ("Sapphire");
-    public static SubscribtionTier Diamond => new ("Diamond");
-
-    private static readonly IReadOnlyCollection<SubscribtionTier> all =
-    [
-        Basic, Silver, Gold, Platinum, Ruby, Sapphire, Diamond
-    ];
-
-    public static Result<SubscribtionTier> Create(string value) =>
-        Result.Create(
-            all.FirstOrDefault(tier => tier.Value == value),
-            new Error("Invalid subscribtion tier."));
 }

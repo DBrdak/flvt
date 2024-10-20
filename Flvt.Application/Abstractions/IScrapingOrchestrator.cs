@@ -1,4 +1,4 @@
-﻿using Flvt.Domain.Primitives.Subscribers.Filters;
+﻿using Flvt.Domain.Primitives.Filters;
 using Flvt.Domain.ScrapedAdvertisements;
 
 namespace Flvt.Application.Abstractions;

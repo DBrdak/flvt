@@ -1,6 +1,6 @@
 ﻿using Flvt.Domain.Primitives.Responses;
 
-namespace Flvt.Domain.Primitives.Subscribers.Filters;
+namespace Flvt.Domain.Primitives.Filters;
 
 //TODO Implement
 public sealed record Preferences
