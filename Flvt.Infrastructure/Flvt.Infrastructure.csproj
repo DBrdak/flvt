@@ -20,6 +20,10 @@
     <ProjectReference Include="..\Flvt.Application\Flvt.Application.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Scrapers\Shared\" />
+  </ItemGroup>
+
 	
 
 </Project>
