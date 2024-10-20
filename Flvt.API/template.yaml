@@ -112,7 +112,7 @@ Resources:
         ScheduleRule:
           Type: Schedule
           Properties:
-            Name: RemoveDuplicatesSchedule
+            Name: RemoveOutdatedSchedule
             Schedule: 'cron(0 3 * * ? *)'
   CustodyFunctionsRemoveDuplicates:
     Type: AWS::Serverless::Function
