@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Flvt.Application;
 using Flvt.Application.Advertisements.ProcessAdvertisements;
-using Flvt.Application.Advertisements.StartProcessingAdvertisements;
 using Flvt.Infrastructure;
 using MediatR;
 using Microsoft.Extensions.Configuration;

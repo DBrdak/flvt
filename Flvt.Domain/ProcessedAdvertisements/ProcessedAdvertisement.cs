@@ -6,6 +6,7 @@ namespace Flvt.Domain.ProcessedAdvertisements;
 public sealed class ProcessedAdvertisement
 {
     public string Link { get; init; }
+    public string Dedupe { get; init; }
     public Address Address { get; init; }
     public Coordinates? Geolocation { get; init; }
     public string Description { get; init; }
@@ -59,6 +60,9 @@ public sealed class ProcessedAdvertisement
         AvailableFrom = availableFrom;
         Pets = pets;
         Photos = photos;
+        Dedupe =
+            $"{Address?.City}-{Address?.District}-{Address?.Street}-{ContactType}-{Rooms.Value}-{Area.Value}-{Floor.Specific}-{Floor.Total}"
+                .ToLower();
     }
 
 

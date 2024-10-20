@@ -81,4 +81,10 @@ internal sealed class OtodomParser : AdvertisementParser
             .InnerText
             .ToLower() is var title &&
         title.Contains("error: the request could not be satisfied");
+
+    public override bool IsOutdatedAdvertisement() =>
+        Document
+            .DocumentNode
+            .SelectSingleNode("//div[@data-cy='expired-ad-alert']")
+            is not null;
 }

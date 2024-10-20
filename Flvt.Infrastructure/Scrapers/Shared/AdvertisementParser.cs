@@ -25,4 +25,5 @@ public abstract class AdvertisementParser
     public abstract ScrapedAdContent ParseContent();
     public abstract IEnumerable<string> ParsePhotos();
     public abstract bool IsRateLimitExceeded(HtmlDocument htmlDocument);
+    public abstract bool IsOutdatedAdvertisement();
 }

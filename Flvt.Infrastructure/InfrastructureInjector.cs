@@ -2,6 +2,8 @@
 using Flvt.Domain.ProcessedAdvertisements;
 using Flvt.Domain.ScrapedAdvertisements;
 using Flvt.Domain.Subscribers;
+using Flvt.Infrastructure.Custodians;
+using Flvt.Infrastructure.Custodians.Assistants;
 using Flvt.Infrastructure.Data;
 using Flvt.Infrastructure.Data.Repositories;
 using Flvt.Infrastructure.Monitoring;
@@ -27,6 +29,12 @@ public static class InfrastructureInjector
 
     private static IServiceCollection AddQueues(this IServiceCollection services) =>
         services.AddScoped<IQueuePublisher, QueuePublisher>();
+
+    private static IServiceCollection AddCustody(this IServiceCollection services) =>
+        services
+            .AddScoped<ICustodian, Custodian>()
+            .AddScoped<ScrapingCustodialAssistant>()
+            .AddScoped<DataCustodialAssistant>();
 
     private static IServiceCollection AddRepositories(this IServiceCollection services) =>
         services.AddScoped<DataContext>()

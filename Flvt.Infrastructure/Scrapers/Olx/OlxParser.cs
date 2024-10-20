@@ -82,5 +82,10 @@ internal sealed class OlxParser : AdvertisementParser
     {
         return false;
     }
+
+    public override bool IsOutdatedAdvertisement()
+    {
+        return false;
+    }
 }
 

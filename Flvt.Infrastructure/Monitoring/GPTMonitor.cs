@@ -21,7 +21,9 @@ internal sealed class GPTMonitor : IPerformanceMonitor, ICostsMonitor
 
         var accuracy = (completedRequestsCount / totalRequestsCount).ToString("P");
 
-        _logger.Information(
+        Log.Logger
+            .ForContext<GPTMonitor>()
+            .Information(
             """
             === GPT Performance Analysis ===
             Failed requests: {failedRequests}
@@ -41,11 +43,14 @@ internal sealed class GPTMonitor : IPerformanceMonitor, ICostsMonitor
     public async Task ReportCostsAsync()
     {
         var usage = _completions.Select(completion => completion.Usage).ToList();
+        Log.Debug("{usage}", usage); //TODO Debug
         var inputTokens = usage.Sum(u => u.PromptTokens);
         var outputTokens = usage.Sum(u => u.CompletionTokens);
         var totalTokens = usage.Sum(u => u.TotalTokens);
 
-        _logger.Information(
+        Log.Logger
+            .ForContext<GPTMonitor>()
+            .Information(
             """
             === GPT Cost Analysis ===
             Input tokens: {inputTokens}

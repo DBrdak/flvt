@@ -7,4 +7,6 @@ public interface IProcessedAdvertisementRepository
     Task<Result<IEnumerable<ProcessedAdvertisement>>> GetAllAsync();
     Task<Result<IEnumerable<ProcessedAdvertisement>>> GetManyByLinkAsync(IEnumerable<string> links);
     Task<Result> AddRangeAsync(IEnumerable<ProcessedAdvertisement> advertisements);
+
+    Task<Result> RemoveRangeAsync(IEnumerable<string> advertisementsLinks);
 }
