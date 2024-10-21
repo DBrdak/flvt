@@ -7,7 +7,7 @@ architecture = "x86_64"
 handler = "Flvt.API::Flvt.API.Functions.Background.ProcessAdvertisements_StartProcessing_Generated::StartProcessing"
 manifest_hash = ""
 packagetype = "Zip"
-functions = ["ScrapeAdvertisementsScrapAll", "ProcessAdvertisementsStartProcessing", "ProcessAdvertisementsCheckProcessingStatus", "ProcessAdvertisementsEndProcessing", "CustodyFunctionsRemoveOutdated", "CustodyFunctionsRemoveDuplicates"]
+functions = ["ScrapeAdvertisementsScrapAll", "ProcessAdvertisementsStartProcessing", "ProcessAdvertisementsCheckProcessingStatus", "ProcessAdvertisementsEndProcessing", "CustodyFunctionsRemoveOutdated", "CustodyFunctionsRemoveDuplicates", "CustodyFunctionsUpdateUnprocessedScrapedAds"]
 
 [function_build_definitions.fe7caad3-08ac-4e76-92a1-7095b0373e23.metadata]
 Tool = "Amazon.Lambda.Annotations"

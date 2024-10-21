@@ -2,6 +2,7 @@
 using Flvt.Application.Advertisements.StartProcessingAdvertisements;
 using Flvt.Application.Custody.RemoveDuplicateAdvertisements;
 using Flvt.Application.Custody.RemoveOutdatedAdvertisements;
+using Flvt.Application.Custody.UpdateUnsucessfullyProcessedAdvertisements;
 using MediatR;
 
 namespace Flvt.API.Functions.Background;
@@ -24,6 +25,14 @@ internal class CustodyFunctions : BaseFunction
     public async Task RemoveDuplicates()
     {
         var command = new RemoveDuplicateAdvertisementsCommand();
+
+        _ = await Sender.Send(command);
+    }
+
+    [LambdaFunction(ResourceName = $"{nameof(CustodyFunctions)}{nameof(UpdateUnprocessedScrapedAds)}")]
+    public async Task UpdateUnprocessedScrapedAds()
+    {
+        var command = new UpdateUnsucessfullyProcessedAdvertisementsCommand();
 
         _ = await Sender.Send(command);
     }

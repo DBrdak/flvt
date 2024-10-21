@@ -33,7 +33,7 @@ Resources:
     Properties:
       FunctionName: ScrapAll
       Runtime: dotnet8
-      CodeUri: s3://flvt/bed6d56129df02c9694ffb93869148f3
+      CodeUri: s3://flvt/268832dee999dde72b354abd2d686308
       MemorySize: 3008
       Timeout: 900
       Role: arn:aws:iam::975049887576:role/FullAccess
@@ -61,7 +61,7 @@ Resources:
     Properties:
       FunctionName: StartProcessing
       Runtime: dotnet8
-      CodeUri: s3://flvt/bed6d56129df02c9694ffb93869148f3
+      CodeUri: s3://flvt/268832dee999dde72b354abd2d686308
       MemorySize: 3008
       Timeout: 300
       Role: arn:aws:iam::975049887576:role/FullAccess
@@ -75,7 +75,7 @@ Resources:
     Properties:
       FunctionName: CheckProcessingStatus
       Runtime: dotnet8
-      CodeUri: s3://flvt/bed6d56129df02c9694ffb93869148f3
+      CodeUri: s3://flvt/268832dee999dde72b354abd2d686308
       MemorySize: 3008
       Timeout: 120
       Role: arn:aws:iam::975049887576:role/FullAccess
@@ -95,7 +95,7 @@ Resources:
     Properties:
       FunctionName: EndProcessing
       Runtime: dotnet8
-      CodeUri: s3://flvt/bed6d56129df02c9694ffb93869148f3
+      CodeUri: s3://flvt/268832dee999dde72b354abd2d686308
       MemorySize: 3008
       Timeout: 300
       Role: arn:aws:iam::975049887576:role/FullAccess
@@ -117,7 +117,7 @@ Resources:
     Properties:
       FunctionName: RemoveOutdated
       Runtime: dotnet8
-      CodeUri: s3://flvt/bed6d56129df02c9694ffb93869148f3
+      CodeUri: s3://flvt/268832dee999dde72b354abd2d686308
       MemorySize: 3008
       Timeout: 300
       Role: arn:aws:iam::975049887576:role/FullAccess
@@ -137,7 +137,7 @@ Resources:
     Properties:
       FunctionName: RemoveDuplicates
       Runtime: dotnet8
-      CodeUri: s3://flvt/bed6d56129df02c9694ffb93869148f3
+      CodeUri: s3://flvt/268832dee999dde72b354abd2d686308
       MemorySize: 3008
       Timeout: 300
       Role: arn:aws:iam::975049887576:role/FullAccess
@@ -148,4 +148,24 @@ Resources:
           Type: Schedule
           Properties:
             Name: RemoveDuplicatesSchedule
+            Schedule: cron(0 3 * * ? *)
+  CustodyFunctionsUpdateUnprocessedScrapedAds:
+    Type: AWS::Serverless::Function
+    Metadata:
+      SamResourceId: CustodyFunctionsUpdateUnprocessedScrapedAds
+      Tool: Amazon.Lambda.Annotations
+    Properties:
+      FunctionName: UpdateUnprocessedScrapedAds
+      Runtime: dotnet8
+      CodeUri: s3://flvt/268832dee999dde72b354abd2d686308
+      MemorySize: 3008
+      Timeout: 300
+      Role: arn:aws:iam::975049887576:role/FullAccess
+      PackageType: Zip
+      Handler: Flvt.API::Flvt.API.Functions.Background.CustodyFunctions_UpdateUnprocessedScrapedAds_Generated::UpdateUnprocessedScrapedAds
+      Events:
+        ScheduleRule:
+          Type: Schedule
+          Properties:
+            Name: UpdateUnprocessedScrapedAdsSchedule
             Schedule: cron(0 3 * * ? *)

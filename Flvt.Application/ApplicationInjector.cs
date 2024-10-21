@@ -35,7 +35,7 @@ public static class ApplicationInjector
                     config["seq:uri"],
                     apiKey: config["seq:key"],
                     restrictedToMinimumLevel: LogEventLevel.Debug)
-                .WriteTo.Console()
+                .Enrich.FromLogContext()
                 .CreateLogger(),
             _ => new LoggerConfiguration()
                 .WriteTo.Console()
