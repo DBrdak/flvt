@@ -19,7 +19,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Custody\" />
     <Folder Include="Subscribers\" />
   </ItemGroup>
 

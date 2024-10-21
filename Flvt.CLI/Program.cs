@@ -44,6 +44,8 @@ public class Service : IService
         //var cmd = new CheckProcessingStatusCommand();
         //var cmd = new EndProcessingCommand();
 
+
+
         var cmd = new ProcessAdvertisementsCommand();
 
         var response = await _sender.Send(cmd);

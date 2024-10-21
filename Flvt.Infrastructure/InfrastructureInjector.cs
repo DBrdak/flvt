@@ -25,7 +25,8 @@ public static class InfrastructureInjector
             .AddScrapers()
             .AddProcessors()
             .AddMonitoring()
-            .AddQueues();
+            .AddQueues()
+            .AddCustody();
 
     private static IServiceCollection AddQueues(this IServiceCollection services) =>
         services.AddScoped<IQueuePublisher, QueuePublisher>();
@@ -72,5 +73,5 @@ public static class InfrastructureInjector
     private static IServiceCollection AddMonitoring(this IServiceCollection services) =>
         services
             .AddTransient<GPTMonitor>()
-            .AddScoped<ScrapingMonitor>();
+            .AddTransient<ScrapingMonitor>();
 }

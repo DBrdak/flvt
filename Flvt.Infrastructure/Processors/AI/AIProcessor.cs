@@ -18,6 +18,8 @@ internal sealed class AIProcessor
 {
     private readonly GPTClient _gptClient;
     private readonly GPTMonitor _monitor;
+    private const int maximumBatchCount = 2;
+    private const int maximumBatchSize = GPTLimits.MaxBatchTasks / 250;
 
     public AIProcessor(GPTClient gptClient, GPTMonitor monitor)
     {
@@ -51,7 +53,10 @@ internal sealed class AIProcessor
     public async Task<List<AdvertisementsBatch>> StartProcessingAdvertisementsInBatchAsync(
         IEnumerable<ScrapedAdvertisement> advertisements)
     {
-        var advertisementsChunks = advertisements.Chunk(GPTLimits.MaxBatchTasks / 250).Take(10);//todo temp
+        var advertisementsChunks = advertisements
+            .Chunk(maximumBatchSize)
+            .OrderByDescending(chunk => chunk.Length)
+            .Take(maximumBatchCount);
 
         var fileCreateTasks = advertisementsChunks.Select(_gptClient.CreateBatchFilesAsync).ToList();
 

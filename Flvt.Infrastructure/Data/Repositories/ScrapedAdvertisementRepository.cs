@@ -27,4 +27,19 @@ internal sealed class ScrapedAdvertisementRepository : Repository<ScrapedAdverti
 
         return await GetWhereAsync(scanFilter);
     }
+
+    public async Task<Result<IEnumerable<ScrapedAdvertisement>>> GetAdvertisementsInProcessAsync()
+    {
+        var scanFilter = new ScanFilter();
+        scanFilter.AddCondition(
+            nameof(ScrapedAdvertisement.IsProcessed),
+            ScanOperator.Equal,
+            new DynamoDBBool(false));
+        scanFilter.AddCondition(
+            nameof(ScrapedAdvertisement.ProcessingStartedAt),
+            ScanOperator.NotEqual,
+            new DynamoDBNull());
+
+        return await GetWhereAsync(scanFilter);
+    }
 }

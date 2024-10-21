@@ -8,13 +8,14 @@ internal sealed class GPTMonitor : IPerformanceMonitor, ICostsMonitor
 {
     private readonly List<ChatCompletion> _completions = [];
     private readonly List<Batch> _batches = [];
-    private readonly ILogger _logger = Log.Logger.ForContext<GPTMonitor>();
 
     public async Task LogPerformanceAsync()
     {
-        var failedRequestsCount = _batches.Select(batch => batch.RequestCounts.Failed).Count();
-        var completedRequestsCount = _batches.Select(batch => batch.RequestCounts.Completed).Count();
-        var totalRequestsCount = _batches.Select(batch => batch.RequestCounts.Total).Count();
+        var failedBatchesCount = _batches.Select(batch => batch.IsFailed).Count();
+        var successfulBatchesCount = _batches.Select(batch => batch.IsCompleted).Count();
+        var failedRequestsCount = _batches.Select(batch => batch.RequestCounts.Failed).Sum();
+        var completedRequestsCount = _batches.Select(batch => batch.RequestCounts.Completed).Sum();
+        var totalRequestsCount = _batches.Select(batch => batch.RequestCounts.Total).Sum();
         var averageBatchTime = _batches
             .Where(batch => batch.CompletedAt is not null)
             .Sum(batch => batch.CompletedAt - batch.CreatedAt) / _batches.Count;
@@ -26,6 +27,8 @@ internal sealed class GPTMonitor : IPerformanceMonitor, ICostsMonitor
             .Information(
             """
             === GPT Performance Analysis ===
+            Failed batches: {failedBatches}
+            Successful batches: {successfulBatches}
             Failed requests: {failedRequests}
             Completeted requests: {completedRequests}
             Total requests: {totalRequests}
@@ -33,6 +36,8 @@ internal sealed class GPTMonitor : IPerformanceMonitor, ICostsMonitor
             Accuracy: {accuracy}
             Average batch time: {averageBatchTime}
             """,
+            failedBatchesCount,
+            successfulBatchesCount,
             failedRequestsCount,
             completedRequestsCount,
             totalRequestsCount,
@@ -43,7 +48,6 @@ internal sealed class GPTMonitor : IPerformanceMonitor, ICostsMonitor
     public async Task ReportCostsAsync()
     {
         var usage = _completions.Select(completion => completion.Usage).ToList();
-        Log.Debug("{usage}", usage); //TODO Debug
         var inputTokens = usage.Sum(u => u.PromptTokens);
         var outputTokens = usage.Sum(u => u.CompletionTokens);
         var totalTokens = usage.Sum(u => u.TotalTokens);

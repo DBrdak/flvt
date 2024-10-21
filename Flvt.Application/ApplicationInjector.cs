@@ -39,6 +39,7 @@ public static class ApplicationInjector
                 .CreateLogger(),
             _ => new LoggerConfiguration()
                 .WriteTo.Console()
+                .Enrich.FromLogContext()
                 .CreateLogger()
         };
 

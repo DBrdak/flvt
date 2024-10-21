@@ -16,4 +16,6 @@ public interface IScrapedAdvertisementRepository
     Task<Result> ExecuteBatchWriteAsync();
 
     Task<Result> RemoveRangeAsync(IEnumerable<string> scrapedAdvertisementsIds);
+
+    Task<Result<IEnumerable<ScrapedAdvertisement>>> GetAdvertisementsInProcessAsync();
 }

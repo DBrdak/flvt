@@ -1,4 +1,5 @@
 ﻿using Flvt.Application.Abstractions;
+using Flvt.Domain.ScrapedAdvertisements;
 using Flvt.Infrastructure.Custodians.Assistants;
 using Serilog;
 
@@ -39,5 +40,19 @@ internal class Custodian : ICustodian
         Log.Logger.Information("Found {duplicateCount} duplicate advertisements", duplicates.Count);
 
         return duplicates;
+    }
+
+    public async Task<IEnumerable<ScrapedAdvertisement>> FindUnsucessfullyProcessedAdvertisements(IEnumerable<ScrapedAdvertisement> scrapedAdvertisements)
+    {
+        var unsucessfullyProcessedAds =
+            await _dataAssistant.GetAdvertisementsInProcessAndNotInBatchAsync(scrapedAdvertisements);
+
+        Log.Logger.Information(
+            "Found {unsucessfullyProcessedAds} unsucessfully processed advertisements",
+            unsucessfullyProcessedAds.Count);
+
+        unsucessfullyProcessedAds.ForEach(ad => ad.ProcessFailed());
+
+        return unsucessfullyProcessedAds;
     }
 }
