@@ -1,6 +1,6 @@
 ﻿using Flvt.Domain.Primitives.Responses;
 
-namespace Flvt.Domain.Primitives.Filters;
+namespace Flvt.Domain.Filters;
 
 public sealed record Frequency
 {

@@ -36,6 +36,7 @@ internal sealed class DataCustodialAssistant
             .GroupBy(ad => ad.Dedupe)
             .Where(group => group.Count() > 1)
             .SelectMany(group => group)
+            .DistinctBy(ad => ad.Dedupe)
             .Select(ad => ad.Link)
             .ToList();
     }

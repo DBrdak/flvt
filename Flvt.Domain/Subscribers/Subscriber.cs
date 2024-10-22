@@ -1,5 +1,6 @@
-﻿using Flvt.Domain.Primitives.Advertisements;
-using Flvt.Domain.Primitives.Filters;
+﻿using System.Collections;
+using Flvt.Domain.Filters;
+using Flvt.Domain.Primitives.Advertisements;
 using Flvt.Domain.Primitives.Money;
 using Flvt.Domain.Primitives.Responses;
 
@@ -9,15 +10,20 @@ public sealed class Subscriber
 {
     public Email Email { get; init; }
     public SubscribtionTier Tier { get; init; }
-    public List<Filter> Filters { get; init; }
     public Country Country { get; init; }
+    private readonly List<string> _filtersIds;
+    public IReadOnlyList<string> Filters => _filtersIds;
 
-    private Subscriber(Email email, List<Filter> filters, Country country, SubscribtionTier tier)
+    private Subscriber(
+        Email email, 
+        Country country, 
+        SubscribtionTier tier,
+        List<string> filtersIds)
     {
         Email = email;
-        Filters = filters;
         Country = country;
         Tier = tier;
+        _filtersIds = filtersIds;
     }
 
     public static Result<Subscriber> Register(string email, string countryCode)
@@ -36,20 +42,43 @@ public sealed class Subscriber
             return countryResult.Error;
         }
 
-        return new Subscriber(emailResult.Value, new List<Filter>(), countryResult.Value, SubscribtionTier.Basic);
+        return new Subscriber(emailResult.Value, countryResult.Value, SubscribtionTier.Basic, []);
     }
 
-    public void AddBasicFilter(
+    public Result<Filter> AddBasicFilter(
+        string name,
         string city,
-        Money minPrice,
-        Money maxPrice,
+        decimal minPrice,
+        decimal maxPrice,
         int minRooms,
         int maxRooms,
-        int minFloor,
-        int maxFloor,
         decimal minArea,
         decimal maxArea)
     {
+        if (Tier == SubscribtionTier.Basic && _filtersIds.Count >= 1)
+        {
+            return SubscriberErrors.ActionNotAllowedForBasicSubscribers;
+        }
 
+        var filterCreateResult = FilterFactory.CreateBasicFilter(
+            name,
+            city,
+            minPrice,
+            maxPrice,
+            minRooms,
+            maxRooms,
+            minArea,
+            maxArea);
+
+        if (filterCreateResult.IsFailure)
+        {
+            return filterCreateResult.Error;
+        }
+
+        var filter = filterCreateResult.Value;
+        
+        _filtersIds.Add(filter.Id);
+
+        return Result.Success(filter);
     }
 }

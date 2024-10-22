@@ -1,4 +1,4 @@
-﻿using Flvt.Domain.Primitives.Filters;
+﻿using Flvt.Domain.Filters;
 
 namespace Flvt.Application.Advertisements.ScrapeAdvertisements;
 

@@ -1,6 +1,6 @@
 ﻿using Flvt.Domain.Primitives.Responses;
 
-namespace Flvt.Domain.Primitives.Filters.Erros;
+namespace Flvt.Domain.Filters.Erros;
 
 internal sealed class FilterErrors
 {

@@ -67,6 +67,10 @@ internal sealed class ProcessingOrchestrator : IProcessingOrchestrator
                         ad => ad
                             .StartProcessing()));
 
+        Log.Logger.Information("Started processing {count} advertisements in {batchCount} batches",
+            advertisementsInBatches.SelectMany(aib => aib.AdvertisementsInBatchAsync).Count(),
+            advertisementsInBatches.Select(aib => aib.BatchId).Count());
+
         return advertisementsInBatches.ToDictionary(
             batch => batch.BatchId,
             batch => batch.AdvertisementsInBatchAsync);

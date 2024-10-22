@@ -30,7 +30,6 @@ internal sealed class BasicProcessorInstructions
                 "code": <string>,
               }
             },
-            "priceNotes": <string[]>,
             "deposit": null or {
                 "amount": <decimal>,
                 "currency": {
@@ -77,10 +76,8 @@ internal sealed class BasicProcessorInstructions
         "Floor - specific is the floor on which the flat is placed and total is the total amout of floors in the builiding. If floor is specified as groundfloor, set 0 then";
     private const string priceInstruction =
         "Price - This field must sum all costs that a customer will pay for the flat. You would likely search for this information in the Description or Characteristics field. Example scenario: Price = 2500 and Rent = 300, so this field in your response should be 2800";
-    private const string priceNotesInstruction =
-        "PriceNotes - if you find information about variable or extra costs, add it here. You can use only nouns (e.g. electricity, water, etc.) translated to native language. DO NOT include costs included in the Price, Fee or Deposit fields.";
     private const string depositInstruction =
-        "Deposit - if deposit amount is given specify it here, set the deposit to null (whole field) if you find no information about it.";
+        "Deposit - if deposit amount is given specify it here. Set the deposit to null if you find no information about it. Note that the Amount and Currency field are not nullable.";
     private const string feeInstruction =
         "Fee - amount that needs to be paid to real estate agency, skip it if it is private offer or no fee is required.";
     private const string facilitiesInstruction =
@@ -105,7 +102,6 @@ internal sealed class BasicProcessorInstructions
         contactTypeInstruction,
         floorInstruction,
         priceInstruction,
-        priceNotesInstruction,
         depositInstruction,
         feeInstruction,
         facilitiesInstruction,

@@ -1,10 +1,11 @@
 ﻿using Flvt.Domain.Primitives.Responses;
-using Newtonsoft.Json;
+using Flvt.Domain.Subscribers;
 
-namespace Flvt.Domain.Primitives.Filters;
+namespace Flvt.Domain.Filters;
 
 public sealed record Filter
 {
+    public string Id { get; init; }
     public FilterName Name { get; private set; }
     public FilterLocation Location { get; private set; }
     public FilterPrice? MinPrice { get; private set; }
@@ -13,12 +14,19 @@ public sealed record Filter
     public FilterRoomsCount? MaxRooms { get; private set; }
     public FilterArea? MinArea { get; private set; }
     public FilterArea? MaxArea { get; private set; }
-    public Frequency Frequency { get; init; }
+    public Frequency? Frequency { get; init; }
     public Preferences? Preferences { get; init; }
-    [JsonIgnore]
+    public SubscribtionTier Tier { get; init; }
     public bool OnlyLast24H { get; init; }
+    private List<string> _foundAdvertisements;
+    public IReadOnlyList<string> FoundAdvertisements => _foundAdvertisements;
+    private List<string> _recentlyFoundAdvertisements;
+    public IReadOnlyList<string> RecentlyFoundAdvertisements => _recentlyFoundAdvertisements;
+    private List<string> _seenAdvertisements;
+    public IReadOnlyList<string> SeenAdvertisements => _seenAdvertisements;
 
     private Filter(
+        string id,
         FilterName name,
         FilterLocation location,
         FilterPrice? minPrice,
@@ -27,9 +35,15 @@ public sealed record Filter
         FilterRoomsCount? maxRooms,
         FilterArea? minArea,
         FilterArea? maxArea,
+        Frequency? frequency,
+        SubscribtionTier tier,
         Preferences? preferences,
-        bool onlyLast24H)
+        List<string> foundAdvertisements,
+        List<string> recentlyFoundAdvertisements,
+        List<string> seenAdvertisements,
+        bool onlyLast24H = false)
     {
+        Id = id;
         Name = name;
         Location = location;
         MinPrice = minPrice;
@@ -38,12 +52,18 @@ public sealed record Filter
         MaxRooms = maxRooms;
         MinArea = minArea;
         MaxArea = maxArea;
+        Frequency = frequency;
         Preferences = preferences;
+        _foundAdvertisements = foundAdvertisements;
+        _recentlyFoundAdvertisements = recentlyFoundAdvertisements;
+        _seenAdvertisements = seenAdvertisements;
+        Tier = tier;
         OnlyLast24H = onlyLast24H;
     }
 
     public static Filter CreateForInternalScan(FilterLocation location) =>
-        new Filter(
+        new (
+            Guid.NewGuid().ToString(),
             FilterName.Create($"Scan-{DateTime.UtcNow:yyyy/MM//dd HH:mm:ss.fff}").Value,
             location,
             null,
@@ -53,9 +73,14 @@ public sealed record Filter
             null,
             null,
             null,
+            SubscribtionTier.Basic,
+            null,
+            [],
+            [],
+            [],
             true);
 
-    public static Result<Filter> Create(
+    internal static Result<Filter> Create(
         string name,
         string location,
         decimal? minPrice,
@@ -64,8 +89,9 @@ public sealed record Filter
         int? maxRooms,
         decimal? minArea,
         decimal? maxArea,
-        string? preferences,
-        bool onlyLast24h = false)
+        Frequency frequency,
+        SubscribtionTier tier,
+        string? preferences)
     {
         var filterName = FilterName.Create(name);
 
@@ -145,6 +171,7 @@ public sealed record Filter
         }
 
         return new Filter(
+            Guid.NewGuid().ToString(),
             filterName.Value,
             filterLocation.Value,
             filterMinPrice?.Value,
@@ -153,7 +180,26 @@ public sealed record Filter
             filterMaxRooms?.Value,
             filterMinArea?.Value,
             filterMaxArea?.Value,
+            frequency,
+            tier,
             preferencesObject?.Value,
-            onlyLast24h);
+            [],
+            [],
+            []);
     }
+
+    public void NewAdvertisementsFound(List<string> advertisements)
+    {
+        _recentlyFoundAdvertisements = advertisements
+            .Where(ad => _foundAdvertisements.All(foundAd => foundAd != ad))
+            .ToList();
+
+        _foundAdvertisements = advertisements;
+
+        _seenAdvertisements = _seenAdvertisements
+            .Where(seenAd => _foundAdvertisements.Contains(seenAd))
+            .ToList();
+    }
+
+    public void MarkAsSeen(string advertisement) => _seenAdvertisements.Add(advertisement);
 }

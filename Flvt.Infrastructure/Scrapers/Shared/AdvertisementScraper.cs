@@ -1,4 +1,4 @@
-﻿using Flvt.Domain.Primitives.Filters;
+﻿using Flvt.Domain.Filters;
 using Flvt.Domain.ScrapedAdvertisements;
 using Flvt.Infrastructure.Monitoring;
 using Flvt.Infrastructure.Utlis.Extensions;

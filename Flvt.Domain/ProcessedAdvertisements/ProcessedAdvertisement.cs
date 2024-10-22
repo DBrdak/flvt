@@ -12,7 +12,6 @@ public sealed class ProcessedAdvertisement
     public string Description { get; init; }
     public string ContactType { get; init; }
     public Money Price { get; init; }
-    public string[] PriceNotes { get; init; }
     public Money? Deposit { get; init; }
     public RoomsCount Rooms { get; init; }
     public Floor Floor { get; init; }
@@ -23,6 +22,7 @@ public sealed class ProcessedAdvertisement
     public string? AvailableFrom { get; init; }
     public bool? Pets { get; init; }
     public IEnumerable<string> Photos { get; init; }
+    public bool IsFlagged { get; private set; }
 
     public ProcessedAdvertisement(
         string link,
@@ -31,7 +31,6 @@ public sealed class ProcessedAdvertisement
         string description,
         string contactType,
         Money price,
-        string[] priceNotes,
         Money? deposit,
         RoomsCount rooms,
         Floor floor,
@@ -41,7 +40,8 @@ public sealed class ProcessedAdvertisement
         DateTime? updatedAt,
         string? availableFrom,
         bool? pets,
-        IEnumerable<string> photos)
+        IEnumerable<string> photos,
+        bool isFlagged = false)
     {
         Link = link;
         Address = address;
@@ -49,7 +49,6 @@ public sealed class ProcessedAdvertisement
         Description = description;
         ContactType = contactType;
         Price = price;
-        PriceNotes = priceNotes;
         Deposit = deposit;
         Rooms = rooms;
         Floor = floor;
@@ -60,10 +59,11 @@ public sealed class ProcessedAdvertisement
         AvailableFrom = availableFrom;
         Pets = pets;
         Photos = photos;
+        IsFlagged = isFlagged;
         Dedupe =
             $"{Address?.City}-{Address?.District}-{Address?.Street}-{ContactType}-{Rooms.Value}-{Area.Value}-{Floor.Specific}-{Floor.Total}"
                 .ToLower();
     }
 
-
+    public void Flag() => IsFlagged = true;
 }

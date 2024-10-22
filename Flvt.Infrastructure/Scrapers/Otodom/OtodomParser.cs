@@ -1,5 +1,5 @@
 ﻿using Flvt.Domain.Extensions;
-using Flvt.Domain.Primitives.Filters;
+using Flvt.Domain.Filters;
 using Flvt.Domain.ScrapedAdvertisements;
 using Flvt.Infrastructure.Scrapers.Shared;
 using HtmlAgilityPack;

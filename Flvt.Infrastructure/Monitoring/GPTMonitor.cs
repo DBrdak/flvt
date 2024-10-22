@@ -11,11 +11,11 @@ internal sealed class GPTMonitor : IPerformanceMonitor, ICostsMonitor
 
     public async Task LogPerformanceAsync()
     {
-        var failedBatchesCount = _batches.Select(batch => batch.IsFailed).Count();
-        var successfulBatchesCount = _batches.Select(batch => batch.IsCompleted).Count();
-        var failedRequestsCount = _batches.Select(batch => batch.RequestCounts.Failed).Sum();
-        var completedRequestsCount = _batches.Select(batch => batch.RequestCounts.Completed).Sum();
-        var totalRequestsCount = _batches.Select(batch => batch.RequestCounts.Total).Sum();
+        var failedBatchesCount = _batches.Count(batch => batch.IsFailed);
+        var successfulBatchesCount = _batches.Count(batch => batch.IsCompleted);
+        var failedRequestsCount = _batches.Sum(batch => batch.RequestCounts.Failed);
+        var completedRequestsCount = _batches.Sum(batch => batch.RequestCounts.Completed);
+        var totalRequestsCount = _batches.Sum(batch => batch.RequestCounts.Total);
         var averageBatchTime = _batches
             .Where(batch => batch.CompletedAt is not null)
             .Sum(batch => batch.CompletedAt - batch.CreatedAt) / _batches.Count;
