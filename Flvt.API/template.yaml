@@ -113,7 +113,7 @@ Resources:
           Type: Schedule
           Properties:
             Name: RemoveOutdatedSchedule
-            Schedule: 'cron(0 3 * * ? *)'
+            Schedule: 'cron(0 1 * * ? *)'
   CustodyFunctionsRemoveDuplicates:
     Type: AWS::Serverless::Function
     Metadata:
@@ -132,7 +132,7 @@ Resources:
           Type: Schedule
           Properties:
             Name: RemoveDuplicatesSchedule
-            Schedule: 'cron(0 3 * * ? *)'
+            Schedule: 'cron(0 2 * * ? *)'
   CustodyFunctionsUpdateUnprocessedScrapedAds:
     Type: AWS::Serverless::Function
     Metadata:

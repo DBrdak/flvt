@@ -1,7 +1,5 @@
-﻿using System.Collections;
-using Flvt.Domain.Filters;
+﻿using Flvt.Domain.Filters;
 using Flvt.Domain.Primitives.Advertisements;
-using Flvt.Domain.Primitives.Money;
 using Flvt.Domain.Primitives.Responses;
 
 namespace Flvt.Domain.Subscribers;
@@ -80,5 +78,14 @@ public sealed class Subscriber
         _filtersIds.Add(filter.Id);
 
         return Result.Success(filter);
+    }
+
+    public Result<string> GetFilter(string filterId)
+    {
+        var filter = _filtersIds.FirstOrDefault(id => id == filterId);
+
+        return filter is null ?
+            SubscriberErrors.FilterNotFound :
+            filter;
     }
 }

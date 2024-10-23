@@ -1,4 +1,5 @@
-﻿using Flvt.Domain.Primitives.Responses;
+﻿using Flvt.Domain.Filters;
+using Flvt.Domain.Primitives.Responses;
 
 namespace Flvt.Domain.Subscribers;
 
@@ -8,4 +9,5 @@ internal sealed class SubscriberErrors
         new($"Invalid filter tier, expected: {expectedTier}, actual: {actualTier}");
     public static Error ActionNotAllowedForBasicSubscribers =>
         new ("This action is not allowed for Basic tier subscribers");
+    public static Error FilterNotFound => new("Filter not found");
 }
