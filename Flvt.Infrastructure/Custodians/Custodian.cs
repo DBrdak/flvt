@@ -1,5 +1,6 @@
 ﻿using Flvt.Application.Abstractions;
 using Flvt.Domain.ScrapedAdvertisements;
+using Flvt.Infrastructure.AWS.Contants;
 using Flvt.Infrastructure.Custodians.Assistants;
 using Serilog;
 
@@ -21,16 +22,25 @@ internal class Custodian : ICustodian
     public async Task<IEnumerable<string>> FindOutdatedAdvertisementsAsync(
         IEnumerable<string> processedAdvertisementsLinks)
     {
-        var checkingTasks = processedAdvertisementsLinks
-            .Select(_scrapingAssistant.ChekIfAdvertisementIsOutdatedAsync);
+        var linksChunks = processedAdvertisementsLinks.Chunk(AWSLimits.FileDescriptorLimit / 2);
+        List<string> outdatedAdvertisements = [];
 
-        var outdatedAdvertisements = await Task.WhenAll(checkingTasks);
+        foreach (var chunk in linksChunks)
+        {
+            var tasks = chunk.Select(_scrapingAssistant.ChekIfAdvertisementIsOutdatedAsync);
+            var outdatedAdvertisementsInChunk = await Task.WhenAll(tasks);
+
+            outdatedAdvertisements.AddRange(
+                outdatedAdvertisementsInChunk
+                    .Where(ad => ad is not null)
+                    .Select(ad => ad!));
+        }
 
         Log.Logger.Information(
             "Found {outdatedCount} outdated advertisements",
-            outdatedAdvertisements.Length);
+            outdatedAdvertisements.Count);
 
-        return outdatedAdvertisements.Where(ad => ad is not null).Select(ad => ad!);
+        return outdatedAdvertisements;
     }
 
     public async Task<IEnumerable<string>> FindDuplicateAdvertisementsAsync()

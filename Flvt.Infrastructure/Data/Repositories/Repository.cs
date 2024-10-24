@@ -139,8 +139,7 @@ internal abstract class Repository<TEntity>
     }
 
     public async Task<Result<TEntity>> UpdateAsync(
-        TEntity entity,
-        CancellationToken cancellationToken = default)
+        TEntity entity)
     {
         return await AddAsync(entity);
     }

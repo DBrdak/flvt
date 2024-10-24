@@ -15,10 +15,57 @@ public sealed record FilterModel
     public decimal? MinArea { get; private set; }
     public decimal? MaxArea { get; private set; }
     public Preferences? Preferences { get; init; }
+    public string Frequency { get; init; }
+    public DateTimeOffset LastUsed { get; init; }
+    public DateTimeOffset NextUse { get; init; }
     public string Tier { get; init; }
-    public bool OnlyLast24H { get; init; }
-    //TODO consider below
-    public IReadOnlyList<string> FoundAdvertisements { get; init; }
-    public IReadOnlyList<string> RecentlyFoundAdvertisements { get; init; }
-    public IReadOnlyList<string> SeenAdvertisements { get; init; }
+
+    private FilterModel(
+        string id,
+        string name,
+        string location,
+        decimal? minPrice,
+        decimal? maxPrice,
+        int? minRooms,
+        int? maxRooms,
+        decimal? minArea,
+        decimal? maxArea,
+        Preferences? preferences,
+        string frequency,
+        DateTimeOffset lastUsed,
+        DateTimeOffset nextUse,
+        string tier)
+    {
+        Id = id;
+        Name = name;
+        Location = location;
+        MinPrice = minPrice;
+        MaxPrice = maxPrice;
+        MinRooms = minRooms;
+        MaxRooms = maxRooms;
+        MinArea = minArea;
+        MaxArea = maxArea;
+        Preferences = preferences;
+        Tier = tier;
+        Frequency = frequency;
+        LastUsed = lastUsed;
+        NextUse = nextUse;
+    }
+
+    public static FilterModel FromDomainModel(Filter filter) =>
+        new(
+            filter.Id,
+            filter.Name.Value,
+            filter.Location.City,
+            filter.MinPrice?.Value,
+            filter.MaxPrice?.Value,
+            filter.MinRooms?.Value,
+            filter.MaxRooms?.Value,
+            filter.MinArea?.Value,
+            filter.MaxArea?.Value,
+            filter.Preferences,
+            filter.Frequency.Name,
+            DateTimeOffset.FromUnixTimeSeconds(filter.Frequency.LastUsed),
+            DateTimeOffset.FromUnixTimeSeconds(filter.Frequency.NextUse),
+            filter.Tier.Value);
 }

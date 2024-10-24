@@ -1,5 +1,7 @@
-﻿using Flvt.Domain.Primitives.Responses;
+﻿using Amazon.DynamoDBv2.DocumentModel;
+using Flvt.Domain.Primitives.Responses;
 using Flvt.Domain.ProcessedAdvertisements;
+using Filter = Flvt.Domain.Filters.Filter;
 
 namespace Flvt.Infrastructure.Data.Repositories;
 
@@ -12,4 +14,42 @@ internal sealed class ProcessedAdvertisementRepository : Repository<ProcessedAdv
     public async Task<Result<IEnumerable<ProcessedAdvertisement>>> GetManyByLinkAsync(
         IEnumerable<string> links) =>
         await GetManyByIdAsync(links);
+
+    public async Task<Result<ProcessedAdvertisement>> GetByLinkAsync(string link) =>
+        await GetByIdAsync(link);
+
+    public async Task<Result<IEnumerable<ProcessedAdvertisement>>> GetByFilterAsync(Filter filter)
+    {
+        var scanFilter = new ScanFilter();
+        scanFilter.AddCondition(
+            "Address.City",
+            ScanOperator.Equal,
+            filter.Location.City);
+        scanFilter.AddCondition(
+            "Price.Amount",
+            ScanOperator.GreaterThanOrEqual,
+            filter.MinPrice?.Value);
+        scanFilter.AddCondition(
+            "Address.City",
+            ScanOperator.Equal,
+            filter.Location.City);
+        scanFilter.AddCondition(
+            "Address.City",
+            ScanOperator.Equal,
+            filter.Location.City);
+        scanFilter.AddCondition(
+            "Address.City",
+            ScanOperator.Equal,
+            filter.Location.City);
+        scanFilter.AddCondition(
+            "Address.City",
+            ScanOperator.Equal,
+            filter.Location.City);
+        scanFilter.AddCondition(
+            "Address.City",
+            ScanOperator.Equal,
+            filter.Location.City);
+
+        return await GetWhereAsync(scanFilter);
+    }
 }

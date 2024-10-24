@@ -14,7 +14,7 @@ public sealed record Filter
     public FilterRoomsCount? MaxRooms { get; private set; }
     public FilterArea? MinArea { get; private set; }
     public FilterArea? MaxArea { get; private set; }
-    public Frequency? Frequency { get; init; }
+    public Frequency Frequency { get; init; }
     public Preferences? Preferences { get; init; }
     public SubscribtionTier Tier { get; init; }
     public bool OnlyLast24H { get; init; }
@@ -24,6 +24,7 @@ public sealed record Filter
     public IReadOnlyList<string> RecentlyFoundAdvertisements => _recentlyFoundAdvertisements;
     private List<string> _seenAdvertisements;
     public IReadOnlyList<string> SeenAdvertisements => _seenAdvertisements;
+    public bool ShouldLaunch => Frequency.NextUse <= DateTimeOffset.UtcNow.ToUnixTimeSeconds();
 
     private Filter(
         string id,
@@ -35,7 +36,7 @@ public sealed record Filter
         FilterRoomsCount? maxRooms,
         FilterArea? minArea,
         FilterArea? maxArea,
-        Frequency? frequency,
+        Frequency frequency,
         SubscribtionTier tier,
         Preferences? preferences,
         List<string> foundAdvertisements,
@@ -72,7 +73,7 @@ public sealed record Filter
             null,
             null,
             null,
-            null,
+            Frequency.Daily,
             SubscribtionTier.Basic,
             null,
             [],

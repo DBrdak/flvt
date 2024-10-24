@@ -1,4 +1,5 @@
-﻿using Flvt.Domain.Primitives.Responses;
+﻿using Flvt.Domain.Filters;
+using Flvt.Domain.Primitives.Responses;
 using Flvt.Domain.ScrapedAdvertisements;
 
 namespace Flvt.Domain.ProcessedAdvertisements;
@@ -13,4 +14,10 @@ public interface IProcessedAdvertisementRepository
     void StartBatchGet();
     void AddItemToBatchGet(string scrapedAdvertisementId);
     Task<Result<IEnumerable<ProcessedAdvertisement>>> ExecuteBatchGetAsync();
+
+    Task<Result<ProcessedAdvertisement>> GetByLinkAsync(string link);
+
+    Task<Result<ProcessedAdvertisement>> UpdateAsync(ProcessedAdvertisement advertisement);
+
+    Task<Result<IEnumerable<ProcessedAdvertisement>>> GetByFilterAsync(Filter filter);
 }

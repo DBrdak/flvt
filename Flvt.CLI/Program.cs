@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Flvt.Application;
 using Flvt.Application.Advertisements.ProcessAdvertisements;
+using Flvt.Application.Custody.RemoveOutdatedAdvertisements;
 using Flvt.Infrastructure;
 using MediatR;
 using Microsoft.Extensions.Configuration;
@@ -43,10 +44,8 @@ public class Service : IService
         //var cmd = new StartProcessingAdvertisementsCommand();
         //var cmd = new CheckProcessingStatusCommand();
         //var cmd = new EndProcessingCommand();
-
-
-
-        var cmd = new ProcessAdvertisementsCommand();
+        //var cmd = new ProcessAdvertisementsCommand();
+        var cmd = new RemoveOutdatedAdvertisementsCommand();
 
         var response = await _sender.Send(cmd);
     }
