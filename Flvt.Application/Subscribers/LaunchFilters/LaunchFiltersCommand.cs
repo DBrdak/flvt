@@ -1,5 +1,5 @@
 using Flvt.Application.Messaging;
 
-namespace Flvt.Application.Subscribers.RunFiltering;
+namespace Flvt.Application.Subscribers.LaunchFilters;
 
 public sealed record LaunchFiltersCommand : ICommand;

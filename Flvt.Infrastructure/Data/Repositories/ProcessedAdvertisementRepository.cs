@@ -18,38 +18,24 @@ internal sealed class ProcessedAdvertisementRepository : Repository<ProcessedAdv
     public async Task<Result<ProcessedAdvertisement>> GetByLinkAsync(string link) =>
         await GetByIdAsync(link);
 
+    //TODO Implement
     public async Task<Result<IEnumerable<ProcessedAdvertisement>>> GetByFilterAsync(Filter filter)
     {
-        var scanFilter = new ScanFilter();
-        scanFilter.AddCondition(
-            "Address.City",
-            ScanOperator.Equal,
-            filter.Location.City);
-        scanFilter.AddCondition(
-            "Price.Amount",
-            ScanOperator.GreaterThanOrEqual,
-            filter.MinPrice?.Value);
-        scanFilter.AddCondition(
-            "Address.City",
-            ScanOperator.Equal,
-            filter.Location.City);
-        scanFilter.AddCondition(
-            "Address.City",
-            ScanOperator.Equal,
-            filter.Location.City);
-        scanFilter.AddCondition(
-            "Address.City",
-            ScanOperator.Equal,
-            filter.Location.City);
-        scanFilter.AddCondition(
-            "Address.City",
-            ScanOperator.Equal,
-            filter.Location.City);
-        scanFilter.AddCondition(
-            "Address.City",
-            ScanOperator.Equal,
-            filter.Location.City);
+        throw new NotImplementedException();
+        //var scanFilter = new ScanFilter();
+        //scanFilter.AddCondition(
+        //    "Address.City",
+        //    ScanOperator.Equal,
+        //    filter.Location.City);
+        //scanFilter.AddCondition(
+        //    "Price.Amount",
+        //    ScanOperator.GreaterThanOrEqual,
+        //    filter.MinPrice?.Value);
+        //scanFilter.AddCondition(
+        //    "Price.Amount",
+        //    ScanOperator.LessThanOrEqual,
+        //    filter.MaxPrice?.Value);
 
-        return await GetWhereAsync(scanFilter);
+        //return await GetWhereAsync(scanFilter);
     }
 }

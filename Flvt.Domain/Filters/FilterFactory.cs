@@ -11,12 +11,12 @@ internal sealed class FilterFactory
     public static Result<Filter> CreateBasicFilter(
         string name,
         string city,
-        decimal minPrice,
-        decimal maxPrice,
-        int minRooms,
-        int maxRooms,
-        decimal minArea,
-        decimal maxArea)
+        decimal? minPrice,
+        decimal? maxPrice,
+        int? minRooms,
+        int? maxRooms,
+        decimal? minArea,
+        decimal? maxArea)
     {
         return Filter.Create(
             name,

@@ -4,7 +4,7 @@ using Flvt.Domain.Primitives.Responses;
 using Flvt.Domain.ProcessedAdvertisements;
 using Serilog;
 
-namespace Flvt.Application.Subscribers.RunFiltering;
+namespace Flvt.Application.Subscribers.LaunchFilters;
 
 internal sealed class LaunchFiltersCommandHandler : ICommandHandler<LaunchFiltersCommand>
 {

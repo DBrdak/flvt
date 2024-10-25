@@ -2,6 +2,9 @@
 using Flvt.Application;
 using Flvt.Application.Advertisements.ProcessAdvertisements;
 using Flvt.Application.Custody.RemoveOutdatedAdvertisements;
+using Flvt.Domain.Filters;
+using Flvt.Domain.ProcessedAdvertisements;
+using Flvt.Domain.Subscribers;
 using Flvt.Infrastructure;
 using MediatR;
 using Microsoft.Extensions.Configuration;
@@ -32,22 +35,38 @@ internal class Program
 public class Service : IService
 {
     private readonly ISender _sender;
+    private readonly IProcessedAdvertisementRepository _repository;
 
-    public Service(ISender sender)
+    public Service(ISender sender, IProcessedAdvertisementRepository repository)
     {
         _sender = sender;
+        _repository = repository;
     }
 
     public async Task Run()
     {
+        var a = _repository.GetByFilterAsync(
+            Subscriber.Register(
+                    "a@a.com",
+                    "PL")
+                .Value.AddBasicFilter(
+                    "nname",
+                    "Warszawa",
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null)
+                .Value);
         //var cmd = new ScrapeAdvertisementsCommand();
         //var cmd = new StartProcessingAdvertisementsCommand();
         //var cmd = new CheckProcessingStatusCommand();
         //var cmd = new EndProcessingCommand();
         //var cmd = new ProcessAdvertisementsCommand();
-        var cmd = new RemoveOutdatedAdvertisementsCommand();
+        //var cmd = new RemoveOutdatedAdvertisementsCommand();
 
-        var response = await _sender.Send(cmd);
+        //var response = await _sender.Send(cmd);
     }
 }
 

@@ -19,7 +19,8 @@ public static class ResponseBuilder
         new()
         {
             ContractResolver = contractResolver,
-            Formatting = Formatting.Indented
+            Formatting = Formatting.Indented,
+            NullValueHandling = NullValueHandling.Include
         };
 
     private static APIGatewayHttpApiV2ProxyResponse Respond(Result result, int statusCode, Dictionary<string, string>? headers = null) =>

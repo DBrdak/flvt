@@ -1,8 +1,11 @@
 ﻿using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DocumentModel;
+using Amazon.Runtime;
+using Flvt.Domain;
 using Flvt.Domain.ProcessedAdvertisements;
 using Flvt.Domain.ScrapedAdvertisements;
 using Flvt.Domain.Subscribers;
+using Flvt.Infrastructure.AWS.Contants;
 using Flvt.Infrastructure.Processors.AI.GPT.Domain.DataModels.Batches;
 
 namespace Flvt.Infrastructure.Data;

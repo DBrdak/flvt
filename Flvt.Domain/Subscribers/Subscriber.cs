@@ -46,12 +46,12 @@ public sealed class Subscriber
     public Result<Filter> AddBasicFilter(
         string name,
         string city,
-        decimal minPrice,
-        decimal maxPrice,
-        int minRooms,
-        int maxRooms,
-        decimal minArea,
-        decimal maxArea)
+        decimal? minPrice,
+        decimal? maxPrice,
+        int? minRooms,
+        int? maxRooms,
+        decimal? minArea,
+        decimal? maxArea)
     {
         if (Tier == SubscribtionTier.Basic && _filtersIds.Count >= 1)
         {
