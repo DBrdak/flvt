@@ -1,5 +1,4 @@
 ﻿using Amazon.Lambda.Annotations;
-using Flvt.Application.Advertisements.StartProcessingAdvertisements;
 using Flvt.Application.Custody.RemoveDuplicateAdvertisements;
 using Flvt.Application.Custody.RemoveOutdatedAdvertisements;
 using Flvt.Application.Custody.UpdateUnsucessfullyProcessedAdvertisements;

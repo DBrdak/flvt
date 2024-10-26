@@ -3,6 +3,7 @@ using Flvt.Domain.ScrapedAdvertisements;
 using Flvt.Infrastructure.Monitoring;
 using Flvt.Infrastructure.Utlis.Extensions;
 using HtmlAgilityPack;
+using Newtonsoft.Json;
 using Serilog;
 
 namespace Flvt.Infrastructure.Scrapers.Shared;
@@ -76,7 +77,7 @@ internal abstract class AdvertisementScraper
                 var content = _advertisementParser.ParseContent();
                 var photos = _advertisementParser.ParsePhotos();
 
-                _advertisements.Add(new(link, content, photos));
+                _advertisements.Add(new(link, JsonConvert.SerializeObject(content), photos));
             }
             catch (Exception e)
             {

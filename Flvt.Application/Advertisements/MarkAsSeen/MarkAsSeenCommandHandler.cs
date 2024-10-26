@@ -1,7 +1,6 @@
 using Flvt.Application.Messaging;
 using Flvt.Domain.Filters;
 using Flvt.Domain.Primitives.Responses;
-using Flvt.Domain.ProcessedAdvertisements;
 
 namespace Flvt.Application.Advertisements.MarkAsSeen;
 

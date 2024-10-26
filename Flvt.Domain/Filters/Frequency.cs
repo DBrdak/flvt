@@ -6,7 +6,7 @@ public sealed record Frequency
 {
     public string Name { get; init; }
     public long EverySeconds { get; init; }
-    public long LastUsed { get; init; }
+    public long LastUsed { get; private set; }
     public long NextUse => LastUsed + EverySeconds;
 
     private const long oneHourInSeconds = 60 * 60;
@@ -32,4 +32,6 @@ public sealed record Frequency
         nameof(Weekly) => Weekly,
         _ => new Error($"{frequency} is invalid frequency")
     };
+
+    internal void Used() => LastUsed = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
 }

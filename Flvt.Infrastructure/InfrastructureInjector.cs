@@ -5,6 +5,7 @@ using Flvt.Domain.Subscribers;
 using Flvt.Infrastructure.Custodians;
 using Flvt.Infrastructure.Custodians.Assistants;
 using Flvt.Infrastructure.Data;
+using Flvt.Infrastructure.Data.DataModels;
 using Flvt.Infrastructure.Data.Repositories;
 using Flvt.Infrastructure.Monitoring;
 using Flvt.Infrastructure.Processors;
@@ -21,7 +22,7 @@ namespace Flvt.Infrastructure;
 public static class InfrastructureInjector
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services) =>
-        services.AddRepositories()
+        services.AddDataAccessLayer()
             .AddScrapers()
             .AddProcessors()
             .AddMonitoring()
@@ -37,8 +38,9 @@ public static class InfrastructureInjector
             .AddScoped<ScrapingCustodialAssistant>()
             .AddScoped<DataCustodialAssistant>();
 
-    private static IServiceCollection AddRepositories(this IServiceCollection services) =>
+    private static IServiceCollection AddDataAccessLayer(this IServiceCollection services) =>
         services.AddScoped<DataContext>()
+            .AddScoped(typeof(DataModelService<>))
             .AddScoped<IProcessedAdvertisementRepository, ProcessedAdvertisementRepository>()
             .AddScoped<IScrapedAdvertisementRepository, ScrapedAdvertisementRepository>()
             .AddScoped<ISubscriberRepository, SubscriberRepository>()

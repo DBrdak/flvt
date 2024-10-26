@@ -1,12 +1,17 @@
 ﻿using Amazon.DynamoDBv2.DocumentModel;
 using Flvt.Domain.Primitives.Responses;
-using Flvt.Infrastructure.Processors.AI.GPT.Domain.DataModels.Batches;
+using Flvt.Infrastructure.Data.DataModels;
+using Flvt.Infrastructure.Data.DataModels.Batches;
 
 namespace Flvt.Infrastructure.Data.Repositories;
 
 internal class BatchRepository : Repository<BatchDataModel>
 {
-    public BatchRepository(DataContext context) : base(context)
+    public BatchRepository(
+        DataContext context,
+        DataModelService<BatchDataModel> dataModelService) : base(
+        context,
+        dataModelService)
     {
     }
 

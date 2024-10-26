@@ -200,6 +200,8 @@ public sealed record Filter
         _seenAdvertisements = _seenAdvertisements
             .Where(seenAd => _foundAdvertisements.Contains(seenAd))
             .ToList();
+
+        Frequency.Used();
     }
 
     public void MarkAsSeen(string advertisement) => _seenAdvertisements.Add(advertisement);

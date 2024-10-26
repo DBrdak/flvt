@@ -2,10 +2,10 @@
 using Flvt.Domain.Primitives.Responses;
 using Flvt.Domain.ProcessedAdvertisements;
 using Flvt.Domain.ScrapedAdvertisements;
+using Flvt.Infrastructure.Data.DataModels.Batches;
 using Flvt.Infrastructure.Data.Repositories;
 using Flvt.Infrastructure.Processors.AI;
 using Flvt.Infrastructure.Processors.AI.GPT.Domain.Batches;
-using Flvt.Infrastructure.Processors.AI.GPT.Domain.DataModels.Batches;
 using Flvt.Infrastructure.Processors.AI.GPT.Domain.Responses;
 using Serilog;
 
@@ -231,7 +231,7 @@ internal sealed class ProcessingOrchestrator : IProcessingOrchestrator
     }
 
     private async Task<Result> SaveBatchAsync(IEnumerable<AdvertisementsBatch> batches) =>
-        await _batchRepository.AddRangeVoidAsync(
+        await _batchRepository.AddRangeAsync(
             batches.Select(
                 b => new BatchDataModel(b.BatchId, b.AdvertisementsInBatchAsync.Select(ad => ad.Link))));
 }

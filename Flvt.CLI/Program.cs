@@ -1,8 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Flvt.Application;
-using Flvt.Application.Advertisements.ProcessAdvertisements;
-using Flvt.Application.Custody.RemoveOutdatedAdvertisements;
-using Flvt.Domain.Filters;
 using Flvt.Domain.ProcessedAdvertisements;
 using Flvt.Domain.Subscribers;
 using Flvt.Infrastructure;
@@ -45,20 +42,20 @@ public class Service : IService
 
     public async Task Run()
     {
-        var a = _repository.GetByFilterAsync(
-            Subscriber.Register(
-                    "a@a.com",
-                    "PL")
-                .Value.AddBasicFilter(
-                    "nname",
-                    "Warszawa",
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null)
-                .Value);
+        //var a = _repository.GetByFilterAsync(
+        //    Subscriber.Register(
+        //            "a@a.com",
+        //            "PL")
+        //        .Value.AddBasicFilter(
+        //            "nname",
+        //            "Warszawa",
+        //            null,
+        //            null,
+        //            null,
+        //            null,
+        //            null,
+        //            null)
+        //        .Value);
         //var cmd = new ScrapeAdvertisementsCommand();
         //var cmd = new StartProcessingAdvertisementsCommand();
         //var cmd = new CheckProcessingStatusCommand();

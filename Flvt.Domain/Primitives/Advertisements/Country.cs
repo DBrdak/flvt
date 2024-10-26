@@ -4,18 +4,14 @@ namespace Flvt.Domain.Primitives.Advertisements;
 
 public sealed record Country
 {
-    public string Name { get; init; }
-    public string NativeName { get; init; }
     public string Code { get; init; }
 
-    private Country(string name, string nativeName, string code)
+    private Country(string code)
     {
-        Name = name;
         Code = code;
-        NativeName = nativeName;
     }
 
-    public static readonly Country Poland = new("Poland", "Polska", "PL");
+    public static readonly Country Poland = new("PL");
 
     public static readonly IReadOnlyCollection<Country> All =
     [

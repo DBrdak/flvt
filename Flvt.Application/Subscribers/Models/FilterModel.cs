@@ -1,5 +1,4 @@
 ﻿using Flvt.Domain.Filters;
-using Flvt.Domain.Subscribers;
 
 namespace Flvt.Application.Subscribers.Models;
 

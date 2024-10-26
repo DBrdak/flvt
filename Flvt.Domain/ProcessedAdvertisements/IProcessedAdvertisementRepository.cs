@@ -1,6 +1,5 @@
 ﻿using Flvt.Domain.Filters;
 using Flvt.Domain.Primitives.Responses;
-using Flvt.Domain.ScrapedAdvertisements;
 
 namespace Flvt.Domain.ProcessedAdvertisements;
 

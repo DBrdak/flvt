@@ -1,13 +1,17 @@
-﻿using Amazon.DynamoDBv2.DocumentModel;
-using Flvt.Domain.Primitives.Responses;
+﻿using Flvt.Domain.Primitives.Responses;
 using Flvt.Domain.ProcessedAdvertisements;
+using Flvt.Infrastructure.Data.DataModels;
 using Filter = Flvt.Domain.Filters.Filter;
 
 namespace Flvt.Infrastructure.Data.Repositories;
 
 internal sealed class ProcessedAdvertisementRepository : Repository<ProcessedAdvertisement>, IProcessedAdvertisementRepository
 {
-    public ProcessedAdvertisementRepository(DataContext context) : base(context)
+    public ProcessedAdvertisementRepository(
+        DataContext context,
+        DataModelService<ProcessedAdvertisement> dataModelService) : base(
+        context,
+        dataModelService)
     {
     }
 

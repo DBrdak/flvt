@@ -1,5 +1,5 @@
-﻿using Flvt.Infrastructure.Processors.AI.GPT.Domain.Batches;
-using Flvt.Infrastructure.Processors.AI.GPT.Domain.DataModels.Batches;
+﻿using Flvt.Infrastructure.Data.DataModels.Batches;
+using Flvt.Infrastructure.Processors.AI.GPT.Domain.Batches;
 
 namespace Flvt.Infrastructure.Processors.AI.GPT.Domain.Responses;
 
