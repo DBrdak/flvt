@@ -13,6 +13,7 @@ public sealed class ProcessedAdvertisement
     public string ContactType { get; init; }
     public Money Price { get; init; }
     public Money? Deposit { get; init; }
+    public Money? Fee { get; init; }
     public RoomsCount Rooms { get; init; }
     public Floor Floor { get; init; }
     public Area Area { get; init; }
@@ -21,7 +22,6 @@ public sealed class ProcessedAdvertisement
     public DateTime? UpdatedAt { get; init; }
     public string? AvailableFrom { get; init; }
     public bool? Pets { get; init; }
-    public IEnumerable<string> Photos { get; init; }
     public bool IsFlagged { get; private set; }
 
     public ProcessedAdvertisement(
@@ -32,6 +32,7 @@ public sealed class ProcessedAdvertisement
         string contactType,
         Money price,
         Money? deposit,
+        Money? fee,
         RoomsCount rooms,
         Floor floor,
         Area area,
@@ -40,7 +41,6 @@ public sealed class ProcessedAdvertisement
         DateTime? updatedAt,
         string? availableFrom,
         bool? pets,
-        IEnumerable<string> photos,
         bool isFlagged = false)
     {
         Link = link;
@@ -49,6 +49,7 @@ public sealed class ProcessedAdvertisement
         Description = description;
         ContactType = contactType;
         Price = price;
+        Fee = fee;
         Deposit = deposit;
         Rooms = rooms;
         Floor = floor;
@@ -58,10 +59,9 @@ public sealed class ProcessedAdvertisement
         UpdatedAt = updatedAt;
         AvailableFrom = availableFrom;
         Pets = pets;
-        Photos = photos;
         IsFlagged = isFlagged;
         Dedupe =
-            $"{Address?.City}-{Address?.District}-{Address?.Street}-{ContactType}-{Rooms.Value}-{Area.Value}-{Floor.Specific}-{Floor.Total}"
+            $"{Address?.City}-{Address?.District}-{Address?.Street}-{ContactType}-{Rooms.Value}-{Area.Amount}-{Floor.Specific}-{Floor.Total}"
                 .ToLower();
     }
 

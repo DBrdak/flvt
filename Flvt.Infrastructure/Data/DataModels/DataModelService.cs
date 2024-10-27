@@ -1,9 +1,11 @@
 ﻿using Amazon.DynamoDBv2.DocumentModel;
+using Flvt.Domain.Photos;
 using Flvt.Domain.ProcessedAdvertisements;
 using Flvt.Domain.ScrapedAdvertisements;
 using Flvt.Domain.Subscribers;
 using Flvt.Infrastructure.Data.DataModels.Batches;
 using Flvt.Infrastructure.Data.DataModels.Filters;
+using Flvt.Infrastructure.Data.DataModels.Photos;
 using Flvt.Infrastructure.Data.DataModels.ProcessedAdvertisements;
 using Flvt.Infrastructure.Data.DataModels.ScrapedAdvertisements;
 using Flvt.Infrastructure.Data.DataModels.Subscribers;
@@ -30,6 +32,8 @@ internal sealed class DataModelService<TEntity>
                 .FromDomainModel(batchDataModel) as IDataModel<TEntity>,
             Domain.Filters.Filter filter => FilterDataModel
                 .FromDomainModel(filter) as IDataModel<TEntity>,
+            AdvertisementPhotos photos => AdvertisementPhotosDataModel
+                .FromDomainModel(photos) as IDataModel<TEntity>,
             _ => throw _convertDomainModelToDataModelException
         } ??
         throw _convertDomainModelToDataModelException;
@@ -47,6 +51,8 @@ internal sealed class DataModelService<TEntity>
                 SubscriberDataModel.FromDocument(doc) as IDataModel<TEntity>,
             { Name: nameof(BatchDataModel) } =>
                 BatchDataModel.FromDocument(doc) as IDataModel<TEntity>,
+            { Name: nameof(AdvertisementPhotos) } =>
+                AdvertisementPhotosDataModel.FromDocument(doc) as IDataModel<TEntity>,
             _ => throw _convertDocumentToDataModelException
         } ??
         throw _convertDocumentToDataModelException;

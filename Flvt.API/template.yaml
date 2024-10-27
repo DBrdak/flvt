@@ -25,6 +25,11 @@ Resources:
     Properties:
       QueueName: FinishedBatchesQueue
       VisibilityTimeout: 900
+  LaunchedFiltersQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: LaunchedFiltersQueue
+      VisibilityTimeout: 900
   ScrapeAdvertisementsScrapAll:
     Type: AWS::Serverless::Function
     Metadata:

@@ -48,6 +48,7 @@ internal sealed class GPTMonitor : IPerformanceMonitor, ICostsMonitor
     public async Task ReportCostsAsync()
     {
         var usage = _completions.Select(completion => completion.Usage).ToList();
+        Log.Logger.Information("Usage: {usage}", usage); // TODO temp
         var inputTokens = usage.Sum(u => u.PromptTokens);
         var outputTokens = usage.Sum(u => u.CompletionTokens);
         var totalTokens = usage.Sum(u => u.TotalTokens);

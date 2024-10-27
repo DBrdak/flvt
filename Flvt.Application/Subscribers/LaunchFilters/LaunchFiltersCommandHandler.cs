@@ -1,3 +1,4 @@
+using Flvt.Application.Abstractions;
 using Flvt.Application.Messaging;
 using Flvt.Domain.Filters;
 using Flvt.Domain.Primitives.Responses;
@@ -10,13 +11,16 @@ internal sealed class LaunchFiltersCommandHandler : ICommandHandler<LaunchFilter
 {
     private readonly IFilterRepository _filterRepository;
     private readonly IProcessedAdvertisementRepository _processedAdvertisementRepository;
+    private readonly IQueuePublisher _queuePublisher;
 
     public LaunchFiltersCommandHandler(
         IFilterRepository filterRepository,
-        IProcessedAdvertisementRepository processedAdvertisementRepository)
+        IProcessedAdvertisementRepository processedAdvertisementRepository,
+        IQueuePublisher queuePublisher)
     {
         _filterRepository = filterRepository;
         _processedAdvertisementRepository = processedAdvertisementRepository;
+        _queuePublisher = queuePublisher;
     }
 
     public async Task<Result> Handle(LaunchFiltersCommand request, CancellationToken cancellationToken)
@@ -43,7 +47,11 @@ internal sealed class LaunchFiltersCommandHandler : ICommandHandler<LaunchFilter
         _filterRepository.StartBatchWrite();
         launchedFilters.ForEach(_filterRepository.AddItemToBatchWrite);
         
-        return await _filterRepository.ExecuteBatchWriteAsync();
+        var writeTask = _filterRepository.ExecuteBatchWriteAsync();
+
+        var publishTask = _queuePublisher.PublishLaunchedFilters(launchedFilters);
+
+        return Result.Aggregate(await Task.WhenAll(writeTask, publishTask));
     }
 
     private IEnumerable<Filter> GetFiltersToLaunch(IEnumerable<Filter> filters) => 

@@ -7,6 +7,7 @@ namespace Flvt.Domain.Subscribers;
 public sealed class Subscriber
 {
     public Email Email { get; init; }
+    public string Token { get; init; }
     public SubscribtionTier Tier { get; init; }
     public Country Country { get; init; }
     private readonly List<string> _filtersIds;

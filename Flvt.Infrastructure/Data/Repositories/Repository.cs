@@ -2,7 +2,6 @@
 using Flvt.Domain.Primitives.Responses;
 using Flvt.Infrastructure.Data.DataModels;
 using Newtonsoft.Json;
-using System.Threading;
 
 namespace Flvt.Infrastructure.Data.Repositories;
 

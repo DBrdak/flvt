@@ -5,5 +5,5 @@ namespace Flvt.Application.Abstractions;
 
 public interface IScrapingOrchestrator
 {
-    Task<IEnumerable<ScrapedAdvertisement>> ScrapeAsync(Filter filter);
+    Task<IEnumerable<AdvertisementsScrapeResult>> ScrapeAsync(Filter filter);
 }

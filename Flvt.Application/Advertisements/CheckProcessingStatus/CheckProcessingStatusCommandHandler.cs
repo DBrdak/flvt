@@ -26,6 +26,6 @@ internal sealed class CheckProcessingStatusCommandHandler : ICommandHandler<Chec
             return Result.Success();
         }
 
-        return await _queuePublisher.PublishFinishedBatches(cancellationToken);
+        return await _queuePublisher.PublishFinishedBatches();
     }
 }

@@ -58,8 +58,7 @@ internal sealed class BasicProcessorInstructions
             "addedAt": <string>,
             "updatedAt": <string>,
             "availableFrom": <string?>,
-            "pets": <boolean?>,
-            "photos": <string[]>
+            "pets": <boolean?>
         }
         """;
     private const string linkInstruction =
@@ -72,6 +71,8 @@ internal sealed class BasicProcessorInstructions
         "Description - create a informative and short description for given advertisement, up to 200 characters.";
     private const string contactTypeInstruction =
         "ContactType - find the contact type from the previous advertisement and standarize it, to \"real estate agency\" or \"private\" but translated to the original advertisement languange. If field is empty in previous object, find information in description and update.";
+    private const string roomsInstruction =
+        "Rooms - count is the number of rooms in the flat and unit is the unit of the rooms in native advertisement's launguage. Unit must be gramarlly correct (e.g. include plural form)";
     private const string floorInstruction =
         "Floor - specific is the floor on which the flat is placed and total is the total amout of floors in the builiding. If floor is specified as groundfloor, set 0 then";
     private const string priceInstruction =
@@ -79,7 +80,7 @@ internal sealed class BasicProcessorInstructions
     private const string depositInstruction =
         "Deposit - if deposit amount is given specify it here. Set the deposit to null if you find no information about it. Note that the Amount and Currency field are not nullable.";
     private const string feeInstruction =
-        "Fee - amount that needs to be paid to real estate agency, skip it if it is private offer or no fee is required.";
+        "Fee - amount that needs to be paid to real estate agency, skip it if it is private offer or no fee is required. Note that the Amount and Currency field are not nullable.";
     private const string facilitiesInstruction =
         "Facilities - provide the facilities that are given in the advertisement. If you can't find any, leave the list empty.";
     private const string availableFromInstruction =
@@ -100,6 +101,7 @@ internal sealed class BasicProcessorInstructions
         geolocationInstruction,
         descriptionInstruction,
         contactTypeInstruction,
+        roomsInstruction,
         floorInstruction,
         priceInstruction,
         depositInstruction,

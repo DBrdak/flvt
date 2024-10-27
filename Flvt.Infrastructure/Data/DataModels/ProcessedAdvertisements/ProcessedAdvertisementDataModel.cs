@@ -10,14 +10,14 @@ internal sealed class ProcessedAdvertisementDataModel : IDataModel<ProcessedAdve
 {
     public string Link { get; init; }
     public string Dedupe { get; init; }
-    public string AddressCountry { get; init; }
-    public string AddressProvince { get; init; }
-    public string AddressRegion { get; init; }
-    public string AddressCity {get; init; }
-    public string AddressDistrict {get; init; }
-    public string AddressSubdistrict {get; init; }
-    public string AddressStreet {get; init; }
-    public string AddressHouseNumber { get;  init; }
+    public string? AddressCountry { get; init; }
+    public string? AddressProvince { get; init; }
+    public string? AddressRegion { get; init; }
+    public string? AddressCity {get; init; }
+    public string? AddressDistrict {get; init; }
+    public string? AddressSubdistrict {get; init; }
+    public string? AddressStreet {get; init; }
+    public string? AddressHouseNumber { get;  init; }
     public string? GeolocationLatitude { get; init; }
     public string? GeolocationLongitude { get; init; }
     public string Description { get; init; }
@@ -26,19 +26,20 @@ internal sealed class ProcessedAdvertisementDataModel : IDataModel<ProcessedAdve
     public string PriceCurrency { get; init; }
     public decimal? DepositAmount { get; init; }
     public string? DepositCurrency { get; init; }
+    public decimal? FeeAmount { get; init; }
+    public string? FeeCurrency { get; init; }
     public int RoomsValue { get; init; }
     public string RoomsUnit { get; init; }
     public int FloorSpecific { get; init; }
     public int? FloorTotal { get; init; }
-    public decimal AreaValue { get; init; }
+    public decimal AreaAmount { get; init; }
     public string AreaUnit { get; init; }
     public string[] Facilities { get; init; }
     public long? AddedAt { get; init; }
     public long? UpdatedAt { get; init; }
     public string? AvailableFrom { get; init; }
     public bool? Pets { get; init; }
-    public IEnumerable<string> Photos { get; init; }
-    public bool IsFlagged { get; private set; }
+    public bool IsFlagged { get; init; }
 
     private ProcessedAdvertisementDataModel(ProcessedAdvertisement original)
     {
@@ -59,55 +60,57 @@ internal sealed class ProcessedAdvertisementDataModel : IDataModel<ProcessedAdve
         PriceAmount = original.Price.Amount;
         PriceCurrency = original.Price.Currency.Code;
         DepositAmount = original.Deposit?.Amount;
-        DepositCurrency = original.Deposit?.Currency.Code;
+        DepositCurrency = original.Deposit?.Currency?.Code is var c && c is null && DepositAmount is not null ? "PLN" : null;
+        FeeAmount = original.Fee?.Amount;
+        FeeCurrency = original.Fee?.Currency.Code;
         RoomsValue = original.Rooms.Value;
         RoomsUnit = original.Rooms.Unit;
         FloorSpecific = original.Floor.Specific;
         FloorTotal = original.Floor.Total;
-        AreaValue = original.Area.Value;
+        AreaAmount = original.Area.Amount;
         AreaUnit = original.Area.Unit;
         Facilities = original.Facilities;
         AddedAt = original.AddedAt?.Ticks;
         UpdatedAt = original.UpdatedAt?.Ticks;
         AvailableFrom = original.AvailableFrom;
         Pets = original.Pets;
-        Photos = original.Photos;
         IsFlagged = original.IsFlagged;
     }
 
     private ProcessedAdvertisementDataModel(Document doc)
     {
-        Link = doc[nameof(Link)];
-        Dedupe = doc[nameof(Dedupe)];
-        AddressCountry = doc[nameof(AddressCountry)];
-        AddressProvince = doc[nameof(AddressProvince)];
-        AddressRegion = doc[nameof(AddressRegion)];
-        AddressCity = doc[nameof(AddressCity)];
-        AddressDistrict = doc[nameof(AddressDistrict)];
-        AddressSubdistrict = doc[nameof(AddressSubdistrict)];
-        AddressStreet = doc[nameof(AddressStreet)];
-        AddressHouseNumber = doc[nameof(AddressHouseNumber)];
-        GeolocationLatitude = doc[nameof(GeolocationLatitude)];
-        GeolocationLongitude = doc[nameof(GeolocationLongitude)];
-        Description = doc[nameof(Description)];
-        ContactType = doc[nameof(ContactType)];
-        PriceAmount = doc[nameof(PriceAmount)].AsDecimal();
-        PriceCurrency = doc[nameof(PriceCurrency)];
-        DepositAmount = doc[nameof(DepositAmount)].AsNullableDecimal();
-        DepositCurrency = doc[nameof(DepositCurrency)].AsNullableString();
-        RoomsValue = doc[nameof(RoomsValue)].AsInt();
-        RoomsUnit = doc[nameof(RoomsUnit)];
-        FloorSpecific = doc[nameof(FloorSpecific)].AsInt();
-        FloorTotal = doc[nameof(FloorTotal)].AsNullableInt();
-        AreaValue = doc[nameof(AreaValue)].AsDecimal();
-        AreaUnit = doc[nameof(AreaUnit)];
-        Facilities = doc[nameof(Facilities)].AsArrayOfString();
-        AddedAt = doc[nameof(AddedAt)].AsLong();
-        UpdatedAt = doc[nameof(UpdatedAt)].AsLong();
-        AvailableFrom = doc[nameof(AvailableFrom)];
-        Pets = doc[nameof(Pets)].AsBoolean();
-        Photos = doc[nameof(Photos)].AsArrayOfString();
-        IsFlagged = doc[nameof(IsFlagged)].AsBoolean();
+        Link = doc.GetProperty(nameof(Link));
+        Dedupe = doc.GetProperty(nameof(Dedupe));
+        AddressCountry = doc.GetNullableProperty(nameof(AddressCountry))?.AsNullableString();
+        AddressProvince = doc.GetNullableProperty(nameof(AddressProvince))?.AsNullableString();
+        AddressRegion = doc.GetNullableProperty(nameof(AddressRegion))?.AsNullableString();
+        AddressCity = doc.GetNullableProperty(nameof(AddressCity))?.AsNullableString();
+        AddressDistrict = doc.GetNullableProperty(nameof(AddressDistrict))?.AsNullableString();
+        AddressSubdistrict = doc.GetNullableProperty(nameof(AddressSubdistrict))?.AsNullableString();
+        AddressStreet = doc.GetNullableProperty(nameof(AddressStreet))?.AsNullableString();
+        AddressHouseNumber = doc.GetNullableProperty(nameof(AddressHouseNumber))?.AsNullableString();
+        GeolocationLatitude = doc.GetNullableProperty(nameof(GeolocationLatitude))?.AsNullableString();
+        GeolocationLongitude = doc.GetNullableProperty(nameof(GeolocationLongitude))?.AsNullableString();
+        Description = doc.GetProperty(nameof(Description));
+        ContactType = doc.GetProperty(nameof(ContactType));
+        PriceAmount = doc.GetProperty(nameof(PriceAmount)).AsDecimal();
+        PriceCurrency = doc.GetProperty(nameof(PriceCurrency));
+        DepositAmount = doc.GetNullableProperty(nameof(DepositAmount))?.AsNullableDecimal();
+        DepositCurrency = doc.GetNullableProperty(nameof(DepositCurrency))?.AsNullableString();
+        FeeAmount = doc.GetNullableProperty(nameof(FeeAmount))?.AsNullableDecimal();
+        FeeCurrency = doc.GetNullableProperty(nameof(FeeCurrency))?.AsNullableString();
+        RoomsValue = doc.GetProperty(nameof(RoomsValue)).AsInt();
+        RoomsUnit = doc.GetProperty(nameof(RoomsUnit));
+        FloorSpecific = doc.GetProperty(nameof(FloorSpecific)).AsInt();
+        FloorTotal = doc.GetNullableProperty(nameof(FloorTotal))?.AsNullableInt();
+        AreaAmount = doc.GetProperty(nameof(AreaAmount)).AsDecimal();
+        AreaUnit = doc.GetProperty(nameof(AreaUnit));
+        Facilities = doc.GetProperty(nameof(Facilities)).AsArrayOfString();
+        AddedAt = doc.GetProperty(nameof(AddedAt)).AsLong();
+        UpdatedAt = doc.GetProperty(nameof(UpdatedAt)).AsLong();
+        AvailableFrom = doc.GetNullableProperty(nameof(AvailableFrom))?.AsNullableString();
+        Pets = doc.GetNullableProperty(nameof(Pets))?.AsNullableBoolean();
+        IsFlagged = doc.GetProperty(nameof(IsFlagged)).AsBoolean();
     }
 
     public Type GetDomainModelType() => typeof(ProcessedAdvertisement);
@@ -120,12 +123,15 @@ internal sealed class ProcessedAdvertisementDataModel : IDataModel<ProcessedAdve
     public ProcessedAdvertisement ToDomainModel()
     {
         var price = new Money(PriceAmount, Currency.FromCode(PriceCurrency).Value);
-        var deposit = DepositAmount.HasValue
+        var deposit = DepositAmount.HasValue && DepositCurrency is not null
             ? new Money(DepositAmount.Value, Currency.FromCode(DepositCurrency!).Value)
+            : null;
+        var fee = FeeAmount.HasValue && FeeCurrency is not null
+            ? new Money(FeeAmount.Value, Currency.FromCode(FeeCurrency!).Value)
             : null;
         var rooms = new RoomsCount(RoomsValue, RoomsUnit);
         var floor = new Floor(FloorSpecific, FloorTotal);
-        var area = new Area(AreaValue, AreaUnit);
+        var area = new Area(AreaAmount, AreaUnit);
         var address = new Address(
             AddressCountry,
             AddressProvince,
@@ -149,6 +155,7 @@ internal sealed class ProcessedAdvertisementDataModel : IDataModel<ProcessedAdve
             ContactType,
             price,
             deposit,
+            fee,
             rooms,
             floor,
             area,
@@ -157,7 +164,6 @@ internal sealed class ProcessedAdvertisementDataModel : IDataModel<ProcessedAdve
             updatedAt,
             AvailableFrom,
             Pets,
-            Photos,
             IsFlagged);
     }
 }

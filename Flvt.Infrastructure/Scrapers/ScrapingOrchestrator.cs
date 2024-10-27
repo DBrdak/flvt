@@ -8,18 +8,16 @@ namespace Flvt.Infrastructure.Scrapers;
 
 internal sealed class ScrapingOrchestrator : IScrapingOrchestrator
 {
-    public async Task<IEnumerable<ScrapedAdvertisement>> ScrapeAsync(Filter filter)
+    public async Task<IEnumerable<AdvertisementsScrapeResult>> ScrapeAsync(Filter filter)
     {
-        Log.Logger.Information("Processing ads for filter: {filter}", filter);
-
         var otodomScraper = new OtodomScraper(filter);
 
         var otodomTask = otodomScraper.ScrapeAsync();
 
         await Task.WhenAll(otodomTask);
 
-        var otodomAds = otodomTask.Result.ToList();
+        var otodomScrapeResult = otodomTask.Result;
 
-        return [.. otodomAds];
+        return [otodomScrapeResult];
     }
 }

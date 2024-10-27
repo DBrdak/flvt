@@ -1,11 +1,9 @@
 ﻿using Amazon.DynamoDBv2.DocumentModel;
-using Flvt.Domain.Filters;
 using Flvt.Domain.Primitives.Advertisements;
 using Flvt.Domain.Subscribers;
 using Flvt.Infrastructure.Data.DataModels.Exceptions;
-using Flvt.Infrastructure.Data.DataModels.Filters;
 using System.Reflection;
-using System.Xml.Linq;
+using Flvt.Infrastructure.Data.Extensions;
 
 namespace Flvt.Infrastructure.Data.DataModels.Subscribers;
 
@@ -25,10 +23,10 @@ internal sealed class SubscriberDataModel : IDataModel<Subscriber>
     }
     public SubscriberDataModel(Document doc)
     {
-        Email = doc[nameof(Email)];
-        Tier = doc[nameof(Tier)];
-        CountryCode = doc[nameof(Country)];
-        Filters = doc[nameof(Filters)].AsArrayOfString();
+        Email = doc.GetProperty(nameof(Email));
+        Tier = doc.GetProperty(nameof(Tier));
+        CountryCode = doc.GetProperty(nameof(CountryCode));
+        Filters = doc.GetProperty(nameof(Filters)).AsArrayOfString();
     }
 
     public static SubscriberDataModel FromDomainModel(Subscriber domainModel) => new(domainModel);

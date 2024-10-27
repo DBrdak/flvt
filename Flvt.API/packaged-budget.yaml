@@ -29,6 +29,13 @@ Resources:
       VisibilityTimeout: 900
     Metadata:
       SamResourceId: FinishedBatchesQueue
+  LaunchedFiltersQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: LaunchedFiltersQueue
+      VisibilityTimeout: 900
+    Metadata:
+      SamResourceId: LaunchedFiltersQueue
   ScrapeAdvertisementsScrapAll:
     Type: AWS::Serverless::Function
     Metadata:
@@ -37,7 +44,7 @@ Resources:
     Properties:
       FunctionName: ScrapAll
       Runtime: dotnet8
-      CodeUri: s3://flvt/e285ccd0a9ed15853abb13f76519d660
+      CodeUri: s3://flvt/31bf8c35064145dab90c10b782825956
       MemorySize: 3008
       Timeout: 900
       Role: arn:aws:iam::975049887576:role/FullAccess
@@ -65,7 +72,7 @@ Resources:
     Properties:
       FunctionName: StartProcessing
       Runtime: dotnet8
-      CodeUri: s3://flvt/e285ccd0a9ed15853abb13f76519d660
+      CodeUri: s3://flvt/31bf8c35064145dab90c10b782825956
       MemorySize: 3008
       Timeout: 300
       Role: arn:aws:iam::975049887576:role/FullAccess
@@ -79,7 +86,7 @@ Resources:
     Properties:
       FunctionName: CheckProcessingStatus
       Runtime: dotnet8
-      CodeUri: s3://flvt/e285ccd0a9ed15853abb13f76519d660
+      CodeUri: s3://flvt/31bf8c35064145dab90c10b782825956
       MemorySize: 3008
       Timeout: 120
       Role: arn:aws:iam::975049887576:role/FullAccess
@@ -99,7 +106,7 @@ Resources:
     Properties:
       FunctionName: EndProcessing
       Runtime: dotnet8
-      CodeUri: s3://flvt/e285ccd0a9ed15853abb13f76519d660
+      CodeUri: s3://flvt/31bf8c35064145dab90c10b782825956
       MemorySize: 3008
       Timeout: 300
       Role: arn:aws:iam::975049887576:role/FullAccess
@@ -121,7 +128,7 @@ Resources:
     Properties:
       FunctionName: RemoveOutdated
       Runtime: dotnet8
-      CodeUri: s3://flvt/e285ccd0a9ed15853abb13f76519d660
+      CodeUri: s3://flvt/31bf8c35064145dab90c10b782825956
       MemorySize: 3008
       Timeout: 300
       Role: arn:aws:iam::975049887576:role/FullAccess
@@ -141,7 +148,7 @@ Resources:
     Properties:
       FunctionName: RemoveDuplicates
       Runtime: dotnet8
-      CodeUri: s3://flvt/e285ccd0a9ed15853abb13f76519d660
+      CodeUri: s3://flvt/31bf8c35064145dab90c10b782825956
       MemorySize: 3008
       Timeout: 300
       Role: arn:aws:iam::975049887576:role/FullAccess
@@ -162,7 +169,7 @@ Resources:
     Properties:
       FunctionName: UpdateUnprocessedScrapedAds
       Runtime: dotnet8
-      CodeUri: s3://flvt/e285ccd0a9ed15853abb13f76519d660
+      CodeUri: s3://flvt/31bf8c35064145dab90c10b782825956
       MemorySize: 3008
       Timeout: 300
       Role: arn:aws:iam::975049887576:role/FullAccess
@@ -174,31 +181,3 @@ Resources:
           Properties:
             Name: UpdateUnprocessedScrapedAdsSchedule
             Schedule: cron(0 3 * * ? *)
-  AdvertisementsGetAllAdvertisements:
-    Type: AWS::Serverless::Function
-    Metadata:
-      SamResourceId: AdvertisementsGetAllAdvertisements
-      SyncedEventProperties:
-        RootGet:
-        - Path
-        - Method
-      SyncedEvents:
-      - RootGet
-      Tool: Amazon.Lambda.Annotations
-    Properties:
-      FunctionName: AdvertisementsGetAllAdvertisements
-      Runtime: dotnet8
-      CodeUri: s3://flvt/e285ccd0a9ed15853abb13f76519d660
-      MemorySize: 3008
-      Timeout: 100
-      Role: arn:aws:iam::975049887576:role/FullAccess
-      PackageType: Zip
-      Handler: Flvt.API::Flvt.API.Functions.API.Advertisements.AdvertisementsFunctions_GetAllAdvertisements_Generated::GetAllAdvertisements
-      Events:
-        RootGet:
-          Type: HttpApi
-          Properties:
-            Path: /v1/advertisements
-            Method: GET
-            ApiId:
-              Ref: FlvtApi

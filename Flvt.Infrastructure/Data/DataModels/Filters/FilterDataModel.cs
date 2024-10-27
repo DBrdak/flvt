@@ -51,23 +51,23 @@ internal sealed class FilterDataModel : IDataModel<Filter>
     }
     private FilterDataModel(Document doc)
     {
-        Id = doc[nameof(Id)];
-        Name = doc[nameof(Name)];
-        Location = doc[nameof(Location)];
-        MinPrice = doc[nameof(MinPrice)].AsNullableDecimal();
-        MaxPrice = doc[nameof(MaxPrice)].AsNullableDecimal();
-        MinRooms = doc[nameof(MinRooms)].AsNullableInt();
-        MaxRooms = doc[nameof(MaxRooms)].AsNullableInt();
-        MinArea = doc[nameof(MinArea)].AsNullableDecimal();
-        MaxArea = doc[nameof(MaxArea)].AsNullableDecimal();
-        FrequencyName = doc[nameof(FrequencyName)];
-        FrequencyEverySeconds = doc[nameof(FrequencyEverySeconds)].AsLong();
-        FrequencyLastUsed = doc[nameof(FrequencyLastUsed)].AsLong();
-        Tier = doc[nameof(Tier)];
-        OnlyLast24H = doc[nameof(OnlyLast24H)].AsBoolean();
-        FoundAdvertisements = doc[nameof(FoundAdvertisements)].AsArrayOfString();
-        RecentlyFoundAdvertisements = doc[nameof(RecentlyFoundAdvertisements)].AsArrayOfString();
-        SeenAdvertisements = doc[nameof(SeenAdvertisements)].AsArrayOfString();
+        Id = doc.GetProperty(nameof(Id));
+        Name = doc.GetProperty(nameof(Name));
+        Location = doc.GetProperty(nameof(Location));
+        MinPrice = doc.GetNullableProperty(nameof(MinPrice))?.AsNullableDecimal();
+        MaxPrice = doc.GetNullableProperty(nameof(MaxPrice))?.AsNullableDecimal();
+        MinRooms = doc.GetNullableProperty(nameof(MinRooms))?.AsNullableInt();
+        MaxRooms = doc.GetNullableProperty(nameof(MaxRooms))?.AsNullableInt();
+        MinArea = doc.GetNullableProperty(nameof(MinArea))?.AsNullableDecimal();
+        MaxArea = doc.GetNullableProperty(nameof(MaxArea))?.AsNullableDecimal();
+        FrequencyName = doc.GetProperty(nameof(FrequencyName));
+        FrequencyEverySeconds = doc.GetProperty(nameof(FrequencyEverySeconds)).AsLong();
+        FrequencyLastUsed = doc.GetProperty(nameof(FrequencyLastUsed)).AsLong();
+        Tier = doc.GetProperty(nameof(Tier));
+        OnlyLast24H = doc.GetProperty(nameof(OnlyLast24H)).AsBoolean();
+        FoundAdvertisements = doc.GetProperty(nameof(FoundAdvertisements)).AsArrayOfString();
+        RecentlyFoundAdvertisements = doc.GetProperty(nameof(RecentlyFoundAdvertisements)).AsArrayOfString();
+        SeenAdvertisements = doc.GetProperty(nameof(SeenAdvertisements)).AsArrayOfString();
     }
 
     public static FilterDataModel FromDomainModel(Filter domainModel) => new (domainModel);

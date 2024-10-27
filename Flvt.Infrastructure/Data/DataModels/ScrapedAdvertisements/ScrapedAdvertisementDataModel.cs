@@ -1,5 +1,6 @@
 ﻿using Amazon.DynamoDBv2.DocumentModel;
 using Flvt.Domain.ScrapedAdvertisements;
+using Flvt.Infrastructure.Data.Extensions;
 
 namespace Flvt.Infrastructure.Data.DataModels.ScrapedAdvertisements;
 
@@ -7,7 +8,6 @@ internal sealed class ScrapedAdvertisementDataModel : IDataModel<ScrapedAdvertis
 {
     public string Link { get; init; }
     public string AdContent { get; init; }
-    public IEnumerable<string> Photos { get; init; }
     public bool IsProcessed { get; init; }
     public long? ProcessingStartedAt { get; init; }
 
@@ -15,18 +15,16 @@ internal sealed class ScrapedAdvertisementDataModel : IDataModel<ScrapedAdvertis
     {
         Link = original.Link;
         AdContent = original.AdContent;
-        Photos = original.Photos;
         IsProcessed = original.IsProcessed;
         ProcessingStartedAt = original.ProcessingStartedAt;
     }
 
     public ScrapedAdvertisementDataModel(Document doc)
     {
-        Link = doc[nameof(Link)];
-        AdContent = doc[nameof(AdContent)];
-        Photos = doc[nameof(Photos)].AsArrayOfString();
-        IsProcessed = doc[nameof(Photos)].AsBoolean();
-        ProcessingStartedAt = doc[nameof(ProcessingStartedAt)].AsLong();
+        Link = doc.GetProperty(nameof(Link));
+        AdContent = doc.GetProperty(nameof(AdContent));
+        IsProcessed = doc.GetProperty(nameof(IsProcessed)).AsBoolean();
+        ProcessingStartedAt = doc.GetNullableProperty(nameof(ProcessingStartedAt))?.AsNullableLong();
     }
 
     public static ScrapedAdvertisementDataModel FromDomainModel(ScrapedAdvertisement domainModel) => new(domainModel);
@@ -40,7 +38,6 @@ internal sealed class ScrapedAdvertisementDataModel : IDataModel<ScrapedAdvertis
         new(
             Link,
             AdContent,
-            Photos,
             ProcessingStartedAt,
             IsProcessed);
 }

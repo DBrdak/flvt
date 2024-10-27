@@ -1,4 +1,5 @@
 ﻿using Flvt.Application.Abstractions;
+using Flvt.Domain.Photos;
 using Flvt.Domain.ProcessedAdvertisements;
 using Flvt.Domain.ScrapedAdvertisements;
 using Flvt.Domain.Subscribers;
@@ -41,6 +42,7 @@ public static class InfrastructureInjector
     private static IServiceCollection AddDataAccessLayer(this IServiceCollection services) =>
         services.AddScoped<DataContext>()
             .AddScoped(typeof(DataModelService<>))
+            .AddScoped<IAdvertisementPhotosRepository, AdvertisementPhotosRepository>()
             .AddScoped<IProcessedAdvertisementRepository, ProcessedAdvertisementRepository>()
             .AddScoped<IScrapedAdvertisementRepository, ScrapedAdvertisementRepository>()
             .AddScoped<ISubscriberRepository, SubscriberRepository>()

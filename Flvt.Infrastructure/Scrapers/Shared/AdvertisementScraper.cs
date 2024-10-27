@@ -1,4 +1,5 @@
 ﻿using Flvt.Domain.Filters;
+using Flvt.Domain.Photos;
 using Flvt.Domain.ScrapedAdvertisements;
 using Flvt.Infrastructure.Monitoring;
 using Flvt.Infrastructure.Utlis.Extensions;
@@ -20,6 +21,7 @@ internal abstract class AdvertisementScraper
     private readonly AdvertisementParser _advertisementParser;
     private readonly HashSet<string> _advertisementsLinks = [];
     private readonly List<ScrapedAdvertisement> _advertisements = [];
+    private readonly List<AdvertisementPhotos> _photos = [];
     private readonly ScrapingMonitor _monitor;
 
     protected AdvertisementScraper(
@@ -32,7 +34,7 @@ internal abstract class AdvertisementScraper
         _monitor = new ScrapingMonitor(this);
     }
 
-    public async Task<IEnumerable<ScrapedAdvertisement>> ScrapeAsync()
+    public async Task<AdvertisementsScrapeResult> ScrapeAsync()
     {
         try
         {
@@ -62,7 +64,7 @@ internal abstract class AdvertisementScraper
         SuccessfullyScrapedLinks = _advertisementsLinks.Count;
         await _monitor.DisposeAsync();
 
-        return _advertisements;
+        return new (_advertisements, _photos);
     }
 
     private async Task ScrapeAdvertisementsAsync(IEnumerable<string> links)
@@ -75,9 +77,10 @@ internal abstract class AdvertisementScraper
                 _advertisementParser.SetHtmlDocument(htmlDoc);
 
                 var content = _advertisementParser.ParseContent();
-                var photos = _advertisementParser.ParsePhotos();
+                var photos = _advertisementParser.ParsePhotos().ToList();
 
-                _advertisements.Add(new(link, JsonConvert.SerializeObject(content), photos));
+                _advertisements.Add(new(link, JsonConvert.SerializeObject(content)));
+                _photos.Add(new AdvertisementPhotos(link, photos));
             }
             catch (Exception e)
             {
@@ -86,7 +89,7 @@ internal abstract class AdvertisementScraper
             }
         }
     }
-
+    
     private async Task ScrapeAdvertisementsLinksAsync()
     {
         var page = 1;

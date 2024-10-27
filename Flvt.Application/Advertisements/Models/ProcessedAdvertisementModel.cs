@@ -1,3 +1,4 @@
+using Flvt.Domain.Photos;
 using Flvt.Domain.Primitives.Advertisements;
 using Flvt.Domain.Primitives.Money;
 using Flvt.Domain.ProcessedAdvertisements;
@@ -23,6 +24,8 @@ public sealed record ProcessedAdvertisementModel
     public bool? Pets { get; init; }
     public IEnumerable<string> Photos { get; init; }
     public bool IsFlagged { get; private set; }
+    public bool IsSeen { get; init; }
+    public bool IsNew { get; init; }
 
     private ProcessedAdvertisementModel(
         string link,
@@ -62,7 +65,7 @@ public sealed record ProcessedAdvertisementModel
         IsFlagged = isFlagged;
     }
 
-    internal static ProcessedAdvertisementModel FromDomainModel(ProcessedAdvertisement processedAdvertisement) =>
+    internal static ProcessedAdvertisementModel FromDomainModel(ProcessedAdvertisement processedAdvertisement, AdvertisementPhotos photos) =>
         new(
             processedAdvertisement.Link,
             processedAdvertisement.Address,
@@ -79,6 +82,6 @@ public sealed record ProcessedAdvertisementModel
             processedAdvertisement.UpdatedAt,
             processedAdvertisement.AvailableFrom,
             processedAdvertisement.Pets,
-            processedAdvertisement.Photos,
+            photos.Links,
             processedAdvertisement.IsFlagged);
 }

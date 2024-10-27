@@ -1,4 +1,5 @@
 ﻿using Amazon.DynamoDBv2.DocumentModel;
+using Flvt.Infrastructure.Data.Extensions;
 
 namespace Flvt.Infrastructure.Data.DataModels.Batches;
 
@@ -19,9 +20,9 @@ internal sealed record BatchDataModel : IDataModel<BatchDataModel>
 
     private BatchDataModel(Document document)
     {
-        Id = document[nameof(Id)];
-        ProcessingAdvertisementsLinks = document[nameof(ProcessingAdvertisementsLinks)].AsArrayOfString();
-        IsFinished = document[nameof(IsFinished)].AsBoolean();
+        Id = document.GetProperty(nameof(Id));
+        ProcessingAdvertisementsLinks = document.GetProperty(nameof(ProcessingAdvertisementsLinks)).AsArrayOfString();
+        IsFinished = document.GetProperty(nameof(IsFinished)).AsBoolean();
     }
 
     public void FinishBatch() => IsFinished = true;

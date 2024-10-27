@@ -142,7 +142,7 @@ internal sealed class ProcessingOrchestrator : IProcessingOrchestrator
         await Task.WhenAll(deleteTasks);
         var groupedProcessedAdvertisements = await Task.WhenAll(processTasks);
 
-        var processedAdvertisements = groupedProcessedAdvertisements
+        var aiProcessedAdvertisements = groupedProcessedAdvertisements
             .Where(ads => ads is not null)
             .SelectMany(ad => ad!)
             .ToList();
@@ -151,7 +151,7 @@ internal sealed class ProcessingOrchestrator : IProcessingOrchestrator
             .RemoveRangeAsync(completedBatches
                 .Select(batch => batch.DataBatch.Id));
 
-        return processedAdvertisements;
+        return aiProcessedAdvertisements;
     }
 
     private async Task RemoveFailedBatchAsync(BatchAggregate batchAggregate)
