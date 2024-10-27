@@ -1,6 +1,8 @@
 using Flvt.Application.Abstractions;
+using Flvt.Application.Advertisements.Models;
 using Flvt.Application.Messaging;
 using Flvt.Domain.Filters;
+using Flvt.Domain.Photos;
 using Flvt.Domain.Primitives.Responses;
 using Flvt.Domain.ProcessedAdvertisements;
 using Serilog;
@@ -11,16 +13,19 @@ internal sealed class LaunchFiltersCommandHandler : ICommandHandler<LaunchFilter
 {
     private readonly IFilterRepository _filterRepository;
     private readonly IProcessedAdvertisementRepository _processedAdvertisementRepository;
+    private readonly IAdvertisementPhotosRepository _photosRepository;
     private readonly IQueuePublisher _queuePublisher;
 
     public LaunchFiltersCommandHandler(
         IFilterRepository filterRepository,
         IProcessedAdvertisementRepository processedAdvertisementRepository,
-        IQueuePublisher queuePublisher)
+        IQueuePublisher queuePublisher,
+        IAdvertisementPhotosRepository photosRepository)
     {
         _filterRepository = filterRepository;
         _processedAdvertisementRepository = processedAdvertisementRepository;
         _queuePublisher = queuePublisher;
+        _photosRepository = photosRepository;
     }
 
     public async Task<Result> Handle(LaunchFiltersCommand request, CancellationToken cancellationToken)
@@ -76,7 +81,22 @@ internal sealed class LaunchFiltersCommandHandler : ICommandHandler<LaunchFilter
             .Select(advertisement => advertisement.Link)
             .ToList();
 
-        filter.NewAdvertisementsFound(advertisementLinks);
+        var photosGetResult = await _photosRepository.GetByManyAdvertisementLinkAsync(advertisementLinks);
+
+        if (photosGetResult.IsFailure)
+        {
+            Log.Error(
+                "Failed to get advertisements photos for filter {FilterId}, error :{error}",
+                filter.Id,
+                photosGetResult.Error);
+            return null;
+        }
+
+        var photos = photosGetResult.Value;
+
+        var advertisementsToFile = ProcessedAdvertisementModel.FromDomainModel;
+
+        filter.NewAdvertisementsFound(advertisementLinks, "");
 
         return filter;
     }

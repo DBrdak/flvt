@@ -22,12 +22,13 @@ internal sealed class FilterDataModel : IDataModel<Filter>
     public string FrequencyName { get; init; }
     public long FrequencyEverySeconds { get; init; }
     public long FrequencyLastUsed { get; init; }
-    //TODO Implement Preferences
     public string Tier { get; init; }
     public bool OnlyLast24H { get; init; }
     public IEnumerable<string> FoundAdvertisements {get; init; }
     public IEnumerable<string> RecentlyFoundAdvertisements { get; init; }
     public IEnumerable<string> SeenAdvertisements { get; init; }
+    public IEnumerable<string> FollowedAdvertisements { get; init; }
+    public string? AdvertisementsFilePath { get; private set; }
 
     private FilterDataModel(Filter filter)
     {
@@ -48,6 +49,8 @@ internal sealed class FilterDataModel : IDataModel<Filter>
         FoundAdvertisements = filter.FoundAdvertisements;
         RecentlyFoundAdvertisements = filter.RecentlyFoundAdvertisements;
         SeenAdvertisements = filter.SeenAdvertisements;
+        FollowedAdvertisements = filter.FollowedAdvertisements;
+        AdvertisementsFilePath = filter.AdvertisementsFilePath;
     }
     private FilterDataModel(Document doc)
     {
@@ -68,6 +71,8 @@ internal sealed class FilterDataModel : IDataModel<Filter>
         FoundAdvertisements = doc.GetProperty(nameof(FoundAdvertisements)).AsArrayOfString();
         RecentlyFoundAdvertisements = doc.GetProperty(nameof(RecentlyFoundAdvertisements)).AsArrayOfString();
         SeenAdvertisements = doc.GetProperty(nameof(SeenAdvertisements)).AsArrayOfString();
+        FollowedAdvertisements = doc.GetProperty(nameof(FollowedAdvertisements)).AsArrayOfString();
+        AdvertisementsFilePath = doc.GetNullableProperty(nameof(AdvertisementsFilePath))?.AsNullableString();
     }
 
     public static FilterDataModel FromDomainModel(Filter domainModel) => new (domainModel);
@@ -159,10 +164,11 @@ internal sealed class FilterDataModel : IDataModel<Filter>
                        maxArea,
                        frequency,
                        tier,
-                       null,
                        FoundAdvertisements,
                        RecentlyFoundAdvertisements,
                        SeenAdvertisements,
+                       FollowedAdvertisements,
+                       AdvertisementsFilePath,
                        OnlyLast24H
                    ],
                    null) as Filter ??

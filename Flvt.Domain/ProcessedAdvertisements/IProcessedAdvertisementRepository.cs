@@ -11,6 +11,7 @@ public interface IProcessedAdvertisementRepository
 
     Task<Result> RemoveRangeAsync(IEnumerable<string> advertisementsLinks);
     void StartBatchGet();
+    void AddManyItemsToBatchGet(IEnumerable<string> ids);
     void AddItemToBatchGet(string scrapedAdvertisementId);
     Task<Result<IEnumerable<ProcessedAdvertisement>>> ExecuteBatchGetAsync();
 

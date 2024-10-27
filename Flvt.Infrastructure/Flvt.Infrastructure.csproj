@@ -9,6 +9,7 @@
   <ItemGroup>
     <PackageReference Include="AWSSDK.CloudWatch" Version="3.7.401.28" />
     <PackageReference Include="AWSSDK.DynamoDBv2" Version="3.7.401.8" />
+    <PackageReference Include="AWSSDK.S3" Version="3.7.405.4" />
     <PackageReference Include="AWSSDK.SecretsManager" Version="3.7.400.30" />
     <PackageReference Include="AWSSDK.SQS" Version="3.7.400.34" />
     <PackageReference Include="HtmlAgilityPack" Version="1.11.67" />

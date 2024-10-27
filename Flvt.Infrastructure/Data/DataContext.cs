@@ -14,7 +14,7 @@ namespace Flvt.Infrastructure.Data;
 internal sealed class DataContext
 {
     private readonly AmazonDynamoDBClient _client = new (
-        /*new BasicAWSCredentials(XD.LOL2, XD.LOL3), CloudEnvironment.RegionEndpoint*/); //TODO remove hardcoded credentials
+        new BasicAWSCredentials(XD.LOL2, XD.LOL3), CloudEnvironment.RegionEndpoint); //TODO remove hardcoded credentials
 
     private readonly AmazonDynamoDBException _connectionException =
         new("Could not connect to DynamoDB");

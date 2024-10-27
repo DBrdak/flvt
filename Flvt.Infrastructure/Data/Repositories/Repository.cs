@@ -197,7 +197,17 @@ internal abstract class Repository<TEntity>
             throw new InvalidOperationException("Batch get was not started");
         }
 
-        _batchGet.AddKey(id);;
+        _batchGet.AddKey(id);
+    }
+
+    public void AddManyItemsToBatchGet(IEnumerable<string> ids)
+    {
+        if (_batchGet is null)
+        {
+            throw new InvalidOperationException("Batch get was not started");
+        }
+
+        ids.ToList().ForEach(id => _batchGet.AddKey(id));
     }
 
     public async Task<Result<IEnumerable<TEntity>>> ExecuteBatchGetAsync()

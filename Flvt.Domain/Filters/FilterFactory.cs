@@ -28,7 +28,6 @@ internal sealed class FilterFactory
             minArea,
             maxArea,
             Frequency.Daily,
-            SubscribtionTier.Basic,
-            null);
+            SubscribtionTier.Basic);
     }
 }

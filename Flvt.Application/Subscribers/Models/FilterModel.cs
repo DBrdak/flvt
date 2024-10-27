@@ -13,7 +13,6 @@ public sealed record FilterModel
     public int? MaxRooms { get; private set; }
     public decimal? MinArea { get; private set; }
     public decimal? MaxArea { get; private set; }
-    public Preferences? Preferences { get; init; }
     public string Frequency { get; init; }
     public DateTimeOffset LastUsed { get; init; }
     public DateTimeOffset NextUse { get; init; }
@@ -29,7 +28,6 @@ public sealed record FilterModel
         int? maxRooms,
         decimal? minArea,
         decimal? maxArea,
-        Preferences? preferences,
         string frequency,
         DateTimeOffset lastUsed,
         DateTimeOffset nextUse,
@@ -44,7 +42,6 @@ public sealed record FilterModel
         MaxRooms = maxRooms;
         MinArea = minArea;
         MaxArea = maxArea;
-        Preferences = preferences;
         Tier = tier;
         Frequency = frequency;
         LastUsed = lastUsed;
@@ -62,7 +59,6 @@ public sealed record FilterModel
             filter.MaxRooms?.Value,
             filter.MinArea?.Value,
             filter.MaxArea?.Value,
-            filter.Preferences,
             filter.Frequency.Name,
             DateTimeOffset.FromUnixTimeSeconds(filter.Frequency.LastUsed),
             DateTimeOffset.FromUnixTimeSeconds(filter.Frequency.NextUse),

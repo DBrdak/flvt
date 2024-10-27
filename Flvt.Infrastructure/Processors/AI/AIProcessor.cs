@@ -18,7 +18,7 @@ internal sealed class AIProcessor
 {
     private readonly GPTClient _gptClient;
     private readonly GPTMonitor _monitor;
-    private const int maximumBatchCount = 2;
+    private const int maximumBatchCount = 3;
     private const int maximumBatchSize = GPTLimits.MaxBatchTasks / 250;
 
     public AIProcessor(GPTClient gptClient, GPTMonitor monitor)
@@ -157,9 +157,13 @@ internal sealed class AIProcessor
     {
         try
         {
-            return JsonConvert.DeserializeObject<ProcessedAdvertisement>(content) ??
+            var advertisement = JsonConvert.DeserializeObject<ProcessedAdvertisement>(content) ??
                    throw new NullReferenceException(
                        "ProcessedAdvertisement deserialization returned null value");
+
+            advertisement.ValidateFields();
+
+            return advertisement;
         }
         catch (Exception e)
         {

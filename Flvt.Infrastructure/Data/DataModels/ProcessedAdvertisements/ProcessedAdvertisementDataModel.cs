@@ -103,11 +103,12 @@ internal sealed class ProcessedAdvertisementDataModel : IDataModel<ProcessedAdve
         RoomsUnit = doc.GetProperty(nameof(RoomsUnit));
         FloorSpecific = doc.GetProperty(nameof(FloorSpecific)).AsInt();
         FloorTotal = doc.GetNullableProperty(nameof(FloorTotal))?.AsNullableInt();
-        AreaAmount = doc.GetProperty(nameof(AreaAmount)).AsDecimal();
+        //AreaAmount = doc.GetProperty(nameof(AreaAmount)).AsDecimal(); TODO Temp
+        AreaAmount = doc.GetNullableProperty(nameof(AreaAmount))?.AsNullableDecimal() ?? 0;
         AreaUnit = doc.GetProperty(nameof(AreaUnit));
         Facilities = doc.GetProperty(nameof(Facilities)).AsArrayOfString();
-        AddedAt = doc.GetProperty(nameof(AddedAt)).AsLong();
-        UpdatedAt = doc.GetProperty(nameof(UpdatedAt)).AsLong();
+        AddedAt = doc.GetNullableProperty(nameof(AddedAt))?.AsNullableLong();
+        UpdatedAt = doc.GetNullableProperty(nameof(UpdatedAt))?.AsNullableLong();
         AvailableFrom = doc.GetNullableProperty(nameof(AvailableFrom))?.AsNullableString();
         Pets = doc.GetNullableProperty(nameof(Pets))?.AsNullableBoolean();
         IsFlagged = doc.GetProperty(nameof(IsFlagged)).AsBoolean();

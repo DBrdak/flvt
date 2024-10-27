@@ -1,3 +1,5 @@
+using Amazon.Extensions.NETCore.Setup;
+using Amazon.S3;
 using Flvt.Application;
 using Flvt.Infrastructure;
 using Microsoft.Extensions.Configuration;
@@ -15,6 +17,7 @@ public class Startup
             .Build();
 
         services.AddSingleton<IConfiguration>(configuration);
+        services.AddAWSService<IAmazonS3>();
 
         services.AddApplication();
         services.AddInfrastructure();

@@ -15,7 +15,6 @@ public sealed record Filter
     public FilterArea? MinArea { get; private set; }
     public FilterArea? MaxArea { get; private set; }
     public Frequency Frequency { get; init; }
-    public Preferences? Preferences { get; init; }
     public SubscribtionTier Tier { get; init; }
     public bool OnlyLast24H { get; init; }
     private List<string> _foundAdvertisements;
@@ -24,6 +23,9 @@ public sealed record Filter
     public IReadOnlyList<string> RecentlyFoundAdvertisements => _recentlyFoundAdvertisements;
     private List<string> _seenAdvertisements;
     public IReadOnlyList<string> SeenAdvertisements => _seenAdvertisements;
+    private List<string> _followedAdvertisements;
+    public IReadOnlyCollection<string> FollowedAdvertisements => _followedAdvertisements;
+    public string? AdvertisementsFilePath { get; private set; }
     public bool ShouldLaunch => Frequency.NextUse <= DateTimeOffset.UtcNow.ToUnixTimeSeconds();
 
     private Filter(
@@ -38,10 +40,11 @@ public sealed record Filter
         FilterArea? maxArea,
         Frequency frequency,
         SubscribtionTier tier,
-        Preferences? preferences,
         List<string> foundAdvertisements,
         List<string> recentlyFoundAdvertisements,
         List<string> seenAdvertisements,
+        List<string> followedAdvertisements,
+        string? advertisementsFilePath,
         bool onlyLast24H = false)
     {
         Id = id;
@@ -54,17 +57,18 @@ public sealed record Filter
         MinArea = minArea;
         MaxArea = maxArea;
         Frequency = frequency;
-        Preferences = preferences;
         _foundAdvertisements = foundAdvertisements;
         _recentlyFoundAdvertisements = recentlyFoundAdvertisements;
         _seenAdvertisements = seenAdvertisements;
+        _followedAdvertisements = followedAdvertisements;
+        AdvertisementsFilePath = advertisementsFilePath;
         Tier = tier;
         OnlyLast24H = onlyLast24H;
     }
 
     public static Filter CreateForInternalScan(FilterLocation location) =>
         new (
-            Guid.NewGuid().ToString(),
+            Ulid.NewUlid().ToString(),
             FilterName.Create($"Scan-{DateTime.UtcNow:yyyy/MM//dd HH:mm:ss.fff}").Value,
             location,
             null,
@@ -75,10 +79,11 @@ public sealed record Filter
             null,
             Frequency.Daily,
             SubscribtionTier.Basic,
+            [],
+            [],
+            [],
+            [],
             null,
-            [],
-            [],
-            [],
             true);
 
     internal static Result<Filter> Create(
@@ -91,8 +96,7 @@ public sealed record Filter
         decimal? minArea,
         decimal? maxArea,
         Frequency frequency,
-        SubscribtionTier tier,
-        string? preferences)
+        SubscribtionTier tier)
     {
         var filterName = FilterName.Create(name);
 
@@ -162,17 +166,8 @@ public sealed record Filter
             return filterMaxRooms.Error;
         }
 
-        var preferencesObject = preferences is null
-            ? null
-            : Preferences.Create(preferences);
-
-        if (preferencesObject is not null && preferencesObject.IsFailure)
-        {
-            return preferencesObject.Error;
-        }
-
         return new Filter(
-            Guid.NewGuid().ToString(),
+            Ulid.NewUlid().ToString(),
             filterName.Value,
             filterLocation.Value,
             filterMinPrice?.Value,
@@ -183,13 +178,14 @@ public sealed record Filter
             filterMaxArea?.Value,
             frequency,
             tier,
-            preferencesObject?.Value,
             [],
             [],
-            []);
+            [],
+            [],
+            null);
     }
 
-    public void NewAdvertisementsFound(List<string> advertisements)
+    public void NewAdvertisementsFound(List<string> advertisements, string advertisementsFilePath)
     {
         _recentlyFoundAdvertisements = advertisements
             .Where(ad => _foundAdvertisements.All(foundAd => foundAd != ad))
@@ -201,8 +197,15 @@ public sealed record Filter
             .Where(seenAd => _foundAdvertisements.Contains(seenAd))
             .ToList();
 
+        _followedAdvertisements = _followedAdvertisements
+            .Where(followedAd => _foundAdvertisements.Contains(followedAd))
+            .ToList();
+
         Frequency.Used();
+        AdvertisementsFilePath = advertisementsFilePath;
     }
 
     public void MarkAsSeen(string advertisement) => _seenAdvertisements.Add(advertisement);
+
+    public void Follow(string advertisement) => _followedAdvertisements.Add(advertisement);
 }

@@ -1,3 +1,4 @@
+using Flvt.Domain.Filters;
 using Flvt.Domain.Photos;
 using Flvt.Domain.Primitives.Advertisements;
 using Flvt.Domain.Primitives.Money;
@@ -24,8 +25,9 @@ public sealed record ProcessedAdvertisementModel
     public bool? Pets { get; init; }
     public IEnumerable<string> Photos { get; init; }
     public bool IsFlagged { get; private set; }
-    public bool IsSeen { get; init; }
+    public bool WasSeen { get; init; }
     public bool IsNew { get; init; }
+    public bool IsFollowed { get; init; }
 
     private ProcessedAdvertisementModel(
         string link,
@@ -44,7 +46,10 @@ public sealed record ProcessedAdvertisementModel
         string? availableFrom,
         bool? pets,
         IEnumerable<string> photos,
-        bool isFlagged)
+        bool isFlagged,
+        bool wasSeen,
+        bool isNew,
+        bool isFollowed)
     {
         Link = link;
         Address = address;
@@ -63,9 +68,17 @@ public sealed record ProcessedAdvertisementModel
         Pets = pets;
         Photos = photos;
         IsFlagged = isFlagged;
+        WasSeen = wasSeen;
+        IsNew = isNew;
+        IsFollowed = isFollowed;
     }
 
-    internal static ProcessedAdvertisementModel FromDomainModel(ProcessedAdvertisement processedAdvertisement, AdvertisementPhotos photos) =>
+    internal static ProcessedAdvertisementModel FromDomainModel(
+        ProcessedAdvertisement processedAdvertisement,
+        AdvertisementPhotos photos,
+        bool wasSeen,
+        bool isNew,
+        bool isFollowed) =>
         new(
             processedAdvertisement.Link,
             processedAdvertisement.Address,
@@ -83,5 +96,23 @@ public sealed record ProcessedAdvertisementModel
             processedAdvertisement.AvailableFrom,
             processedAdvertisement.Pets,
             photos.Links,
-            processedAdvertisement.IsFlagged);
+            processedAdvertisement.IsFlagged,
+            wasSeen, 
+            isNew, 
+            isFollowed);
+
+    internal static IEnumerable<ProcessedAdvertisementModel> FromFilter(
+        Filter filter,
+        List<ProcessedAdvertisement> advertisements,
+        List<AdvertisementPhotos> photos)
+    {
+        var seenAdvertisements =
+            advertisements.Where(ad => filter.SeenAdvertisements.Any(seenAd => seenAd == ad.Link));
+        var newAdvertisements =
+            advertisements.Where(ad => filter.RecentlyFoundAdvertisements.Any(newAd => newAd == ad.Link));
+        var followedAdvertisements =
+            advertisements.Where(ad => filter.FollowedAdvertisements.Any(followedAd => followedAd == ad.Link));
+
+        return [];
+    }
 }

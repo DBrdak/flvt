@@ -62,25 +62,14 @@ internal sealed class GetAdvertisementsByFilterQueryHandler : IQueryHandler<GetA
 
         var filter = filterGetResult.Value;
 
-        _processedAdvertisementRepository.StartBatchGet();
-        filter.FoundAdvertisements.ToList().ForEach(_processedAdvertisementRepository.AddItemToBatchGet);
-        var advertisementsGetResult = await _processedAdvertisementRepository.ExecuteBatchGetAsync();
-
-        if (advertisementsGetResult.IsFailure)
-        {
-            return advertisementsGetResult.Error;
-        }
-
-        var advertisements = advertisementsGetResult.Value;
-
-        
+        //TODO Implement pagination
+        //What if I will save found advertisements of filter somewhere (dynamodb or s3) and then return them by page?
+        // TODO What should I have to do before frontend?
+        // 1. Implement ads get
+        // 2. Implement authentication
+        // 3. Expose API
+        // 4. Configure background jobs
 
         return null;
     }
-}
-
-internal sealed class GetAdvertisementsByFilterErrors
-{
-    public static readonly Error InvalidRequest =
-        new("Invalid request, one or more of required parameters missing: Page / FilterId / SubscriberEmail");
 }

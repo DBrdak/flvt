@@ -12,5 +12,9 @@ namespace Flvt.Infrastructure.Data.Repositories
 
         public async Task<Result<AdvertisementPhotos>> GetByAdvertisementLinkAsync(string link) =>
             await GetByIdAsync(link);
+
+        public async Task<Result<IEnumerable<AdvertisementPhotos>>> GetByManyAdvertisementLinkAsync(
+            IEnumerable<string> link) =>
+            await GetManyByIdAsync(link);
     }
 }
