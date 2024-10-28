@@ -1,5 +1,4 @@
-﻿using Flvt.Infrastructure.SecretManager;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 
 namespace Flvt.Infrastructure.Authentication;

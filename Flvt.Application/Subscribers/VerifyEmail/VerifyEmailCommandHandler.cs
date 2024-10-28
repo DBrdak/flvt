@@ -3,7 +3,6 @@ using Flvt.Application.Messaging;
 using Flvt.Application.Subscribers.Models;
 using Flvt.Domain.Primitives.Responses;
 using Flvt.Domain.Subscribers;
-using Microsoft.AspNetCore.Http.Timeouts;
 
 namespace Flvt.Application.Subscribers.VerifyEmail;
 

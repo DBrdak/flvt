@@ -1,7 +1,6 @@
 ﻿using Amazon.Lambda.Annotations;
 using Amazon.Lambda.Annotations.APIGateway;
 using Amazon.Lambda.APIGatewayEvents;
-using Amazon.Lambda.Core;
 using Flvt.API.Utils;
 using Flvt.Application.Advertisements.GetAdvertisementsByFilter;
 using MediatR;

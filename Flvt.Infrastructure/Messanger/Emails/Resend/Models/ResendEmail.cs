@@ -1,5 +1,4 @@
-﻿using Flvt.Domain.Subscribers;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Email = Flvt.Infrastructure.Messanger.Emails.Models.Email;
 
 namespace Flvt.Infrastructure.Messanger.Emails.Resend.Models;

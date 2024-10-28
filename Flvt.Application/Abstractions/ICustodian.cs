@@ -1,5 +1,4 @@
-﻿using Flvt.Domain.Photos;
-using Flvt.Domain.ScrapedAdvertisements;
+﻿using Flvt.Domain.ScrapedAdvertisements;
 
 namespace Flvt.Application.Abstractions;
 

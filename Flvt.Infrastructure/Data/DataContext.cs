@@ -1,12 +1,9 @@
 ﻿using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DocumentModel;
-using Amazon.Runtime;
-using Flvt.Domain;
 using Flvt.Domain.Photos;
 using Flvt.Domain.ProcessedAdvertisements;
 using Flvt.Domain.ScrapedAdvertisements;
 using Flvt.Domain.Subscribers;
-using Flvt.Infrastructure.AWS.Contants;
 using Flvt.Infrastructure.Data.DataModels.Batches;
 
 namespace Flvt.Infrastructure.Data;
@@ -14,7 +11,7 @@ namespace Flvt.Infrastructure.Data;
 internal sealed class DataContext
 {
     private readonly AmazonDynamoDBClient _client = new (
-        new BasicAWSCredentials(XD.LOL2, XD.LOL3), CloudEnvironment.RegionEndpoint); //TODO remove hardcoded credentials
+        /*new BasicAWSCredentials(XD.LOL2, XD.LOL3), CloudEnvironment.RegionEndpoint*/); //TODO remove hardcoded credentials
 
     private readonly AmazonDynamoDBException _connectionException =
         new("Could not connect to DynamoDB");

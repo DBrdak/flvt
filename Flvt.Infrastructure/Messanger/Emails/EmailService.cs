@@ -1,9 +1,7 @@
 ﻿using Flvt.Application.Abstractions;
 using Flvt.Domain.Primitives.Responses;
 using Flvt.Domain.Subscribers;
-using Flvt.Infrastructure.Messanger.Emails.Models;
 using Flvt.Infrastructure.Messanger.Emails.Resend;
-using Microsoft.AspNetCore.Routing.Template;
 using Email = Flvt.Infrastructure.Messanger.Emails.Models.Email;
 
 namespace Flvt.Infrastructure.Messanger.Emails;

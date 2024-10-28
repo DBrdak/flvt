@@ -1,6 +1,7 @@
 ﻿using Amazon.Lambda.Annotations;
 using Flvt.Application.Custody.RemoveDuplicateAdvertisements;
 using Flvt.Application.Custody.RemoveOutdatedAdvertisements;
+using Flvt.Application.Custody.RemoveUnusedAdvertisementsPhotos;
 using Flvt.Application.Custody.UpdateUnsucessfullyProcessedAdvertisements;
 using MediatR;
 
@@ -32,6 +33,14 @@ internal class CustodyFunctions : BaseFunction
     public async Task UpdateUnprocessedScrapedAds()
     {
         var command = new UpdateUnsucessfullyProcessedAdvertisementsCommand();
+
+        _ = await Sender.Send(command);
+    }
+
+    [LambdaFunction(ResourceName = $"{nameof(CustodyFunctions)}{nameof(RemoveUnusedPhotos)}")]
+    public async Task RemoveUnusedPhotos()
+    {
+        var command = new RemoveUnusedAdvertisementsPhotosCommand();
 
         _ = await Sender.Send(command);
     }

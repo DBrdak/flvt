@@ -1,9 +1,7 @@
 using Flvt.Application.Abstractions;
-using Flvt.Application.Advertisements.Models;
 using Flvt.Application.Messaging;
 using Flvt.Domain.Filters;
 using Flvt.Domain.Primitives.Responses;
-using Flvt.Domain.ProcessedAdvertisements;
 using Flvt.Domain.Subscribers;
 
 namespace Flvt.Application.Advertisements.GetAdvertisementsByFilter;

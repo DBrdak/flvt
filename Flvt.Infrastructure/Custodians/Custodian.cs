@@ -1,5 +1,4 @@
 ﻿using Flvt.Application.Abstractions;
-using Flvt.Domain.Photos;
 using Flvt.Domain.ScrapedAdvertisements;
 using Flvt.Infrastructure.AWS.Contants;
 using Flvt.Infrastructure.Custodians.Assistants;
