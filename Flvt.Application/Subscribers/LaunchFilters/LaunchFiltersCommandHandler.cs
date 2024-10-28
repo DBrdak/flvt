@@ -43,7 +43,8 @@ internal sealed class LaunchFiltersCommandHandler : ICommandHandler<LaunchFilter
 
         var launchedFiltersResults = await Task.WhenAll(filteringTasks);
 
-        var launchedFilters = launchedFiltersResults.Where(filter => filter is not null)
+        var launchedFilters = launchedFiltersResults
+            .Where(filter => filter is not null)
             .Select(filter => filter!)
             .ToList();
 
