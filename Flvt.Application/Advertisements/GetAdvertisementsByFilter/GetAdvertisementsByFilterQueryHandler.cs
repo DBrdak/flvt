@@ -1,3 +1,4 @@
+using Flvt.Application.Abstractions;
 using Flvt.Application.Advertisements.Models;
 using Flvt.Application.Messaging;
 using Flvt.Domain.Filters;
@@ -7,30 +8,28 @@ using Flvt.Domain.Subscribers;
 
 namespace Flvt.Application.Advertisements.GetAdvertisementsByFilter;
 
-internal sealed class GetAdvertisementsByFilterQueryHandler : IQueryHandler<GetAdvertisementsByFilterQuery, Page<ProcessedAdvertisementModel>>
+internal sealed class GetAdvertisementsByFilterQueryHandler : IQueryHandler<GetAdvertisementsByFilterQuery, string>
 {
     private readonly ISubscriberRepository _subscriberRepository;
     private readonly IFilterRepository _filterRepository;
-    private readonly IProcessedAdvertisementRepository _processedAdvertisementRepository;
+    private readonly IFileService _fileService;
 
     public GetAdvertisementsByFilterQueryHandler(
         ISubscriberRepository subscriberRepository,
         IFilterRepository filterRepository,
-        IProcessedAdvertisementRepository processedAdvertisementRepository)
+        IFileService fileService)
     {
         _subscriberRepository = subscriberRepository;
         _filterRepository = filterRepository;
-        _processedAdvertisementRepository = processedAdvertisementRepository;
+        _fileService = fileService;
     }
 
-    public async Task<Result<Page<ProcessedAdvertisementModel>>> Handle(
+    public async Task<Result<string>> Handle(
         GetAdvertisementsByFilterQuery request,
         CancellationToken cancellationToken)
     {
         if (request.SubscriberEmail is null ||
-            request.FilterId is null ||
-            request.Page is null ||
-            request.PageSize is null)
+            request.FilterId is null)
         {
             return GetAdvertisementsByFilterErrors.InvalidRequest;
         }
@@ -62,14 +61,12 @@ internal sealed class GetAdvertisementsByFilterQueryHandler : IQueryHandler<GetA
 
         var filter = filterGetResult.Value;
 
-        //TODO Implement pagination
-        //What if I will save found advertisements of filter somewhere (dynamodb or s3) and then return them by page?
+        return await _fileService.GetAdvertisementsUrlAsync(filter);
+
         // TODO What should I have to do before frontend?
-        // 1. Implement ads get
         // 2. Implement authentication
         // 3. Expose API
-        // 4. Configure background jobs
-
-        return null;
+        // 4. Configure background jobs (LaunchFilters, PhotoCustodian)
+        // 5. Email on launched filter
     }
 }

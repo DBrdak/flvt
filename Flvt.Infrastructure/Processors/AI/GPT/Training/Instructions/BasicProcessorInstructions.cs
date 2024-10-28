@@ -88,7 +88,12 @@ internal sealed class BasicProcessorInstructions
     private const string petsInstruction =
         "Pets - put true if pets are allowed, false if not allowed and null if information is not provided";
     private const string endingInstructions =
-        "You should copy other fields as long as there is no error (e.g. missing field etc.). If there is any error, you can fix it if you have enough information to do so (e.g. missing field 'unit' in rooms - you can add it, etc.). You should always use null if you cannot find information instead of omitting properties. Please note that, all currencies must be given in international currency code. All text data should be returned in native advertisement's language.";
+        "You should copy other fields as long as there is no error (e.g. missing field etc.). " +
+        "If there is any error, you can fix it if you have enough information to do so (e.g. missing field 'unit' in rooms - you can add it, etc.). " +
+        "You should always use null if you cannot find information instead of omitting properties. " +
+        "However, note that amount and currency properties are not nullable, so they cannot be null. For example, this is not allowed: \"fee\":{\"amount\": null,\"currency\":{\"code\": null}}, instead of this, use this: \"fee\":null" +
+        "Please note that, all currencies must be given in international currency code. " +
+        "All text data should be returned in native advertisement's language.";
 
     private static readonly IReadOnlyCollection<string> _allSortedInstructions = new[]
     {

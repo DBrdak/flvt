@@ -75,7 +75,7 @@ public sealed record ProcessedAdvertisementModel
 
     internal static ProcessedAdvertisementModel FromDomainModel(
         ProcessedAdvertisement processedAdvertisement,
-        AdvertisementPhotos photos,
+        IEnumerable<string> photos,
         bool wasSeen,
         bool isNew,
         bool isFollowed) =>
@@ -95,24 +95,40 @@ public sealed record ProcessedAdvertisementModel
             processedAdvertisement.UpdatedAt,
             processedAdvertisement.AvailableFrom,
             processedAdvertisement.Pets,
-            photos.Links,
+            photos,
             processedAdvertisement.IsFlagged,
             wasSeen, 
             isNew, 
             isFollowed);
 
-    internal static IEnumerable<ProcessedAdvertisementModel> FromFilter(
+    internal static List<ProcessedAdvertisementModel> FromFilter(
         Filter filter,
         List<ProcessedAdvertisement> advertisements,
         List<AdvertisementPhotos> photos)
     {
+        List<ProcessedAdvertisementModel> advertisementsModels = [];
         var seenAdvertisements =
-            advertisements.Where(ad => filter.SeenAdvertisements.Any(seenAd => seenAd == ad.Link));
+            advertisements
+                .Where(ad => filter.SeenAdvertisements.Any(seenAd => seenAd == ad.Link))
+                .ToList();
         var newAdvertisements =
-            advertisements.Where(ad => filter.RecentlyFoundAdvertisements.Any(newAd => newAd == ad.Link));
+            advertisements
+                .Where(ad => filter.RecentlyFoundAdvertisements.Any(newAd => newAd == ad.Link))
+                .ToList();
         var followedAdvertisements =
-            advertisements.Where(ad => filter.FollowedAdvertisements.Any(followedAd => followedAd == ad.Link));
+            advertisements
+                .Where(ad => filter.FollowedAdvertisements.Any(followedAd => followedAd == ad.Link))
+                .ToList();
 
-        return [];
+        advertisementsModels.AddRange(
+            from advertisement in advertisements
+            let wasSeen = seenAdvertisements.Any(ad => ad.Link == advertisement.Link)
+            let isNew = newAdvertisements.Any(ad => ad.Link == advertisement.Link)
+            let isFollowed = followedAdvertisements.Any(ad => ad.Link == advertisement.Link)
+            let advertisementPhotos = photos.FirstOrDefault(photo => photo.AdvertisementLink == advertisement.Link)
+                ?.Links ?? []
+            select FromDomainModel(advertisement, advertisementPhotos, wasSeen, isNew, isFollowed));
+
+        return advertisementsModels;
     }
 }

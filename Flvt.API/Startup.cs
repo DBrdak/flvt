@@ -1,4 +1,3 @@
-using Amazon.Extensions.NETCore.Setup;
 using Amazon.S3;
 using Flvt.Application;
 using Flvt.Infrastructure;

@@ -15,17 +15,20 @@ internal sealed class LaunchFiltersCommandHandler : ICommandHandler<LaunchFilter
     private readonly IProcessedAdvertisementRepository _processedAdvertisementRepository;
     private readonly IAdvertisementPhotosRepository _photosRepository;
     private readonly IQueuePublisher _queuePublisher;
+    private readonly IFileService _fileService;
 
     public LaunchFiltersCommandHandler(
         IFilterRepository filterRepository,
         IProcessedAdvertisementRepository processedAdvertisementRepository,
         IQueuePublisher queuePublisher,
-        IAdvertisementPhotosRepository photosRepository)
+        IAdvertisementPhotosRepository photosRepository,
+        IFileService fileService)
     {
         _filterRepository = filterRepository;
         _processedAdvertisementRepository = processedAdvertisementRepository;
         _queuePublisher = queuePublisher;
         _photosRepository = photosRepository;
+        _fileService = fileService;
     }
 
     public async Task<Result> Handle(LaunchFiltersCommand request, CancellationToken cancellationToken)
@@ -75,7 +78,7 @@ internal sealed class LaunchFiltersCommandHandler : ICommandHandler<LaunchFilter
             return null;
         }
 
-        var advertisements = advertisementsGetResult.Value;
+        var advertisements = advertisementsGetResult.Value.ToList();
 
         var advertisementLinks = advertisements
             .Select(advertisement => advertisement.Link)
@@ -92,11 +95,24 @@ internal sealed class LaunchFiltersCommandHandler : ICommandHandler<LaunchFilter
             return null;
         }
 
-        var photos = photosGetResult.Value;
+        var photos = photosGetResult.Value.ToList();
 
-        var advertisementsToFile = ProcessedAdvertisementModel.FromDomainModel;
+        var advertisementsToFile = ProcessedAdvertisementModel.FromFilter(filter, advertisements, photos);
 
-        filter.NewAdvertisementsFound(advertisementLinks, "");
+        var advertisementsFileWriteResult = await _fileService.WriteAdvertisementsToFileAsync(filter, advertisementsToFile);
+
+        if (advertisementsFileWriteResult.IsFailure)
+        {
+            Log.Error(
+                "Failed to write advertisements to file for filter {FilterId}, error :{error}",
+                filter.Id,
+                advertisementsFileWriteResult.Error);
+            return null;
+        }
+
+        var advertisementsFilePath = advertisementsFileWriteResult.Value;
+
+        filter.NewAdvertisementsFound(advertisementLinks, advertisementsFilePath);
 
         return filter;
     }

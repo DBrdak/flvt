@@ -1,4 +1,5 @@
 ﻿using Flvt.Application.Abstractions;
+using Flvt.Domain.Photos;
 using Flvt.Domain.ScrapedAdvertisements;
 using Flvt.Infrastructure.AWS.Contants;
 using Flvt.Infrastructure.Custodians.Assistants;
@@ -65,4 +66,11 @@ internal class Custodian : ICustodian
 
         return unsucessfullyProcessedAds;
     }
+
+    public async Task<IEnumerable<string>> FindUnusedAdvertisementPhotos(
+        List<string> advertisementsLinks,
+        List<string> advertisementsPhotos) =>
+        await _dataAssistant.GetUnusedPhotos(
+            advertisementsLinks,
+            advertisementsPhotos);
 }

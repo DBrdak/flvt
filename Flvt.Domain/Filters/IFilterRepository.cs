@@ -11,4 +11,6 @@ public interface IFilterRepository
     void StartBatchWrite();
     void AddItemToBatchWrite(Filter filter);
     Task<Result> ExecuteBatchWriteAsync();
+
+    Task<Result<IEnumerable<Filter>>> GetManyByIdAsync(IEnumerable<string> filtersIds);
 }

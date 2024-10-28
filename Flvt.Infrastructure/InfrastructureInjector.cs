@@ -3,11 +3,15 @@ using Flvt.Domain.Photos;
 using Flvt.Domain.ProcessedAdvertisements;
 using Flvt.Domain.ScrapedAdvertisements;
 using Flvt.Domain.Subscribers;
+using Flvt.Infrastructure.Authentication;
 using Flvt.Infrastructure.Custodians;
 using Flvt.Infrastructure.Custodians.Assistants;
 using Flvt.Infrastructure.Data;
 using Flvt.Infrastructure.Data.DataModels;
 using Flvt.Infrastructure.Data.Repositories;
+using Flvt.Infrastructure.FileBucket;
+using Flvt.Infrastructure.Messanger.Emails;
+using Flvt.Infrastructure.Messanger.Emails.Resend;
 using Flvt.Infrastructure.Monitoring;
 using Flvt.Infrastructure.Processors;
 using Flvt.Infrastructure.Processors.AI;
@@ -15,6 +19,8 @@ using Flvt.Infrastructure.Processors.AI.GPT;
 using Flvt.Infrastructure.Processors.AI.GPT.Options;
 using Flvt.Infrastructure.Queues;
 using Flvt.Infrastructure.Scrapers;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
@@ -28,7 +34,10 @@ public static class InfrastructureInjector
             .AddProcessors()
             .AddMonitoring()
             .AddQueues()
-            .AddCustody();
+            .AddCustody()
+            .AddFiles()
+            .AddAuthentication()
+            .AddEmails();
 
     private static IServiceCollection AddQueues(this IServiceCollection services) =>
         services.AddScoped<IQueuePublisher, QueuePublisher>();
@@ -74,8 +83,25 @@ public static class InfrastructureInjector
         return services;
     }
 
+    private static IServiceCollection AddFiles(this IServiceCollection services) => 
+        services.AddScoped<IFileService, FileService>();
+
     private static IServiceCollection AddMonitoring(this IServiceCollection services) =>
         services
             .AddTransient<GPTMonitor>()
             .AddTransient<ScrapingMonitor>();
+
+    private static IServiceCollection AddAuthentication(this IServiceCollection services) =>
+        services
+            .ConfigureOptions<AuthenticationOptionsSetup>()
+            .ConfigureOptions<JwtBearerOptionsSetup>()
+            .AddScoped<IJwtService, JwtService>()
+            .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer()
+            .Services;
+
+    private static IServiceCollection AddEmails(this IServiceCollection services) =>
+        services
+            .AddScoped<IEmailService, EmailService>()
+            .AddScoped<ResendClient>();
 }

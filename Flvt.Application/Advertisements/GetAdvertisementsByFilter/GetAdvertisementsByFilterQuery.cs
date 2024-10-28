@@ -6,8 +6,4 @@ namespace Flvt.Application.Advertisements.GetAdvertisementsByFilter;
 
 public sealed record GetAdvertisementsByFilterQuery(
     string? FilterId,
-    string? SubscriberEmail,
-    int? PageSize,
-    int? Page,
-    string? SortOrder,
-    string? SortBy) : IQuery<Page<ProcessedAdvertisementModel>>;
+    string? SubscriberEmail) : IQuery<string>;

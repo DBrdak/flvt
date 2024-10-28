@@ -63,4 +63,11 @@ internal sealed class DataCustodialAssistant
                 .Where(sa => !batches.Any(b => b.ProcessingAdvertisementsLinks.Contains(sa.Link)))
                 .ToList();
     }
+
+    public async Task<List<string>> GetUnusedPhotos(
+        IEnumerable<string> advertisementsLinks,
+        IEnumerable<string> advertisementsPhotosLinks) =>
+        advertisementsPhotosLinks
+            .Except(advertisementsLinks)
+            .ToList();
 }

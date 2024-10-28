@@ -1,13 +1,13 @@
 ﻿using System.Text;
+using Flvt.Application.Abstractions;
 using Flvt.Application.Advertisements.Models;
 using Flvt.Domain.Filters;
 using Flvt.Domain.Primitives.Responses;
-using Flvt.Domain.ProcessedAdvertisements;
 using Newtonsoft.Json;
 
 namespace Flvt.Infrastructure.FileBucket;
 
-internal sealed class FileService
+internal sealed class FileService : IFileService
 {
     private readonly S3Bucket _s3Bucket;
 

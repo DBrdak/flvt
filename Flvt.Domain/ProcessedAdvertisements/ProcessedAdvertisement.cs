@@ -61,7 +61,7 @@ public sealed class ProcessedAdvertisement
         Pets = pets;
         IsFlagged = isFlagged;
         Dedupe =
-            $"{Address?.City}-{Address?.District}-{Address?.Street}-{ContactType}-{Rooms.Value}-{Area.Amount}-{Floor.Specific}-{Floor.Total}"
+            $"{Address?.City}-{Address?.District}-{Address?.Street}-{ContactType}-{Rooms.Value}-{Area.Amount}-{Floor.Specific}-{Floor.Total}-{Price.Amount}"
                 .ToLower();
     }
 

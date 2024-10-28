@@ -2,7 +2,6 @@
 using Flvt.Domain.Filters;
 using Flvt.Domain.ScrapedAdvertisements;
 using Flvt.Infrastructure.Scrapers.Otodom;
-using Serilog;
 
 namespace Flvt.Infrastructure.Scrapers;
 

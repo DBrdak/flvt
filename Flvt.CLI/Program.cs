@@ -2,7 +2,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Flvt.Application;
 using Flvt.Application.Abstractions;
-using Flvt.Application.Advertisements.StartProcessingAdvertisements;
 using Flvt.Domain.Photos;
 using Flvt.Domain.ProcessedAdvertisements;
 using Flvt.Domain.ScrapedAdvertisements;
