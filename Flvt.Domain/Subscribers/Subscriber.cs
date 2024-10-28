@@ -111,7 +111,7 @@ public sealed class Subscriber
         var subscriber = new Subscriber(
             emailResult.Value,
             password,
-            true,
+            false,
             null,
             LoggingGuard.Create(),
             SubscribtionTier.Basic,

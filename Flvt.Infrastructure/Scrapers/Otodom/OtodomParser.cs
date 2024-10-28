@@ -86,5 +86,10 @@ internal sealed class OtodomParser : AdvertisementParser
         Document
             .DocumentNode
             .SelectSingleNode("//div[@data-cy='expired-ad-alert']")
+            is not null 
+        ||
+        Document
+            .DocumentNode
+            .SelectSingleNode("//div[@data-cy='redirectedFromInactiveAd']") 
             is not null;
 }

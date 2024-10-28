@@ -14,6 +14,7 @@ using System.Text;
 using Amazon;
 using Flvt.Domain;
 using Amazon.Runtime;
+using Flvt.Application.Custody.RemoveOutdatedAdvertisements;
 
 namespace Flvt.CLI;
 
@@ -81,9 +82,9 @@ public class Service : IService
         //var cmd = new CheckProcessingStatusCommand();
         //var cmd = new EndProcessingCommand();
         //var cmd = new ProcessAdvertisementsCommand();
-        //var cmd = new RemoveOutdatedAdvertisementsCommand();
+        var cmd = new RemoveOutdatedAdvertisementsCommand();
 
-        //var response = await _sender.Send(cmd);
+        var response = await _sender.Send(cmd);
 
         //var adsR = await _repository.GetAllAsync();
         //var ads = adsR.Value;
@@ -95,14 +96,14 @@ public class Service : IService
 
         //Console.WriteLine(stopwatch.ElapsedMilliseconds);
 
-        var stopwatch = new Stopwatch();
-        stopwatch.Start();
-        var ads = await RetrieveJsonFromS3Async("flvt", "/advertisements/ads-test.json");
-        stopwatch.Stop();
+        //var stopwatch = new Stopwatch();
+        //stopwatch.Start();
+        //var ads = await RetrieveJsonFromS3Async("flvt", "/advertisements/ads-test.json");
+        //stopwatch.Stop();
 
-        Console.WriteLine(stopwatch.ElapsedMilliseconds);
-        Console.WriteLine();
-    }
+        //Console.WriteLine(stopwatch.ElapsedMilliseconds);
+        //Console.WriteLine();
+     }
 
     public async Task UploadJsonToS3Async(IEnumerable<ProcessedAdvertisement> ads, string bucketName, string key)
     {

@@ -11,9 +11,9 @@ internal static class HtmlWebExtensions
         string url,
         AdvertisementParser advertisementParser)
     {
-        var htmlDoc = await web.LoadFromWebAsync(url);
+        var htmlDoc = await web.TryLoadFromWebAsync(url);
 
-        while (advertisementParser.IsRateLimitExceeded(htmlDoc))
+        while (htmlDoc is null || advertisementParser.IsRateLimitExceeded(htmlDoc))
         {
             Log.Logger.Warning(
                 "Rate limit exceeded, waiting 30 seconds before trying again: {link}", url);
@@ -23,5 +23,24 @@ internal static class HtmlWebExtensions
         }
 
         return htmlDoc;
+    }
+
+    public static async Task<HtmlDocument?> TryLoadFromWebAsync(this HtmlWeb web, string url)
+    {
+        try
+        {
+            return await web.LoadFromWebAsync(url);
+        }
+        catch (HttpRequestException e)
+        {
+            Log.Logger.Error(
+                "Error occured when trying to retrieve response from: {link} - Code: {errorCode}, Type: {errorType}, Message: {errorMessage}",
+                url,
+                e.StatusCode,
+                e.HttpRequestError,
+                e.Message);
+            
+            return null;
+        }
     }
 }

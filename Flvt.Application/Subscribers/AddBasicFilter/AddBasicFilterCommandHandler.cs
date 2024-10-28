@@ -1,5 +1,6 @@
 using Flvt.Application.Messaging;
 using Flvt.Application.Subscribers.Models;
+using Flvt.Application.Subscribers.Services;
 using Flvt.Domain.Filters;
 using Flvt.Domain.Primitives.Responses;
 using Flvt.Domain.Subscribers;
@@ -10,11 +11,16 @@ internal sealed class AddBasicFilterCommandHandler : ICommandHandler<AddBasicFil
 {
     private readonly ISubscriberRepository _subscriberRepository;
     private readonly IFilterRepository _filterRepository;
+    private readonly FiltersService _filtersService;
 
-    public AddBasicFilterCommandHandler(ISubscriberRepository subscriberRepository, IFilterRepository filterRepository)
+    public AddBasicFilterCommandHandler(
+        ISubscriberRepository subscriberRepository,
+        IFilterRepository filterRepository,
+        FiltersService filtersService)
     {
         _subscriberRepository = subscriberRepository;
         _filterRepository = filterRepository;
+        _filtersService = filtersService;
     }
 
     public async Task<Result<FilterModel>> Handle(AddBasicFilterCommand request, CancellationToken cancellationToken)
@@ -44,6 +50,8 @@ internal sealed class AddBasicFilterCommandHandler : ICommandHandler<AddBasicFil
         }
 
         var filter = basicFilterCreateResult.Value;
+
+        await _filtersService.LaunchFilter(filter);
 
         var filterAddTask = _filterRepository.AddAsync(filter);
         var subscriberUpdateTask = _subscriberRepository.UpdateAsync(subscriber);

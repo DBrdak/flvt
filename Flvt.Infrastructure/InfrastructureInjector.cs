@@ -1,4 +1,5 @@
 ﻿using Flvt.Application.Abstractions;
+using Flvt.Domain.Filters;
 using Flvt.Domain.Photos;
 using Flvt.Domain.ProcessedAdvertisements;
 using Flvt.Domain.ScrapedAdvertisements;
@@ -54,6 +55,7 @@ public static class InfrastructureInjector
             .AddScoped<IProcessedAdvertisementRepository, ProcessedAdvertisementRepository>()
             .AddScoped<IScrapedAdvertisementRepository, ScrapedAdvertisementRepository>()
             .AddScoped<ISubscriberRepository, SubscriberRepository>()
+            .AddScoped<IFilterRepository, FilterRepository>()
             .AddScoped<BatchRepository>();
 
     private static IServiceCollection AddScrapers(this IServiceCollection services) => 
@@ -83,7 +85,9 @@ public static class InfrastructureInjector
     }
 
     private static IServiceCollection AddFiles(this IServiceCollection services) => 
-        services.AddScoped<IFileService, FileService>();
+        services
+            .AddScoped<S3Bucket>()
+            .AddScoped<IFileService, FileService>();
 
     private static IServiceCollection AddMonitoring(this IServiceCollection services) =>
         services

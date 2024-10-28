@@ -62,9 +62,6 @@ internal sealed class GetAdvertisementsByFilterQueryHandler : IQueryHandler<GetA
         return await _fileService.GetAdvertisementsUrlAsync(filter);
 
         // TODO What should I have to do before frontend?
-        // 2. Implement authentication
-        // 3. Expose API
-        // 4. Configure background jobs (LaunchFilters, PhotoCustodian)
         // 5. Email on launched filter
     }
 }

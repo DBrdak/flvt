@@ -57,9 +57,12 @@ internal sealed class RemoveUnusedAdvertisementsPhotosCommandHandler :
         advertisementsLinks.AddRange(scrapedAdvertisementsGetResult.Value.Select(ad => ad.Link));
         var photosLinks = photosGetResult.Value.Select(photo => photo.AdvertisementLink).ToList();
 
-        var photosToRemove = await _custodian.FindUnusedAdvertisementPhotos(advertisementsLinks, photosLinks);
-        Log.Logger.Information("Found {photosCount} to remove --- VALIDATE", photosToRemove.Count());
-        //return await _advertisementPhotosRepository.RemoveRangeAsync(photosToRemove); TODO validate and implement
-        return Result.Success();
+        var photosToRemove = (await _custodian.FindUnusedAdvertisementPhotos(
+            advertisementsLinks,
+            photosLinks)).ToList();
+     
+        Log.Logger.Information("Found {photosCount} photos to remove --- VALIDATE", photosToRemove.Count());
+        
+        return await _advertisementPhotosRepository.RemoveRangeAsync(photosToRemove);
     }
 }

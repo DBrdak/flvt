@@ -1,4 +1,5 @@
 ﻿using Flvt.Application.Behaviors;
+using Flvt.Application.Subscribers.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
@@ -8,19 +9,16 @@ namespace Flvt.Application;
 
 public static class ApplicationInjector
 {
-    public static IServiceCollection AddApplication(this IServiceCollection services)
-    {
-        services.AddMediatR(
-            config =>
-            {
-                config.RegisterServicesFromAssemblyContaining<ApplicationAssemblyReference>();
-                config.AddOpenBehavior(typeof(TrackingBehavior<,>));
-            });
-
-        services.AddLogger();
-
-        return services;
-    }
+    public static IServiceCollection AddApplication(this IServiceCollection services) =>
+        services
+            .AddMediatR(
+                config =>
+                {
+                    config.RegisterServicesFromAssemblyContaining<ApplicationAssemblyReference>();
+                    config.AddOpenBehavior(typeof(TrackingBehavior<,>));
+                })
+            .AddLogger()
+            .AddServices();
 
     private static IServiceCollection AddLogger(this IServiceCollection services)
     {
@@ -45,4 +43,8 @@ public static class ApplicationInjector
 
         return services;
     }
+
+    private static IServiceCollection AddServices(this IServiceCollection services) =>
+        services
+            .AddScoped<FiltersService>();
 }
