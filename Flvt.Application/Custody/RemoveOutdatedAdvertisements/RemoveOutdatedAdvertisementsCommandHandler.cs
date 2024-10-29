@@ -39,13 +39,21 @@ internal sealed class RemoveOutdatedAdvertisementsCommandHandler : ICommandHandl
             return scrapedAdvertisementsGetResult.Result.Error;
         }
 
-        var advertisementsLinks = processedAdvertisementsGetResult.Result.Value
+        var processedAdvertisements = processedAdvertisementsGetResult.Result.Value;
+        var scrapedAdvertisements = scrapedAdvertisementsGetResult.Result.Value.ToList();
+
+        var advertisementsLinks = processedAdvertisements
             .Select(ad => ad.Link)
             .ToList();
-        advertisementsLinks.AddRange(scrapedAdvertisementsGetResult.Result.Value
+        advertisementsLinks.AddRange(scrapedAdvertisements
             .Select(ad => ad.Link));
 
         var outdatedAdvertisements = (await _custodian.FindOutdatedAdvertisementsAsync(advertisementsLinks)).ToList();
+
+        outdatedAdvertisements.AddRange(
+            scrapedAdvertisements
+                .Where(ad => string.IsNullOrWhiteSpace(ad.AdContent))
+                .Select(ad => ad.Link));
 
         IEnumerable<Task<Result>> removeTasks =
         [

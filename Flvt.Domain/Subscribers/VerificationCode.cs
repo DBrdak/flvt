@@ -28,13 +28,8 @@ public sealed record VerificationCode
             DateTimeOffset.UtcNow.AddMinutes(60).ToUnixTimeSeconds());
     }
 
-    internal bool Verify(string code)
-    {
-        if (DateTimeOffset.UtcNow.ToUnixTimeSeconds() > ExpirationDate)
-        {
-            return false;
-        }
-
-        return Code == code;
-    }
+    internal bool Verify(string code) => 
+        DateTimeOffset.UtcNow.ToUnixTimeSeconds() > ExpirationDate 
+        && 
+        Code == code;
 }

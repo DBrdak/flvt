@@ -26,6 +26,7 @@ public sealed record Filter
     private List<string> _followedAdvertisements;
     public IReadOnlyCollection<string> FollowedAdvertisements => _followedAdvertisements;
     public string? AdvertisementsFilePath { get; private set; }
+    public string SubscriberEmail { get; init; }
     public bool ShouldLaunch => Frequency.NextUse <= DateTimeOffset.UtcNow.ToUnixTimeSeconds();
 
     private Filter(
@@ -45,6 +46,7 @@ public sealed record Filter
         List<string> seenAdvertisements,
         List<string> followedAdvertisements,
         string? advertisementsFilePath,
+        string subscriberEmail,
         bool onlyLast24H = false)
     {
         Id = id;
@@ -62,6 +64,7 @@ public sealed record Filter
         _seenAdvertisements = seenAdvertisements;
         _followedAdvertisements = followedAdvertisements;
         AdvertisementsFilePath = advertisementsFilePath;
+        SubscriberEmail = subscriberEmail;
         Tier = tier;
         OnlyLast24H = onlyLast24H;
     }
@@ -84,6 +87,7 @@ public sealed record Filter
             [],
             [],
             null,
+            string.Empty,
             true);
 
     internal static Result<Filter> Create(
@@ -96,7 +100,8 @@ public sealed record Filter
         decimal? minArea,
         decimal? maxArea,
         Frequency frequency,
-        SubscribtionTier tier)
+        SubscribtionTier tier,
+        Subscriber subscriber)
     {
         var filterName = FilterName.Create(name);
 
@@ -182,7 +187,8 @@ public sealed record Filter
             [],
             [],
             [],
-            null);
+            null,
+            subscriber.Email.Value);
     }
 
     public void NewAdvertisementsFound(List<string> advertisements, string advertisementsFilePath)

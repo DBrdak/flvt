@@ -16,9 +16,9 @@ internal sealed class FilterFactory
         int? minRooms,
         int? maxRooms,
         decimal? minArea,
-        decimal? maxArea)
-    {
-        return Filter.Create(
+        decimal? maxArea,
+        Subscriber subscriber) =>
+        Filter.Create(
             name,
             city,
             minPrice,
@@ -28,6 +28,6 @@ internal sealed class FilterFactory
             minArea,
             maxArea,
             Frequency.Daily,
-            SubscribtionTier.Basic);
-    }
+            SubscribtionTier.Basic,
+            subscriber);
 }

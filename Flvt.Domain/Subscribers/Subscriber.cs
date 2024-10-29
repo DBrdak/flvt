@@ -60,7 +60,8 @@ public sealed class Subscriber
             minRooms,
             maxRooms,
             minArea,
-            maxArea);
+            maxArea,
+            this);
 
         if (filterCreateResult.IsFailure)
         {
@@ -199,4 +200,22 @@ public sealed class Subscriber
             Result.Failure(SubscriberErrors.VerificationCodeInvalid);
     }
     private void SetVerificationCode(VerificationCode code) => VerificationCode = code;
+
+    public string RequestNewPassword() => GenerateVerificationCode().Code;
+
+    public Result ChangePassword(string newPlainPassword, string verificationCode)
+    {
+        var verificationResult = VerifyCode(verificationCode);
+
+        if (verificationResult.IsFailure)
+        {
+            return verificationResult.Error;
+        }
+
+        VerificationCode = null;
+
+        var newPasswordCreateResult = Password.Create(newPlainPassword);
+
+        return newPasswordCreateResult;
+    }
 }

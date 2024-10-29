@@ -60,9 +60,5 @@ internal sealed class GetAdvertisementsByFilterQueryHandler : IQueryHandler<GetA
         var filter = filterGetResult.Value;
 
         return await _fileService.GetAdvertisementsUrlAsync(filter);
-
-        // TODO What should I have to do before frontend?
-        // 5. Email on launched filter
-        // 6. Password reset
     }
 }

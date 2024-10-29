@@ -28,7 +28,8 @@ internal sealed class FilterDataModel : IDataModel<Filter>
     public IEnumerable<string> RecentlyFoundAdvertisements { get; init; }
     public IEnumerable<string> SeenAdvertisements { get; init; }
     public IEnumerable<string> FollowedAdvertisements { get; init; }
-    public string? AdvertisementsFilePath { get; private set; }
+    public string? AdvertisementsFilePath { get; init; }
+    public string SubscriberEmail { get; init; }
 
     private FilterDataModel(Filter filter)
     {
@@ -51,6 +52,7 @@ internal sealed class FilterDataModel : IDataModel<Filter>
         SeenAdvertisements = filter.SeenAdvertisements;
         FollowedAdvertisements = filter.FollowedAdvertisements;
         AdvertisementsFilePath = filter.AdvertisementsFilePath;
+        SubscriberEmail = filter.SubscriberEmail;
     }
     private FilterDataModel(Document doc)
     {
@@ -73,6 +75,7 @@ internal sealed class FilterDataModel : IDataModel<Filter>
         SeenAdvertisements = doc.GetProperty(nameof(SeenAdvertisements)).AsArrayOfString();
         FollowedAdvertisements = doc.GetProperty(nameof(FollowedAdvertisements)).AsArrayOfString();
         AdvertisementsFilePath = doc.GetNullableProperty(nameof(AdvertisementsFilePath))?.AsNullableString();
+        SubscriberEmail = doc.GetProperty(nameof(SubscriberEmail));
     }
 
     public static FilterDataModel FromDomainModel(Filter domainModel) => new (domainModel);
@@ -169,6 +172,7 @@ internal sealed class FilterDataModel : IDataModel<Filter>
                        SeenAdvertisements,
                        FollowedAdvertisements,
                        AdvertisementsFilePath,
+                       SubscriberEmail,
                        OnlyLast24H
                    ],
                    null) as Filter ??
