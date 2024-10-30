@@ -465,7 +465,7 @@ Resources:
           - Path
           - Method
     Properties:
-      FunctionName: AdvertisementsFollow
+      FunctionName: RequestNewPassword
       Runtime: dotnet8
       CodeUri: .
       MemorySize: 3008

@@ -8,7 +8,7 @@ architecture = "x86_64"
 handler = "Flvt.API::Flvt.API.Functions.Background.ProcessAdvertisements_StartProcessing_Generated::StartProcessing"
 manifest_hash = ""
 packagetype = "Zip"
-functions = ["ScrapeAdvertisementsScrapAll", "ProcessAdvertisementsStartProcessing", "ProcessAdvertisementsCheckProcessingStatus", "ProcessAdvertisementsEndProcessing", "CustodyFunctionsRemoveOutdated", "CustodyFunctionsRemoveDuplicates", "CustodyFunctionsUpdateUnprocessedScrapedAds", "FlvtAuthorizer", "CustodyFunctionsRemoveUnusedPhotos", "LaunchFilters"]
+functions = ["ScrapeAdvertisementsScrapAll", "ProcessAdvertisementsStartProcessing", "ProcessAdvertisementsCheckProcessingStatus", "ProcessAdvertisementsEndProcessing", "CustodyFunctionsRemoveOutdated", "CustodyFunctionsRemoveDuplicates", "CustodyFunctionsUpdateUnprocessedScrapedAds", "FlvtAuthorizer", "CustodyFunctionsRemoveUnusedPhotos", "LaunchFilters", "NotifyAboutLaunchedFilters"]
 
 [function_build_definitions.fe7caad3-08ac-4e76-92a1-7095b0373e23.metadata]
 Tool = "Amazon.Lambda.Annotations"
@@ -36,6 +36,12 @@ RootGet = ["Path", "Method"]
 
 
 
+
+
+
+
+
+
 [function_build_definitions.8b2df700-a482-4e51-bf94-09215aeff233]
 codeuri = "C:\\Users\\Brdak\\source\\repos\\flvt\\Flvt.API"
 runtime = "dotnet8"
@@ -43,7 +49,7 @@ architecture = "x86_64"
 handler = "Flvt.API::Flvt.API.Functions.API.Auth.AuthFunctions_Register_Generated::Register"
 manifest_hash = ""
 packagetype = "Zip"
-functions = ["Register", "Login", "VerifyEmail"]
+functions = ["Register", "Login", "VerifyEmail", "SetNewPassword"]
 
 [function_build_definitions.8b2df700-a482-4e51-bf94-09215aeff233.metadata]
 Tool = "Amazon.Lambda.Annotations"
@@ -59,6 +65,12 @@ RootPost = ["Path", "Method"]
 
 
 
+
+
+
+
+
+
 [function_build_definitions.e6102ed8-535b-46de-b3be-cdcfd94316ec]
 codeuri = "C:\\Users\\Brdak\\source\\repos\\flvt\\Flvt.API"
 runtime = "dotnet8"
@@ -66,7 +78,7 @@ architecture = "x86_64"
 handler = "Flvt.API::Flvt.API.Functions.API.Auth.AuthFunctions_ResendVerificationEmail_Generated::ResendVerificationEmail"
 manifest_hash = ""
 packagetype = "Zip"
-functions = ["ResendVerificationEmail"]
+functions = ["AdvertisementsMarkAsSeen", "AdvertisementsFlag", "AdvertisementsFollow", "RequestNewPassword", "ResendEmail"]
 
 [function_build_definitions.e6102ed8-535b-46de-b3be-cdcfd94316ec.metadata]
 Tool = "Amazon.Lambda.Annotations"
@@ -74,6 +86,12 @@ SyncedEvents = ["RootPut"]
 
 [function_build_definitions.e6102ed8-535b-46de-b3be-cdcfd94316ec.metadata.SyncedEventProperties]
 RootPut = ["Path", "Method"]
+
+
+
+
+
+
 
 
 

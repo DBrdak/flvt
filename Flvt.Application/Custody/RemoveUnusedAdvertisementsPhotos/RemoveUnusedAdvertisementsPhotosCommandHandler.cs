@@ -61,7 +61,7 @@ internal sealed class RemoveUnusedAdvertisementsPhotosCommandHandler :
             advertisementsLinks,
             photosLinks)).ToList();
      
-        Log.Logger.Information("Found {photosCount} photos to remove --- VALIDATE", photosToRemove.Count());
+        Log.Logger.Information("Found {photosCount} photos to remove", photosToRemove.Count());
         
         return await _advertisementPhotosRepository.RemoveRangeAsync(photosToRemove);
     }

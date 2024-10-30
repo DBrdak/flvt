@@ -79,17 +79,11 @@ internal sealed class AuthFunctions : BaseFunction
 
     [LambdaFunction(ResourceName = nameof(RequestNewPassword))]
     [HttpApi(LambdaHttpMethod.Put, "/v1/auth/new-password/request")]
-    public async Task<APIGatewayHttpApiV2ProxyResponse> RequestNewPassword(APIGatewayHttpApiV2ProxyRequest request)
+    public async Task<APIGatewayHttpApiV2ProxyResponse> RequestNewPassword(
+        [FromQuery] string email,
+        APIGatewayHttpApiV2ProxyRequest request)
     {
-        var subscriberEmail = request
-            .RequestContext
-            .Authorizer
-            .Jwt
-            .Claims
-            .FirstOrDefault(kvp => kvp.Key == UserRepresentationModel.EmailClaimName)
-            .Value;
-
-        var command = new RequestNewPasswordCommand(subscriberEmail);
+        var command = new RequestNewPasswordCommand(email);
 
         var result = await Sender.Send(command);
 

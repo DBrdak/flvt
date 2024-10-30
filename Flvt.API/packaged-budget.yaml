@@ -58,7 +58,7 @@ Resources:
     Properties:
       FunctionName: ScrapAll
       Runtime: dotnet8
-      CodeUri: s3://flvt/cad0a2f2dbba475763f38a956559e8cb
+      CodeUri: s3://flvt/c87c5168268c117088f5e9889d0e731c
       MemorySize: 3008
       Timeout: 900
       Role: arn:aws:iam::975049887576:role/FullAccess
@@ -86,7 +86,7 @@ Resources:
     Properties:
       FunctionName: StartProcessing
       Runtime: dotnet8
-      CodeUri: s3://flvt/cad0a2f2dbba475763f38a956559e8cb
+      CodeUri: s3://flvt/c87c5168268c117088f5e9889d0e731c
       MemorySize: 3008
       Timeout: 300
       Role: arn:aws:iam::975049887576:role/FullAccess
@@ -100,7 +100,7 @@ Resources:
     Properties:
       FunctionName: CheckProcessingStatus
       Runtime: dotnet8
-      CodeUri: s3://flvt/cad0a2f2dbba475763f38a956559e8cb
+      CodeUri: s3://flvt/c87c5168268c117088f5e9889d0e731c
       MemorySize: 3008
       Timeout: 120
       Role: arn:aws:iam::975049887576:role/FullAccess
@@ -120,7 +120,7 @@ Resources:
     Properties:
       FunctionName: EndProcessing
       Runtime: dotnet8
-      CodeUri: s3://flvt/cad0a2f2dbba475763f38a956559e8cb
+      CodeUri: s3://flvt/c87c5168268c117088f5e9889d0e731c
       MemorySize: 3008
       Timeout: 300
       Role: arn:aws:iam::975049887576:role/FullAccess
@@ -142,7 +142,7 @@ Resources:
     Properties:
       FunctionName: RemoveOutdated
       Runtime: dotnet8
-      CodeUri: s3://flvt/cad0a2f2dbba475763f38a956559e8cb
+      CodeUri: s3://flvt/c87c5168268c117088f5e9889d0e731c
       MemorySize: 3008
       Timeout: 900
       Role: arn:aws:iam::975049887576:role/FullAccess
@@ -162,7 +162,7 @@ Resources:
     Properties:
       FunctionName: RemoveDuplicates
       Runtime: dotnet8
-      CodeUri: s3://flvt/cad0a2f2dbba475763f38a956559e8cb
+      CodeUri: s3://flvt/c87c5168268c117088f5e9889d0e731c
       MemorySize: 3008
       Timeout: 300
       Role: arn:aws:iam::975049887576:role/FullAccess
@@ -183,7 +183,7 @@ Resources:
     Properties:
       FunctionName: UpdateUnprocessedScrapedAds
       Runtime: dotnet8
-      CodeUri: s3://flvt/cad0a2f2dbba475763f38a956559e8cb
+      CodeUri: s3://flvt/c87c5168268c117088f5e9889d0e731c
       MemorySize: 3008
       Timeout: 300
       Role: arn:aws:iam::975049887576:role/FullAccess
@@ -209,7 +209,7 @@ Resources:
     Properties:
       FunctionName: AdvertisementsGetByFilter
       Runtime: dotnet8
-      CodeUri: s3://flvt/cad0a2f2dbba475763f38a956559e8cb
+      CodeUri: s3://flvt/c87c5168268c117088f5e9889d0e731c
       MemorySize: 3008
       Timeout: 60
       Role: arn:aws:iam::975049887576:role/FullAccess
@@ -231,7 +231,7 @@ Resources:
     Properties:
       FunctionName: FlvtAuthorizer
       Runtime: dotnet8
-      CodeUri: s3://flvt/cad0a2f2dbba475763f38a956559e8cb
+      CodeUri: s3://flvt/c87c5168268c117088f5e9889d0e731c
       MemorySize: 3008
       Timeout: 60
       Role: arn:aws:iam::975049887576:role/FullAccess
@@ -251,7 +251,7 @@ Resources:
     Properties:
       FunctionName: Register
       Runtime: dotnet8
-      CodeUri: s3://flvt/cad0a2f2dbba475763f38a956559e8cb
+      CodeUri: s3://flvt/c87c5168268c117088f5e9889d0e731c
       MemorySize: 3008
       Timeout: 60
       Role: arn:aws:iam::975049887576:role/FullAccess
@@ -281,7 +281,7 @@ Resources:
     Properties:
       FunctionName: Login
       Runtime: dotnet8
-      CodeUri: s3://flvt/cad0a2f2dbba475763f38a956559e8cb
+      CodeUri: s3://flvt/c87c5168268c117088f5e9889d0e731c
       MemorySize: 3008
       Timeout: 60
       Role: arn:aws:iam::975049887576:role/FullAccess
@@ -311,7 +311,7 @@ Resources:
     Properties:
       FunctionName: VerifyEmail
       Runtime: dotnet8
-      CodeUri: s3://flvt/cad0a2f2dbba475763f38a956559e8cb
+      CodeUri: s3://flvt/c87c5168268c117088f5e9889d0e731c
       MemorySize: 3008
       Timeout: 60
       Role: arn:aws:iam::975049887576:role/FullAccess
@@ -323,34 +323,6 @@ Resources:
           Properties:
             Path: /v1/auth/verify
             Method: POST
-            ApiId:
-              Ref: FlvtApi
-  ResendVerificationEmail:
-    Type: AWS::Serverless::Function
-    Metadata:
-      SamResourceId: ResendVerificationEmail
-      SyncedEventProperties:
-        RootPut:
-        - Path
-        - Method
-      SyncedEvents:
-      - RootPut
-      Tool: Amazon.Lambda.Annotations
-    Properties:
-      FunctionName: ResendVerificationEmail
-      Runtime: dotnet8
-      CodeUri: s3://flvt/cad0a2f2dbba475763f38a956559e8cb
-      MemorySize: 3008
-      Timeout: 60
-      Role: arn:aws:iam::975049887576:role/FullAccess
-      PackageType: Zip
-      Handler: Flvt.API::Flvt.API.Functions.API.Auth.AuthFunctions_ResendVerificationEmail_Generated::ResendVerificationEmail
-      Events:
-        RootPut:
-          Type: HttpApi
-          Properties:
-            Path: /v1/auth/resend
-            Method: PUT
             ApiId:
               Ref: FlvtApi
   GetSubscriber:
@@ -367,7 +339,7 @@ Resources:
     Properties:
       FunctionName: GetSubscriber
       Runtime: dotnet8
-      CodeUri: s3://flvt/cad0a2f2dbba475763f38a956559e8cb
+      CodeUri: s3://flvt/c87c5168268c117088f5e9889d0e731c
       MemorySize: 3008
       Timeout: 60
       Role: arn:aws:iam::975049887576:role/FullAccess
@@ -389,7 +361,7 @@ Resources:
     Properties:
       FunctionName: RemoveUnusedPhotos
       Runtime: dotnet8
-      CodeUri: s3://flvt/cad0a2f2dbba475763f38a956559e8cb
+      CodeUri: s3://flvt/c87c5168268c117088f5e9889d0e731c
       MemorySize: 3008
       Timeout: 900
       Role: arn:aws:iam::975049887576:role/FullAccess
@@ -409,7 +381,7 @@ Resources:
     Properties:
       FunctionName: LaunchFilters
       Runtime: dotnet8
-      CodeUri: s3://flvt/cad0a2f2dbba475763f38a956559e8cb
+      CodeUri: s3://flvt/c87c5168268c117088f5e9889d0e731c
       MemorySize: 3008
       Timeout: 900
       Role: arn:aws:iam::975049887576:role/FullAccess
@@ -421,3 +393,199 @@ Resources:
           Properties:
             Name: LaunchFiltersSchedule
             Schedule: rate(1 hour)
+  NotifyAboutLaunchedFilters:
+    Type: AWS::Serverless::Function
+    Metadata:
+      SamResourceId: NotifyAboutLaunchedFilters
+      Tool: Amazon.Lambda.Annotations
+    Properties:
+      FunctionName: NotifyAboutLaunchedFilters
+      Runtime: dotnet8
+      CodeUri: s3://flvt/c87c5168268c117088f5e9889d0e731c
+      MemorySize: 3008
+      Timeout: 900
+      Role: arn:aws:iam::975049887576:role/FullAccess
+      PackageType: Zip
+      Handler: Flvt.API::Flvt.API.Functions.Background.FiltersJobs_NotifyAboutLaunchedFilters_Generated::NotifyAboutLaunchedFilters
+      Events:
+        SqsEvent:
+          Type: SQS
+          Properties:
+            Queue:
+              Fn::GetAtt:
+              - LaunchedFiltersQueue
+              - Arn
+  AdvertisementsMarkAsSeen:
+    Type: AWS::Serverless::Function
+    Metadata:
+      SamResourceId: AdvertisementsMarkAsSeen
+      SyncedEventProperties:
+        RootPut:
+        - Path
+        - Method
+      SyncedEvents:
+      - RootPut
+      Tool: Amazon.Lambda.Annotations
+    Properties:
+      FunctionName: AdvertisementsMarkAsSeen
+      Runtime: dotnet8
+      CodeUri: s3://flvt/c87c5168268c117088f5e9889d0e731c
+      MemorySize: 3008
+      Timeout: 60
+      Role: arn:aws:iam::975049887576:role/FullAccess
+      PackageType: Zip
+      Handler: Flvt.API::Flvt.API.Functions.API.Advertisements.AdvertisementsFunctions_MarkAsSeen_Generated::MarkAsSeen
+      Events:
+        RootPut:
+          Type: HttpApi
+          Properties:
+            Path: /v1/advertisements/see
+            Method: PUT
+            ApiId:
+              Ref: FlvtApi
+  AdvertisementsFlag:
+    Type: AWS::Serverless::Function
+    Metadata:
+      SamResourceId: AdvertisementsFlag
+      SyncedEventProperties:
+        RootPut:
+        - Path
+        - Method
+      SyncedEvents:
+      - RootPut
+      Tool: Amazon.Lambda.Annotations
+    Properties:
+      FunctionName: AdvertisementsFlag
+      Runtime: dotnet8
+      CodeUri: s3://flvt/c87c5168268c117088f5e9889d0e731c
+      MemorySize: 3008
+      Timeout: 60
+      Role: arn:aws:iam::975049887576:role/FullAccess
+      PackageType: Zip
+      Handler: Flvt.API::Flvt.API.Functions.API.Advertisements.AdvertisementsFunctions_Flag_Generated::Flag
+      Events:
+        RootPut:
+          Type: HttpApi
+          Properties:
+            Path: /v1/advertisements/flag
+            Method: PUT
+            ApiId:
+              Ref: FlvtApi
+  AdvertisementsFollow:
+    Type: AWS::Serverless::Function
+    Metadata:
+      SamResourceId: AdvertisementsFollow
+      SyncedEventProperties:
+        RootPut:
+        - Path
+        - Method
+      SyncedEvents:
+      - RootPut
+      Tool: Amazon.Lambda.Annotations
+    Properties:
+      FunctionName: AdvertisementsFollow
+      Runtime: dotnet8
+      CodeUri: s3://flvt/c87c5168268c117088f5e9889d0e731c
+      MemorySize: 3008
+      Timeout: 60
+      Role: arn:aws:iam::975049887576:role/FullAccess
+      PackageType: Zip
+      Handler: Flvt.API::Flvt.API.Functions.API.Advertisements.AdvertisementsFunctions_Follow_Generated::Follow
+      Events:
+        RootPut:
+          Type: HttpApi
+          Properties:
+            Path: /v1/advertisements/follow
+            Method: PUT
+            ApiId:
+              Ref: FlvtApi
+  RequestNewPassword:
+    Type: AWS::Serverless::Function
+    Metadata:
+      SamResourceId: RequestNewPassword
+      SyncedEventProperties:
+        RootPut:
+        - Path
+        - Method
+      SyncedEvents:
+      - RootPut
+      Tool: Amazon.Lambda.Annotations
+    Properties:
+      FunctionName: RequestNewPassword
+      Runtime: dotnet8
+      CodeUri: s3://flvt/c87c5168268c117088f5e9889d0e731c
+      MemorySize: 3008
+      Timeout: 60
+      Role: arn:aws:iam::975049887576:role/FullAccess
+      PackageType: Zip
+      Handler: Flvt.API::Flvt.API.Functions.API.Auth.AuthFunctions_RequestNewPassword_Generated::RequestNewPassword
+      Events:
+        RootPut:
+          Type: HttpApi
+          Properties:
+            Path: /v1/auth/new-password/request
+            Method: PUT
+            ApiId:
+              Ref: FlvtApi
+            Auth:
+              Authorizer: NONE
+  SetNewPassword:
+    Type: AWS::Serverless::Function
+    Metadata:
+      SamResourceId: SetNewPassword
+      SyncedEventProperties:
+        RootPost:
+        - Path
+        - Method
+      SyncedEvents:
+      - RootPost
+      Tool: Amazon.Lambda.Annotations
+    Properties:
+      FunctionName: SetNewPassword
+      Runtime: dotnet8
+      CodeUri: s3://flvt/c87c5168268c117088f5e9889d0e731c
+      MemorySize: 3008
+      Timeout: 60
+      Role: arn:aws:iam::975049887576:role/FullAccess
+      PackageType: Zip
+      Handler: Flvt.API::Flvt.API.Functions.API.Auth.AuthFunctions_SetNewPassword_Generated::SetNewPassword
+      Events:
+        RootPost:
+          Type: HttpApi
+          Properties:
+            Path: /v1/auth/new-password/set
+            Method: POST
+            ApiId:
+              Ref: FlvtApi
+            Auth:
+              Authorizer: NONE
+  ResendEmail:
+    Type: AWS::Serverless::Function
+    Metadata:
+      SamResourceId: ResendEmail
+      SyncedEventProperties:
+        RootPut:
+        - Path
+        - Method
+      SyncedEvents:
+      - RootPut
+      Tool: Amazon.Lambda.Annotations
+    Properties:
+      FunctionName: ResendEmail
+      Runtime: dotnet8
+      CodeUri: s3://flvt/c87c5168268c117088f5e9889d0e731c
+      MemorySize: 3008
+      Timeout: 900
+      Role: arn:aws:iam::975049887576:role/FullAccess
+      PackageType: Zip
+      Handler: Flvt.API::Flvt.API.Functions.API.Auth.AuthFunctions_ResendEmail_Generated::ResendEmail
+      Events:
+        RootPut:
+          Type: HttpApi
+          Properties:
+            Path: /v1/auth/resend
+            Method: PUT
+            ApiId:
+              Ref: FlvtApi
+            Auth:
+              Authorizer: NONE

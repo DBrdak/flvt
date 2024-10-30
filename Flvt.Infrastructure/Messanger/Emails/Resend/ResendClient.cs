@@ -1,8 +1,10 @@
 ﻿using System.Net.Http.Json;
 using Flvt.Domain.Primitives.Responses;
 using Flvt.Infrastructure.Messanger.Emails.Models;
+using Flvt.Infrastructure.Messanger.Emails.Resend.Models;
 using Flvt.Infrastructure.SecretManager;
 using Newtonsoft.Json;
+using Serilog;
 
 namespace Flvt.Infrastructure.Messanger.Emails.Resend;
 
@@ -17,23 +19,31 @@ internal sealed class ResendClient
         var apiToken = await SecretAccesor.GetSecretAsync(secretName);
         _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {apiToken}");
 
+        var resendEmail = ResendEmail.FromDomainEmail(email);
+
         var response = await _httpClient.PostAsJsonAsync(
             sendEmailPath,
-            email);
+            resendEmail);
 
         var responseContent = await response.Content.ReadAsStringAsync();
 
         var jsonData = JsonConvert.SerializeObject(email);
 
-        return Result.FromBool(
+        var result = Result.FromBool(
             response.IsSuccessStatusCode,
             CreateResendResponseError([email.Recipient], responseContent, jsonData));
+
+        if (result.IsFailure)
+        {
+            Log.Logger.Error(
+                "Problem while sending an email to {recipient}. Response: {errorMessage}.",
+                email.Recipient,
+                responseContent);
+        }
+
+        return result;
     }
 
     private static Error CreateResendResponseError(string[] recipient, object errorMessage, string data) => new(
-        $"""
-         Problem while sending an email to {JsonConvert.SerializeObject(recipient)}.
-         Request: {data}
-         Response: {JsonConvert.SerializeObject(errorMessage)}.
-         """);
+        $"Problem while sending an email to {JsonConvert.SerializeObject(recipient)}");
 }
