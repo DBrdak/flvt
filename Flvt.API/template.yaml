@@ -294,32 +294,6 @@ Resources:
             Path: /v1/auth/verify
             Method: POST
             ApiId: !Ref FlvtApi
-  ResendVerificationEmail:
-    Type: AWS::Serverless::Function
-    Metadata:
-      Tool: Amazon.Lambda.Annotations
-      SyncedEvents:
-        - RootPut
-      SyncedEventProperties:
-        RootPut:
-          - Path
-          - Method
-    Properties:
-      FunctionName: ResendVerificationEmail
-      Runtime: dotnet8
-      CodeUri: .
-      MemorySize: 3008
-      Timeout: 60
-      Role: arn:aws:iam::975049887576:role/FullAccess
-      PackageType: Zip
-      Handler: Flvt.API::Flvt.API.Functions.API.Auth.AuthFunctions_ResendVerificationEmail_Generated::ResendVerificationEmail
-      Events:
-        RootPut:
-          Type: HttpApi
-          Properties:
-            Path: /v1/auth/resend
-            Method: PUT
-            ApiId: !Ref FlvtApi
   GetSubscriber:
     Type: AWS::Serverless::Function
     Metadata:
@@ -384,3 +358,183 @@ Resources:
           Properties:
             Name: LaunchFiltersSchedule
             Schedule: 'rate(1 hour)'
+  NotifyAboutLaunchedFilters:
+    Type: AWS::Serverless::Function
+    Metadata:
+      Tool: Amazon.Lambda.Annotations
+    Properties:
+      FunctionName: NotifyAboutLaunchedFilters
+      Runtime: dotnet8
+      CodeUri: .
+      MemorySize: 3008
+      Timeout: 900
+      Role: arn:aws:iam::975049887576:role/FullAccess
+      PackageType: Zip
+      Handler: Flvt.API::Flvt.API.Functions.Background.FiltersJobs_NotifyAboutLaunchedFilters_Generated::NotifyAboutLaunchedFilters
+      Events:
+        SqsEvent:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt LaunchedFiltersQueue.Arn
+  AdvertisementsMarkAsSeen:
+    Type: AWS::Serverless::Function
+    Metadata:
+      Tool: Amazon.Lambda.Annotations
+      SyncedEvents:
+        - RootPut
+      SyncedEventProperties:
+        RootPut:
+          - Path
+          - Method
+    Properties:
+      FunctionName: AdvertisementsMarkAsSeen
+      Runtime: dotnet8
+      CodeUri: .
+      MemorySize: 3008
+      Timeout: 60
+      Role: arn:aws:iam::975049887576:role/FullAccess
+      PackageType: Zip
+      Handler: Flvt.API::Flvt.API.Functions.API.Advertisements.AdvertisementsFunctions_MarkAsSeen_Generated::MarkAsSeen
+      Events:
+        RootPut:
+          Type: HttpApi
+          Properties:
+            Path: /v1/advertisements/see
+            Method: PUT
+            ApiId: !Ref FlvtApi
+  AdvertisementsFlag:
+    Type: AWS::Serverless::Function
+    Metadata:
+      Tool: Amazon.Lambda.Annotations
+      SyncedEvents:
+        - RootPut
+      SyncedEventProperties:
+        RootPut:
+          - Path
+          - Method
+    Properties:
+      FunctionName: AdvertisementsFlag
+      Runtime: dotnet8
+      CodeUri: .
+      MemorySize: 3008
+      Timeout: 60
+      Role: arn:aws:iam::975049887576:role/FullAccess
+      PackageType: Zip
+      Handler: Flvt.API::Flvt.API.Functions.API.Advertisements.AdvertisementsFunctions_Flag_Generated::Flag
+      Events:
+        RootPut:
+          Type: HttpApi
+          Properties:
+            Path: /v1/advertisements/flag
+            Method: PUT
+            ApiId: !Ref FlvtApi
+  AdvertisementsFollow:
+    Type: AWS::Serverless::Function
+    Metadata:
+      Tool: Amazon.Lambda.Annotations
+      SyncedEvents:
+        - RootPut
+      SyncedEventProperties:
+        RootPut:
+          - Path
+          - Method
+    Properties:
+      FunctionName: AdvertisementsFollow
+      Runtime: dotnet8
+      CodeUri: .
+      MemorySize: 3008
+      Timeout: 60
+      Role: arn:aws:iam::975049887576:role/FullAccess
+      PackageType: Zip
+      Handler: Flvt.API::Flvt.API.Functions.API.Advertisements.AdvertisementsFunctions_Follow_Generated::Follow
+      Events:
+        RootPut:
+          Type: HttpApi
+          Properties:
+            Path: /v1/advertisements/follow
+            Method: PUT
+            ApiId: !Ref FlvtApi
+  RequestNewPassword:
+    Type: AWS::Serverless::Function
+    Metadata:
+      Tool: Amazon.Lambda.Annotations
+      SyncedEvents:
+        - RootPut
+      SyncedEventProperties:
+        RootPut:
+          - Path
+          - Method
+    Properties:
+      FunctionName: AdvertisementsFollow
+      Runtime: dotnet8
+      CodeUri: .
+      MemorySize: 3008
+      Timeout: 60
+      Role: arn:aws:iam::975049887576:role/FullAccess
+      PackageType: Zip
+      Handler: Flvt.API::Flvt.API.Functions.API.Auth.AuthFunctions_RequestNewPassword_Generated::RequestNewPassword
+      Events:
+        RootPut:
+          Type: HttpApi
+          Properties:
+            Path: /v1/auth/new-password/request
+            Method: PUT
+            ApiId: !Ref FlvtApi
+            Auth:
+              Authorizer: NONE
+  SetNewPassword:
+    Type: AWS::Serverless::Function
+    Metadata:
+      Tool: Amazon.Lambda.Annotations
+      SyncedEvents:
+        - RootPost
+      SyncedEventProperties:
+        RootPost:
+          - Path
+          - Method
+    Properties:
+      FunctionName: SetNewPassword
+      Runtime: dotnet8
+      CodeUri: .
+      MemorySize: 3008
+      Timeout: 60
+      Role: arn:aws:iam::975049887576:role/FullAccess
+      PackageType: Zip
+      Handler: Flvt.API::Flvt.API.Functions.API.Auth.AuthFunctions_SetNewPassword_Generated::SetNewPassword
+      Events:
+        RootPost:
+          Type: HttpApi
+          Properties:
+            Path: /v1/auth/new-password/set
+            Method: POST
+            ApiId: !Ref FlvtApi
+            Auth:
+              Authorizer: NONE
+  ResendEmail:
+    Type: AWS::Serverless::Function
+    Metadata:
+      Tool: Amazon.Lambda.Annotations
+      SyncedEvents:
+        - RootPut
+      SyncedEventProperties:
+        RootPut:
+          - Path
+          - Method
+    Properties:
+      FunctionName: ResendEmail
+      Runtime: dotnet8
+      CodeUri: .
+      MemorySize: 3008
+      Timeout: 900
+      Role: arn:aws:iam::975049887576:role/FullAccess
+      PackageType: Zip
+      Handler: Flvt.API::Flvt.API.Functions.API.Auth.AuthFunctions_ResendEmail_Generated::ResendEmail
+      Events:
+        RootPut:
+          Type: HttpApi
+          Properties:
+            Path: /v1/auth/resend
+            Method: PUT
+            ApiId: !Ref FlvtApi
+            Auth:
+              Authorizer: NONE

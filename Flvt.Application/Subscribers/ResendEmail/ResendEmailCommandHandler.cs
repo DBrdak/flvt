@@ -40,6 +40,8 @@ internal sealed class ResendEmailCommandHandler : ICommandHandler<ResendEmailCom
         {
             _ when purpose == ResendEmailPurpose.Verification => 
                 await _emailService.SendVerificationEmailAsync(subscriber),
+            _ when purpose == ResendEmailPurpose.NewPassword => 
+                await _emailService.SendResetPasswordEmailAsync(subscriber),
             _ => ResendEmailErrors.PurposeNotSupported
         };
     }

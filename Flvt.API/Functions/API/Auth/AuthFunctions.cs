@@ -1,10 +1,13 @@
 ﻿using Amazon.Lambda.Annotations;
 using Amazon.Lambda.Annotations.APIGateway;
 using Amazon.Lambda.APIGatewayEvents;
+using Flvt.API.Functions.API.Auth.Requests;
 using Flvt.API.Utils;
 using Flvt.Application.Subscribers.Login;
 using Flvt.Application.Subscribers.Register;
+using Flvt.Application.Subscribers.RequestNewPassword;
 using Flvt.Application.Subscribers.ResendEmail;
+using Flvt.Application.Subscribers.SetNewPassword;
 using Flvt.Application.Subscribers.VerifyEmail;
 using Flvt.Infrastructure.Authentication.Models;
 using MediatR;
@@ -60,11 +63,23 @@ internal sealed class AuthFunctions : BaseFunction
         return result.ReturnAPIResponse(200, 400);
     }
 
-    [LambdaFunction(ResourceName = nameof(ResendVerificationEmail))]
+    [LambdaFunction(ResourceName = nameof(ResendEmail))]
     [HttpApi(LambdaHttpMethod.Put, "/v1/auth/resend")]
-    public async Task<APIGatewayHttpApiV2ProxyResponse> ResendVerificationEmail(
+    public async Task<APIGatewayHttpApiV2ProxyResponse> ResendEmail(
         [FromQuery] string purpose,
+        [FromQuery] string email,
         APIGatewayHttpApiV2ProxyRequest request)
+    {
+        var command = new ResendEmailCommand(email, purpose);
+
+        var result = await Sender.Send(command);
+
+        return result.ReturnAPIResponse(200, 400);
+    }
+
+    [LambdaFunction(ResourceName = nameof(RequestNewPassword))]
+    [HttpApi(LambdaHttpMethod.Put, "/v1/auth/new-password/request")]
+    public async Task<APIGatewayHttpApiV2ProxyResponse> RequestNewPassword(APIGatewayHttpApiV2ProxyRequest request)
     {
         var subscriberEmail = request
             .RequestContext
@@ -74,10 +89,35 @@ internal sealed class AuthFunctions : BaseFunction
             .FirstOrDefault(kvp => kvp.Key == UserRepresentationModel.EmailClaimName)
             .Value;
 
-        var command = new ResendEmailCommand(subscriberEmail, purpose);
+        var command = new RequestNewPasswordCommand(subscriberEmail);
 
         var result = await Sender.Send(command);
 
         return result.ReturnAPIResponse(200, 400);
     }
+
+    [LambdaFunction(ResourceName = nameof(SetNewPassword))]
+    [HttpApi(LambdaHttpMethod.Post, "/v1/auth/new-password/set")]
+    public async Task<APIGatewayHttpApiV2ProxyResponse> SetNewPassword(
+        [FromBody] NewPasswordRequest request,
+        APIGatewayHttpApiV2ProxyRequest requestContext)
+    {
+        var subscriberEmail = requestContext
+            .RequestContext
+            .Authorizer
+            .Jwt
+            .Claims
+            .FirstOrDefault(kvp => kvp.Key == UserRepresentationModel.EmailClaimName)
+            .Value;
+
+        var command = new SetNewPasswordCommand(
+            subscriberEmail,
+            request.VerificationCode,
+            request.NewPassword);
+
+        var result = await Sender.Send(command);
+
+        return result.ReturnAPIResponse(200, 400);
+    }
+
 }

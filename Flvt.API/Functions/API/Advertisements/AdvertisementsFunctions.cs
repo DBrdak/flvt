@@ -2,7 +2,10 @@
 using Amazon.Lambda.Annotations.APIGateway;
 using Amazon.Lambda.APIGatewayEvents;
 using Flvt.API.Utils;
+using Flvt.Application.Advertisements.Flag;
+using Flvt.Application.Advertisements.Follow;
 using Flvt.Application.Advertisements.GetAdvertisementsByFilter;
+using Flvt.Application.Advertisements.MarkAsSeen;
 using MediatR;
 
 namespace Flvt.API.Functions.API.Advertisements;
@@ -34,5 +37,43 @@ public sealed class AdvertisementsFunctions : BaseFunction
         var result = await Sender.Send(query);
 
         return result.ReturnAPIResponse(200, 404);
+    }
+
+    [LambdaFunction(ResourceName = $"Advertisements{nameof(MarkAsSeen)}")]
+    [HttpApi(LambdaHttpMethod.Put, "/v1/advertisements/see")]
+    public async Task<APIGatewayHttpApiV2ProxyResponse> MarkAsSeen(
+        [FromQuery] string advertisementLink,
+        [FromQuery] string filterId)
+    {
+        var command = new MarkAsSeenCommand(filterId, advertisementLink);
+
+        var result = await Sender.Send(command);
+
+        return result.ReturnAPIResponse(200, 400);
+    }
+
+    [LambdaFunction(ResourceName = $"Advertisements{nameof(Follow)}")]
+    [HttpApi(LambdaHttpMethod.Put, "/v1/advertisements/follow")]
+    public async Task<APIGatewayHttpApiV2ProxyResponse> Follow(
+        [FromQuery] string advertisementLink,
+        [FromQuery] string filterId)
+    {
+        var command = new FollowCommand(filterId, advertisementLink);
+
+        var result = await Sender.Send(command);
+
+        return result.ReturnAPIResponse(200, 400);
+    }
+
+    [LambdaFunction(ResourceName = $"Advertisements{nameof(Flag)}")]
+    [HttpApi(LambdaHttpMethod.Put, "/v1/advertisements/flag")]
+    public async Task<APIGatewayHttpApiV2ProxyResponse> Flag(
+        [FromQuery] string advertisementLink)
+    {
+        var command = new FlagCommand(advertisementLink);
+
+        var result = await Sender.Send(command);
+
+        return result.ReturnAPIResponse(200, 400);
     }
 }

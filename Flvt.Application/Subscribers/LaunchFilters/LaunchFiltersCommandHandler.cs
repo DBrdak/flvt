@@ -37,9 +37,9 @@ internal sealed class LaunchFiltersCommandHandler : ICommandHandler<LaunchFilter
 
         var filters = filterGetResult.Value;
 
-        var filtersToRun = GetFiltersToLaunch(filters);
+        var filtersToLaunch = GetFiltersToLaunch(filters).ToList();
 
-        var filteringTasks = filtersToRun.Select(_filtersService.LaunchFilter);
+        var filteringTasks = filtersToLaunch.Select(_filtersService.LaunchFilter);
 
         var launchedFiltersResults = await Task.WhenAll(filteringTasks);
 
@@ -54,6 +54,11 @@ internal sealed class LaunchFiltersCommandHandler : ICommandHandler<LaunchFilter
         var writeTask = _filterRepository.ExecuteBatchWriteAsync();
 
         var publishTask = _queuePublisher.PublishLaunchedFilters(launchedFilters);
+
+        Log.Logger.Information(
+            "Launched {launchedFilterCount} filters with {accuracy} accuracy",
+            launchedFilters.Count,
+            (launchedFilters.Count / filtersToLaunch.Count == 0 ? 1 : filtersToLaunch.Count).ToString("P"));
 
         return Result.Aggregate(await Task.WhenAll(writeTask, publishTask));
     }
