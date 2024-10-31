@@ -58,6 +58,7 @@ internal sealed class SubscriberDataModel : IDataModel<Subscriber>
         var email = Domain.Subscribers.Email.Create(Email).Value;
         var country = Country.Create(CountryCode).Value;
         var tier = SubscribtionTier.Create(Tier).Value;
+
         var password = Activator.CreateInstance(
                            typeof(Password),
                            BindingFlags.Instance | BindingFlags.NonPublic,
@@ -67,16 +68,19 @@ internal sealed class SubscriberDataModel : IDataModel<Subscriber>
                            ],
                            null) as Password ??
                        throw new DataModelConversionException(typeof(string), typeof(Password));
-        var verificationCode = Activator.CreateInstance(
-                                  typeof(VerificationCode),
-                                  BindingFlags.Instance | BindingFlags.NonPublic,
-                                  null,
-                                  [
-                                      VerificationCode,
-                                      VerificationCodeExpirationDate
-                                  ],
-                                  null) as VerificationCode ??
-                               throw new DataModelConversionException(typeof(string), typeof(Password));
+
+        var verificationCode = VerificationCode is not null && VerificationCodeExpirationDate is not null ?
+            Activator.CreateInstance(
+                typeof(VerificationCode),
+                BindingFlags.Instance | BindingFlags.NonPublic,
+                null,
+                [VerificationCode, VerificationCodeExpirationDate],
+                null) as VerificationCode ??
+            throw new DataModelConversionException(
+                typeof(string),
+                typeof(Password)) 
+            : null;
+
         var guard = Activator.CreateInstance(
                         typeof(LoggingGuard),
                         BindingFlags.Instance | BindingFlags.NonPublic,
@@ -100,7 +104,7 @@ internal sealed class SubscriberDataModel : IDataModel<Subscriber>
                        guard,
                        tier,
                        country,
-                       Filters
+                       Filters.ToList()
                    ],
                    null) as Subscriber ??
                throw new DataModelConversionException(typeof(Subscriber));

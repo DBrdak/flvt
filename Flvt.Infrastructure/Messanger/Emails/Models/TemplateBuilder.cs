@@ -101,13 +101,11 @@ internal class TemplateBuilder
             <body data-new-gr-c-s-loaded="14.1204.0">
               <div class="container">
                 <div class="header">
-                  <h1>Verification</h1>
                   <h1>{{header}}</h1>
                 </div>
                 <div class="content">
                   <p>Hello,</p>
                   <p>{{message}}</p>
-                  <p>Thank you for registering with us. Please use the verification code below to verify your email address.</p>
                   <div class="verification-code">
                     <div class="verification-code-digit">{{code[0]}}</div>
                     <div class="verification-code-digit">{{code[1]}}</div>

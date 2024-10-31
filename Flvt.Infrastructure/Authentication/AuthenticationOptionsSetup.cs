@@ -1,5 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
+using Serilog;
 
 namespace Flvt.Infrastructure.Authentication;
 
@@ -16,5 +18,7 @@ public sealed class AuthenticationOptionsSetup : IConfigureOptions<Authenticatio
     public void Configure(AuthenticationOptions options)
     {
         _configuration.GetSection(sectionName).Bind(options);
+        Log.Logger.Information(_configuration.GetSection(sectionName).Value ?? "config not found");
+        Log.Logger.Information(JsonConvert.SerializeObject(_configuration));
     }
 }

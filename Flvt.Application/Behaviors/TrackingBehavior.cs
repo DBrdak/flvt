@@ -43,7 +43,7 @@ public sealed class TrackingBehavior<TRequest, TResponse> : IPipelineBehavior<TR
 
             await Log.CloseAndFlushAsync();
 
-            return response ?? (TResponse)Error.Exception;
+            return response;
         }
     }
 }

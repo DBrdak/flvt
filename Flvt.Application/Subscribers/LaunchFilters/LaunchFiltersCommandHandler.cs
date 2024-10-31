@@ -55,12 +55,21 @@ internal sealed class LaunchFiltersCommandHandler : ICommandHandler<LaunchFilter
 
         var publishTask = _queuePublisher.PublishLaunchedFilters(launchedFilters);
 
-        Log.Logger.Information(
-            "Launched {launchedFilterCount} filters with {accuracy} accuracy",
-            launchedFilters.Count,
-            (launchedFilters.Count / filtersToLaunch.Count == 0 ? 1 : filtersToLaunch.Count).ToString("P"));
+        LogAboutLaunchedFilters(launchedFilters, filtersToLaunch);
 
         return Result.Aggregate(await Task.WhenAll(writeTask, publishTask));
+    }
+
+    private static void LogAboutLaunchedFilters(List<Filter> launchedFilters, List<Filter> filtersToLaunch)
+    {
+        var launchedFiltersCount = launchedFilters.Count;
+        var filtersToLaunchCount = filtersToLaunch.Count;
+        var accuracy = filtersToLaunchCount == 0 ? 1m : (decimal)launchedFiltersCount / filtersToLaunchCount;
+
+        Log.Logger.Information(
+            "Launched {launchedFilterCount} filters with {accuracy} accuracy",
+            launchedFiltersCount,
+            accuracy.ToString("P"));
     }
 
     private IEnumerable<Filter> GetFiltersToLaunch(IEnumerable<Filter> filters) => 

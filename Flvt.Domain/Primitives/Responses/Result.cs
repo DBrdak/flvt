@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using Newtonsoft.Json.Linq;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json.Serialization;
 
 namespace Flvt.Domain.Primitives.Responses;
@@ -75,5 +76,4 @@ public class Result<TValue> : Result
     public static implicit operator Result<TValue>(TValue? value) => Create(value);
 
     public static implicit operator Result<TValue>(Error error) => Failure<TValue>(error);
-
 }

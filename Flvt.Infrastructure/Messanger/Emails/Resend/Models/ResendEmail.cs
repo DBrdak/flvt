@@ -33,11 +33,9 @@ internal class ResendEmail
         Html = html;
     }
 
-    public static ResendEmail FromDomainEmail(Email email)
-    {
-        return new(
+    public static ResendEmail FromDomainEmail(Email email) =>
+        new(
             [email.Recipient],
             email.Subject,
             email.HtmlBody);
-    }
 }
