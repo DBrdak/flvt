@@ -1,6 +1,4 @@
-﻿using System.Reflection.PortableExecutable;
-
-namespace Flvt.Infrastructure.Messanger.Emails.Models;
+﻿namespace Flvt.Infrastructure.Messanger.Emails.Models;
 
 internal class TemplateBuilder
 {

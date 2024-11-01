@@ -1,6 +1,4 @@
-﻿using Flvt.Domain.Filters;
-
-namespace Flvt.Infrastructure.Messanger.Emails.Models;
+﻿namespace Flvt.Infrastructure.Messanger.Emails.Models;
 
 internal sealed record Email
 {

@@ -7,9 +7,9 @@ public sealed record AddBasicFilterCommand(
     string SubscriberEmail,
     string Name,
     string City,
-    decimal MinPrice,
-    decimal MaxPrice,
-    int MinRooms,
-    int MaxRooms,
-    decimal MinArea,
-    decimal MaxArea) : ICommand<FilterModel>;
+    decimal? MinPrice,
+    decimal? MaxPrice,
+    int? MinRooms,
+    int? MaxRooms,
+    decimal? MinArea,
+    decimal? MaxArea) : ICommand<FilterModel>;

@@ -22,7 +22,7 @@ internal sealed class FileService : IFileService
     {
         var advertisementsJson = JsonConvert.SerializeObject(advertisements);
 
-        var filePath = $"ads/{filter.Id}_{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}.json";
+        var filePath = $"ads/{filter.Id}.json";
 
         var response = await _s3Bucket.WriteFileAsync(
             Encoding.UTF8.GetBytes(advertisementsJson),

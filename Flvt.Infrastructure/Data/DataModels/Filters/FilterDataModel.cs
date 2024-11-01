@@ -94,49 +94,49 @@ internal sealed class FilterDataModel : IDataModel<Filter>
                            [Location],
                            null) ??
                        throw new DataModelConversionException(typeof(string), typeof(FilterLocation));
-        var minPrice = Activator.CreateInstance(
-                           typeof(FilterPrice),
-                           BindingFlags.Instance | BindingFlags.NonPublic,
-                           null,
-                           [MinPrice],
-                           null) ??
-                       throw new DataModelConversionException(typeof(decimal), typeof(FilterPrice));
-        var maxPrice = Activator.CreateInstance(
-                           typeof(FilterPrice),
-                           BindingFlags.Instance | BindingFlags.NonPublic,
-                           null,
-                           [MaxPrice],
-                           null) ??
-                       throw new DataModelConversionException(typeof(decimal), typeof(FilterPrice));
-        var minArea = Activator.CreateInstance(
-                           typeof(FilterArea),
-                           BindingFlags.Instance | BindingFlags.NonPublic,
-                           null,
-                           [MinArea],
-                           null) ??
-                       throw new DataModelConversionException(typeof(decimal), typeof(FilterArea));
-        var maxArea = Activator.CreateInstance(
-                           typeof(FilterArea),
-                           BindingFlags.Instance | BindingFlags.NonPublic,
-                           null,
-                           [MaxArea],
-                           null) ??
-                       throw new DataModelConversionException(typeof(decimal), typeof(FilterArea));
-        var minRooms = Activator.CreateInstance(
-                           typeof(FilterRoomsCount),
-                           BindingFlags.Instance | BindingFlags.NonPublic,
-                           null,
-                           [MinRooms],
-                           null) ??
-                       throw new DataModelConversionException(typeof(int), typeof(FilterRoomsCount));
-        var maxRooms = Activator.CreateInstance(
-                           typeof(FilterRoomsCount),
-                           BindingFlags.Instance | BindingFlags.NonPublic,
-                           null,
-                           [MaxRooms],
-                           null) ??
-                       throw new DataModelConversionException(typeof(int), typeof(FilterRoomsCount));
-        var frequency = Activator.CreateInstance(
+        var minPrice = MinPrice is null ? null : Activator.CreateInstance(
+                                                    typeof(FilterPrice),
+                                                    BindingFlags.Instance | BindingFlags.NonPublic,
+                                                    null,
+                                                    [MinPrice.Value],
+                                                    null) ??
+                                                throw new DataModelConversionException(typeof(decimal), typeof(FilterPrice));
+        var maxPrice = MaxPrice is null ? null : Activator.CreateInstance(
+                                                     typeof(FilterPrice),
+                                                     BindingFlags.Instance | BindingFlags.NonPublic,
+                                                     null,
+                                                     [MaxPrice.Value],
+                                                     null) ??
+                                                 throw new DataModelConversionException(typeof(decimal), typeof(FilterPrice));
+        var minArea = MinArea is null ? null : Activator.CreateInstance(
+                                                   typeof(FilterArea),
+                                                   BindingFlags.Instance | BindingFlags.NonPublic,
+                                                   null,
+                                                   [MinArea.Value],
+                                                   null) ??
+                                               throw new DataModelConversionException(typeof(decimal), typeof(FilterArea));
+        var maxArea = MaxArea is null ? null : Activator.CreateInstance(
+                                                   typeof(FilterArea),
+                                                   BindingFlags.Instance | BindingFlags.NonPublic,
+                                                   null,
+                                                   [MaxArea.Value],
+                                                   null) ??
+                                               throw new DataModelConversionException(typeof(decimal), typeof(FilterArea));
+        var minRooms = MinRooms is null ? null : Activator.CreateInstance(
+                                                     typeof(FilterRoomsCount),
+                                                     BindingFlags.Instance | BindingFlags.NonPublic,
+                                                     null,
+                                                     [MinRooms.Value],
+                                                     null) ??
+                                                 throw new DataModelConversionException(typeof(int), typeof(FilterRoomsCount));
+        var maxRooms = MaxRooms is null ? null : Activator.CreateInstance(
+                                                     typeof(FilterRoomsCount),
+                                                     BindingFlags.Instance | BindingFlags.NonPublic,
+                                                     null,
+                                                     [MaxRooms.Value],
+                                                     null) ??
+                                                 throw new DataModelConversionException(typeof(int), typeof(FilterRoomsCount));
+        var frequency = MinPrice is null ? null : Activator.CreateInstance(
                             typeof(Frequency),
                             BindingFlags.Instance | BindingFlags.NonPublic,
                             null,
@@ -167,10 +167,10 @@ internal sealed class FilterDataModel : IDataModel<Filter>
                        maxArea,
                        frequency,
                        tier,
-                       FoundAdvertisements,
-                       RecentlyFoundAdvertisements,
-                       SeenAdvertisements,
-                       FollowedAdvertisements,
+                       FoundAdvertisements.ToList(),
+                       RecentlyFoundAdvertisements.ToList(),
+                       SeenAdvertisements.ToList(),
+                       FollowedAdvertisements.ToList(),
                        AdvertisementsFilePath,
                        SubscriberEmail,
                        OnlyLast24H

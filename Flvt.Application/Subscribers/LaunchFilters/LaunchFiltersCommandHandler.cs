@@ -1,11 +1,8 @@
 using Flvt.Application.Abstractions;
-using Flvt.Application.Advertisements.Models;
 using Flvt.Application.Messaging;
 using Flvt.Application.Subscribers.Services;
 using Flvt.Domain.Filters;
-using Flvt.Domain.Photos;
 using Flvt.Domain.Primitives.Responses;
-using Flvt.Domain.ProcessedAdvertisements;
 using Serilog;
 
 namespace Flvt.Application.Subscribers.LaunchFilters;

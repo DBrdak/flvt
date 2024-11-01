@@ -6,6 +6,7 @@ using Flvt.Application.Advertisements.Flag;
 using Flvt.Application.Advertisements.Follow;
 using Flvt.Application.Advertisements.GetAdvertisementsByFilter;
 using Flvt.Application.Advertisements.MarkAsSeen;
+using Flvt.Infrastructure.Authentication.Models;
 using MediatR;
 
 namespace Flvt.API.Functions.API.Advertisements;
@@ -22,13 +23,7 @@ public sealed class AdvertisementsFunctions : BaseFunction
         [FromQuery] string? filterId,
         APIGatewayHttpApiV2ProxyRequest request)
     {
-        var subscriberEmail = request
-            .RequestContext
-            .Authorizer
-            .Jwt
-            .Claims
-            .FirstOrDefault(kvp => kvp.Key.ToLower() == "email")
-            .Value;
+        var subscriberEmail = request.GetJwtClaimValue(UserRepresentationModel.EmailClaimName);
 
         var query = new GetAdvertisementsByFilterQuery(
             filterId,

@@ -1,6 +1,5 @@
 ﻿using System.Runtime.Serialization;
 using Amazon.Lambda.Annotations;
-using Amazon.Lambda.Core;
 using Amazon.Lambda.SQSEvents;
 using Flvt.Application.Subscribers.LaunchFilters;
 using Flvt.Application.Subscribers.NotifyFilterLaunch;

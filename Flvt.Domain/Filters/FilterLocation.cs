@@ -11,15 +11,15 @@ public sealed record FilterLocation
     /// </summary>
     public static readonly IReadOnlyCollection<FilterLocation> SupportedCities =
         [
-            new("warszawa"),
-            new("piaseczno"),
-            new("lomianki"),
-            new("wolomin"),
-            new("zabki"),
-            new("marki"),
-            new("legionowo"),
-            new("pruszkow"),
-            new("piastow"),
+            new("Warszawa"),
+            new("Piaseczno"),
+            new("Łomianki"),
+            new("Wołomin"),
+            new("Ząbki"),
+            new("Marki"),
+            new("Legionowo"),
+            new("Pruszków"),
+            new("Piastów"),
             //new("krakow"),
             //new("wroclaw"),
             //new("poznan"),
@@ -37,7 +37,7 @@ public sealed record FilterLocation
     private FilterLocation(string city) => City = city;
 
     internal static Result<FilterLocation> Create(string city) =>
-        SupportedCities.FirstOrDefault(location => location.City == city.ToLower()) switch
+        SupportedCities.FirstOrDefault(location => location.City.ToLower() == city.ToLower()) switch
         {
             { } location => location,
             _ => FilterErrors.LocationNotSupported

@@ -3,6 +3,7 @@ using Flvt.Application.Subscribers.Models;
 using Flvt.Domain.Filters;
 using Flvt.Domain.Primitives.Responses;
 using Flvt.Domain.Subscribers;
+using Serilog;
 
 namespace Flvt.Application.Subscribers.GetSubscriber;
 
@@ -35,7 +36,10 @@ internal sealed class GetSubscriberQueryHandler : IQueryHandler<GetSubscriberQue
             return filtersGetResult.Error;
         }
 
-        var filters = filtersGetResult.Value;
+        var filters = filtersGetResult.Value.ToList();
+
+        Log.Logger.Information("Filters IDs: {filtersIds}", subscriber.Filters);
+        Log.Logger.Information("Filters: {filters}", filters);
 
         var filterModels = filters.Select(FilterModel.FromDomainModel);
 

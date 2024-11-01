@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json.Linq;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.Text.Json.Serialization;
 
 namespace Flvt.Domain.Primitives.Responses;

@@ -29,7 +29,7 @@ public sealed record VerificationCode
     }
 
     internal bool Verify(string code) => 
-        DateTimeOffset.UtcNow.ToUnixTimeSeconds() > ExpirationDate 
+        DateTimeOffset.UtcNow.ToUnixTimeSeconds() < ExpirationDate 
         && 
         Code == code;
 }

@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using Flvt.Application.Abstractions;
 using Flvt.Application.Messaging;
 using Flvt.Domain.Filters;

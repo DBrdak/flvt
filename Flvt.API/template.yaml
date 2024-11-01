@@ -538,3 +538,55 @@ Resources:
             ApiId: !Ref FlvtApi
             Auth:
               Authorizer: NONE
+  AddBasicFilter:
+    Type: AWS::Serverless::Function
+    Metadata:
+      Tool: Amazon.Lambda.Annotations
+      SyncedEvents:
+        - RootPost
+      SyncedEventProperties:
+        RootPost:
+          - Path
+          - Method
+    Properties:
+      FunctionName: AddBasicFilter
+      Runtime: dotnet8
+      CodeUri: .
+      MemorySize: 3008
+      Timeout: 60
+      Role: arn:aws:iam::975049887576:role/FullAccess
+      PackageType: Zip
+      Handler: Flvt.API::Flvt.API.Functions.API.Subscribers.SubscribersFunctions_AddBasicFilter_Generated::AddBasicFilter
+      Events:
+        RootPost:
+          Type: HttpApi
+          Properties:
+            Path: /v1/subscribers/filters/basic
+            Method: POST
+            ApiId: !Ref FlvtApi
+  RemoveFilter:
+    Type: AWS::Serverless::Function
+    Metadata:
+      Tool: Amazon.Lambda.Annotations
+      SyncedEvents:
+        - RootDelete
+      SyncedEventProperties:
+        RootDelete:
+          - Path
+          - Method
+    Properties:
+      FunctionName: RemoveFilter
+      Runtime: dotnet8
+      CodeUri: .
+      MemorySize: 3008
+      Timeout: 60
+      Role: arn:aws:iam::975049887576:role/FullAccess
+      PackageType: Zip
+      Handler: Flvt.API::Flvt.API.Functions.API.Subscribers.SubscribersFunctions_RemoveFilter_Generated::RemoveFilter
+      Events:
+        RootDelete:
+          Type: HttpApi
+          Properties:
+            Path: /v1/subscribers/filters/{filterId}
+            Method: DELETE
+            ApiId: !Ref FlvtApi

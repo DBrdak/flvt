@@ -6,7 +6,7 @@ public sealed class SubscribtionTier
 {
     public string Value { get; init; }
 
-    public SubscribtionTier(string value) => Value = value;
+    private SubscribtionTier(string value) => Value = value;
 
     public static SubscribtionTier Basic => new ("Basic");
     public static SubscribtionTier Silver => new ("Silver");

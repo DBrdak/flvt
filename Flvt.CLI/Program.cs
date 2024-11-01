@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Flvt.Application;
 using Flvt.Application.Abstractions;
 using Flvt.Domain.Photos;

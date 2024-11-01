@@ -13,4 +13,6 @@ public interface IFilterRepository
     Task<Result> ExecuteBatchWriteAsync();
 
     Task<Result<IEnumerable<Filter>>> GetManyByIdAsync(IEnumerable<string> filtersIds);
+
+    Task<Result> RemoveAsync(string filterId);
 }

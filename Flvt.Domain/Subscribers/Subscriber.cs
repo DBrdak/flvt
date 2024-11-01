@@ -116,12 +116,10 @@ public sealed class Subscriber
             null,
             LoggingGuard.Create(),
             SubscribtionTier.Basic,
-            Country.Poland,
+            countryResult.Value,
             []);
 
-        var verificationCode = subscriber.GenerateVerificationCode();
-
-        subscriber.SetVerificationCode(verificationCode);
+        subscriber.GenerateVerificationCode();
 
         return subscriber;
     }
@@ -134,11 +132,6 @@ public sealed class Subscriber
         {
             Guard.LogInFailed();
             return Result.Failure(passwordVerifyResult.Error);
-        }
-
-        if (!IsEmailVerified)
-        {
-            return SubscriberErrors.EmailNotVerified;
         }
 
         if (Guard.IsLocked)
@@ -174,20 +167,6 @@ public sealed class Subscriber
         return code;
     }
 
-    public Result<VerificationCode> ReGenerateVerificationCode()
-    {
-        if (VerificationCode is null)
-        {
-            return SubscriberErrors.VerificationCodeCannotBeReGenerated;
-        }
-
-        var code = VerificationCode.Generate();
-
-        VerificationCode = code;
-
-        return code;
-    }
-
 
     private Result VerifyCode(string code)
     {
@@ -199,9 +178,16 @@ public sealed class Subscriber
             Result.Success() :
             Result.Failure(SubscriberErrors.VerificationCodeInvalid);
     }
-    private void SetVerificationCode(VerificationCode code) => VerificationCode = code;
 
-    public string RequestNewPassword() => GenerateVerificationCode().Code;
+    public Result<string> RequestNewPassword()
+    {
+        if (!IsEmailVerified)
+        {
+            return SubscriberErrors.EmailNotVerified;
+        }
+
+        return GenerateVerificationCode().Code;
+    }
 
     public Result ChangePassword(string newPlainPassword, string verificationCode)
     {
@@ -218,4 +204,17 @@ public sealed class Subscriber
 
         return newPasswordCreateResult;
     }
+
+    public void ReGenerateVerificationCode()
+    {
+        var code = VerificationCode.Generate();
+
+        VerificationCode = code;
+    }
+
+    public Result<string> RemoveFilter(
+        string filterId) =>
+        _filtersIds.Remove(filterId) ?
+            filterId :
+            SubscriberErrors.FilterNotFound;
 }

@@ -55,6 +55,23 @@ RootGet = ["Path", "Method"]
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 [function_build_definitions.8b2df700-a482-4e51-bf94-09215aeff233]
 codeuri = "C:\\Users\\Brdak\\source\\repos\\flvt\\Flvt.API"
 runtime = "dotnet8"
@@ -62,7 +79,7 @@ architecture = "x86_64"
 handler = "Flvt.API::Flvt.API.Functions.API.Auth.AuthFunctions_Register_Generated::Register"
 manifest_hash = ""
 packagetype = "Zip"
-functions = ["Register", "Login", "VerifyEmail", "SetNewPassword"]
+functions = ["Register", "Login", "VerifyEmail", "SetNewPassword", "AddBasicFilter"]
 
 [function_build_definitions.8b2df700-a482-4e51-bf94-09215aeff233.metadata]
 Tool = "Amazon.Lambda.Annotations"
@@ -70,6 +87,23 @@ SyncedEvents = ["RootPost"]
 
 [function_build_definitions.8b2df700-a482-4e51-bf94-09215aeff233.metadata.SyncedEventProperties]
 RootPost = ["Path", "Method"]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -129,6 +163,48 @@ RootPut = ["Path", "Method"]
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[function_build_definitions.5d8cc8d9-08c3-4a72-a402-19cdcec65d15]
+codeuri = "C:\\Users\\Brdak\\source\\repos\\flvt\\Flvt.API"
+runtime = "dotnet8"
+architecture = "x86_64"
+handler = "Flvt.API::Flvt.API.Functions.API.Subscribers.SubscribersFunctions_RemoveFilter_Generated::RemoveFilter"
+manifest_hash = ""
+packagetype = "Zip"
+functions = ["RemoveFilter"]
+
+[function_build_definitions.5d8cc8d9-08c3-4a72-a402-19cdcec65d15.metadata]
+Tool = "Amazon.Lambda.Annotations"
+SyncedEvents = ["RootDelete"]
+
+[function_build_definitions.5d8cc8d9-08c3-4a72-a402-19cdcec65d15.metadata.SyncedEventProperties]
+RootDelete = ["Path", "Method"]
 
 
 

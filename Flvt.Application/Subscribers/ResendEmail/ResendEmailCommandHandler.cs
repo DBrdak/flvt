@@ -36,6 +36,15 @@ internal sealed class ResendEmailCommandHandler : ICommandHandler<ResendEmailCom
 
         var purpose = purposeCreateResult.Value;
 
+        subscriber.ReGenerateVerificationCode();
+
+        var updateResult = await _subscriberRepository.UpdateAsync(subscriber);
+
+        if (updateResult.IsFailure)
+        {
+            return updateResult.Error;
+        }
+
         return purpose switch
         {
             _ when purpose == ResendEmailPurpose.Verification => 

@@ -69,7 +69,7 @@ internal sealed class SubscriberDataModel : IDataModel<Subscriber>
                            null) as Password ??
                        throw new DataModelConversionException(typeof(string), typeof(Password));
 
-        var verificationCode = VerificationCode is not null && VerificationCodeExpirationDate is not null ?
+        var verificationCode = !string.IsNullOrWhiteSpace(VerificationCode) && VerificationCodeExpirationDate is not null ?
             Activator.CreateInstance(
                 typeof(VerificationCode),
                 BindingFlags.Instance | BindingFlags.NonPublic,
@@ -78,7 +78,7 @@ internal sealed class SubscriberDataModel : IDataModel<Subscriber>
                 null) as VerificationCode ??
             throw new DataModelConversionException(
                 typeof(string),
-                typeof(Password)) 
+                typeof(VerificationCode)) 
             : null;
 
         var guard = Activator.CreateInstance(

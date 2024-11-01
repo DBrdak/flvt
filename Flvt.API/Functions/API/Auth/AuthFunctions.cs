@@ -1,7 +1,6 @@
 ﻿using Amazon.Lambda.Annotations;
 using Amazon.Lambda.Annotations.APIGateway;
 using Amazon.Lambda.APIGatewayEvents;
-using Flvt.API.Functions.API.Auth.Requests;
 using Flvt.API.Utils;
 using Flvt.Application.Subscribers.Login;
 using Flvt.Application.Subscribers.Register;
@@ -9,7 +8,6 @@ using Flvt.Application.Subscribers.RequestNewPassword;
 using Flvt.Application.Subscribers.ResendEmail;
 using Flvt.Application.Subscribers.SetNewPassword;
 using Flvt.Application.Subscribers.VerifyEmail;
-using Flvt.Infrastructure.Authentication.Models;
 using MediatR;
 
 namespace Flvt.API.Functions.API.Auth;
@@ -45,19 +43,9 @@ internal sealed class AuthFunctions : BaseFunction
     [LambdaFunction(ResourceName = nameof(VerifyEmail))]
     [HttpApi(LambdaHttpMethod.Post, "/v1/auth/verify")]
     public async Task<APIGatewayHttpApiV2ProxyResponse> VerifyEmail(
-        [FromQuery] string verificationCode,
+        [FromBody] VerifyEmailCommand command,
         APIGatewayHttpApiV2ProxyRequest request)
     {
-        var subscriberEmail = request
-            .RequestContext
-            .Authorizer
-            .Jwt
-            .Claims
-            .FirstOrDefault(kvp => kvp.Key == UserRepresentationModel.EmailClaimName)
-            .Value;
-
-        var command = new VerifyEmailCommand(subscriberEmail, verificationCode);
-
         var result = await Sender.Send(command);
 
         return result.ReturnAPIResponse(200, 400);
@@ -93,22 +81,9 @@ internal sealed class AuthFunctions : BaseFunction
     [LambdaFunction(ResourceName = nameof(SetNewPassword))]
     [HttpApi(LambdaHttpMethod.Post, "/v1/auth/new-password/set")]
     public async Task<APIGatewayHttpApiV2ProxyResponse> SetNewPassword(
-        [FromBody] NewPasswordRequest request,
+        [FromBody] SetNewPasswordCommand command,
         APIGatewayHttpApiV2ProxyRequest requestContext)
     {
-        var subscriberEmail = requestContext
-            .RequestContext
-            .Authorizer
-            .Jwt
-            .Claims
-            .FirstOrDefault(kvp => kvp.Key == UserRepresentationModel.EmailClaimName)
-            .Value;
-
-        var command = new SetNewPasswordCommand(
-            subscriberEmail,
-            request.VerificationCode,
-            request.NewPassword);
-
         var result = await Sender.Send(command);
 
         return result.ReturnAPIResponse(200, 400);

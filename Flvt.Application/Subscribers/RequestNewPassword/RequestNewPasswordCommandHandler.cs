@@ -29,7 +29,12 @@ internal sealed class RequestNewPasswordCommandHandler : ICommandHandler<Request
 
         var subscriber = subscriberGetResult.Value;
 
-        subscriber.RequestNewPassword();
+        var verificationCodeGenerateResult = subscriber.RequestNewPassword();
+
+        if (verificationCodeGenerateResult.IsFailure)
+        {
+            return verificationCodeGenerateResult.Error;
+        }
 
         await _emailService.SendResetPasswordEmailAsync(subscriber);
 
