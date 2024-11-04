@@ -4,6 +4,8 @@ using Flvt.Domain.Filters;
 using Flvt.Domain.Subscribers;
 using Flvt.Infrastructure.Data.DataModels.Exceptions;
 using Flvt.Infrastructure.Data.Extensions;
+using Newtonsoft.Json;
+using Serilog;
 using Filter = Flvt.Domain.Filters.Filter;
 
 namespace Flvt.Infrastructure.Data.DataModels.Filters;
@@ -136,7 +138,7 @@ internal sealed class FilterDataModel : IDataModel<Filter>
                                                      [MaxRooms.Value],
                                                      null) ??
                                                  throw new DataModelConversionException(typeof(int), typeof(FilterRoomsCount));
-        var frequency = MinPrice is null ? null : Activator.CreateInstance(
+        var frequency = Activator.CreateInstance(
                             typeof(Frequency),
                             BindingFlags.Instance | BindingFlags.NonPublic,
                             null,
@@ -152,30 +154,30 @@ internal sealed class FilterDataModel : IDataModel<Filter>
                    throw new DataModelConversionException(typeof(string), typeof(SubscribtionTier));
 
         return Activator.CreateInstance(
-                   typeof(Filter),
-                   BindingFlags.Instance | BindingFlags.NonPublic,
-                   null,
-                   [
-                       Id,
-                       name,
-                       location,
-                       minPrice,
-                       maxPrice,
-                       minRooms,
-                       maxRooms,
-                       minArea,
-                       maxArea,
-                       frequency,
-                       tier,
-                       FoundAdvertisements.ToList(),
-                       RecentlyFoundAdvertisements.ToList(),
-                       SeenAdvertisements.ToList(),
-                       FollowedAdvertisements.ToList(),
-                       AdvertisementsFilePath,
-                       SubscriberEmail,
-                       OnlyLast24H
-                   ],
-                   null) as Filter ??
-               throw new DataModelConversionException(typeof(Filter));
+                                 typeof(Filter),
+                                 BindingFlags.Instance | BindingFlags.NonPublic,
+                                 null,
+                                 [
+                                     Id,
+                                     name,
+                                     location,
+                                     minPrice,
+                                     maxPrice,
+                                     minRooms,
+                                     maxRooms,
+                                     minArea,
+                                     maxArea,
+                                     frequency,
+                                     tier,
+                                     FoundAdvertisements.ToList(),
+                                     RecentlyFoundAdvertisements.ToList(),
+                                     SeenAdvertisements.ToList(),
+                                     FollowedAdvertisements.ToList(),
+                                     AdvertisementsFilePath,
+                                     SubscriberEmail,
+                                     OnlyLast24H
+                                 ],
+                                 null) as Filter ??
+                             throw new DataModelConversionException(typeof(Filter));
     }
 }
