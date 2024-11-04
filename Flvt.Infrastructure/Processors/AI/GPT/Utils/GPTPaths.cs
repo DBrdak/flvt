@@ -2,5 +2,9 @@
 
 internal sealed class GPTPaths
 {
-    public static string CreateCompletion => "v1/chat/completions";
+    public const string CreateCompletion = "/v1/chat/completions";
+    public const string UploadFile = "v1/files";
+    public const string CreateBatch = "v1/batches";
+    public static string RetrieveBatch(string batchId) => $"v1/batches/{batchId}";
+    public static string RetrieveFileContent(string fileId) => $"v1/files/{fileId}/content";
 }

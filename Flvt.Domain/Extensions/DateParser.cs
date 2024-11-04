@@ -6,15 +6,13 @@ public static class DateParser
 {
     public static DateTime ParseDate(string date)
     {
-        DateTime parsedDate = default;
-            
-        var parseResult = DateTime.TryParse(date, out parsedDate);
+        var parseResult = DateTime.TryParse(date, out var parsedDate);
 
         if(!parseResult)
         {
             parseResult = DateTime.TryParseExact(
                 date,
-                "dd.MM.yyyy",
+                "d.MM.yyyy",
                 CultureInfo.InvariantCulture,
                 DateTimeStyles.None,
                 out parsedDate);

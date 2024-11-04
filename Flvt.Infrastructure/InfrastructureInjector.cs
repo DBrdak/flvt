@@ -1,15 +1,26 @@
 ﻿using Flvt.Application.Abstractions;
+using Flvt.Domain.Filters;
+using Flvt.Domain.Photos;
 using Flvt.Domain.ProcessedAdvertisements;
 using Flvt.Domain.ScrapedAdvertisements;
 using Flvt.Domain.Subscribers;
+using Flvt.Infrastructure.Authentication;
+using Flvt.Infrastructure.Custodians;
+using Flvt.Infrastructure.Custodians.Assistants;
 using Flvt.Infrastructure.Data;
+using Flvt.Infrastructure.Data.DataModels;
 using Flvt.Infrastructure.Data.Repositories;
+using Flvt.Infrastructure.FileBucket;
+using Flvt.Infrastructure.Messanger.Emails;
+using Flvt.Infrastructure.Messanger.Emails.Resend;
 using Flvt.Infrastructure.Monitoring;
 using Flvt.Infrastructure.Processors;
 using Flvt.Infrastructure.Processors.AI;
 using Flvt.Infrastructure.Processors.AI.GPT;
 using Flvt.Infrastructure.Processors.AI.GPT.Options;
+using Flvt.Infrastructure.Queues;
 using Flvt.Infrastructure.Scrapers;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
@@ -17,32 +28,38 @@ namespace Flvt.Infrastructure;
 
 public static class InfrastructureInjector
 {
-    public static IServiceCollection AddInfrastructure(this IServiceCollection services)
-    {
-        services.AddRepositories();
-        services.AddScrapers();
-        services.AddProcessors();
-        services.AddMonitoring();
+    public static IServiceCollection AddInfrastructure(this IServiceCollection services) =>
+        services.AddDataAccessLayer()
+            .AddScrapers()
+            .AddProcessors()
+            .AddMonitoring()
+            .AddQueues()
+            .AddCustody()
+            .AddFiles()
+            .AddAuthentication()
+            .AddEmails();
 
-        return services;
-    }
+    private static IServiceCollection AddQueues(this IServiceCollection services) =>
+        services.AddScoped<IQueuePublisher, QueuePublisher>();
 
-    private static IServiceCollection AddRepositories(this IServiceCollection services)
-    {
-        services.AddScoped<DataContext>();
-        services.AddScoped<IProcessedAdvertisementRepository, ProcessedAdvertisementRepository>();
-        services.AddScoped<IScrapedAdvertisementRepository, ScrapedAdvertisementRepository>();
-        services.AddScoped<ISubscriberRepository, SubscriberRepository>();
+    private static IServiceCollection AddCustody(this IServiceCollection services) =>
+        services
+            .AddScoped<ICustodian, Custodian>()
+            .AddScoped<ScrapingCustodialAssistant>()
+            .AddScoped<DataCustodialAssistant>();
 
-        return services;
-    }
+    private static IServiceCollection AddDataAccessLayer(this IServiceCollection services) =>
+        services.AddScoped<DataContext>()
+            .AddScoped(typeof(DataModelService<>))
+            .AddScoped<IAdvertisementPhotosRepository, AdvertisementPhotosRepository>()
+            .AddScoped<IProcessedAdvertisementRepository, ProcessedAdvertisementRepository>()
+            .AddScoped<IScrapedAdvertisementRepository, ScrapedAdvertisementRepository>()
+            .AddScoped<ISubscriberRepository, SubscriberRepository>()
+            .AddScoped<IFilterRepository, FilterRepository>()
+            .AddScoped<BatchRepository>();
 
-    private static IServiceCollection AddScrapers(this IServiceCollection services)
-    {
+    private static IServiceCollection AddScrapers(this IServiceCollection services) => 
         services.AddScoped<IScrapingOrchestrator, ScrapingOrchestrator>();
-
-        return services;
-    }
 
     private static IServiceCollection AddProcessors(this IServiceCollection services)
     {
@@ -61,16 +78,33 @@ public static class InfrastructureInjector
 
                     httpClient.BaseAddress = new Uri(gptOptions.Url);
                 })
-            .AddHttpMessageHandler<GPTDelegatingHandler>();
+            .AddHttpMessageHandler<GPTDelegatingHandler>()
+            .AddDefaultLogger();
 
         return services;
     }
 
-    private static IServiceCollection AddMonitoring(this IServiceCollection services)
-    {
-        services.AddScoped<GPTMonitor>();
-        services.AddScoped<ScrapingMonitor>();
+    private static IServiceCollection AddFiles(this IServiceCollection services) => 
+        services
+            .AddScoped<S3Bucket>()
+            .AddScoped<IFileService, FileService>();
 
-        return services;
-    }
+    private static IServiceCollection AddMonitoring(this IServiceCollection services) =>
+        services
+            .AddTransient<GPTMonitor>()
+            .AddTransient<ScrapingMonitor>();
+
+    private static IServiceCollection AddAuthentication(this IServiceCollection services) =>
+        services
+            .ConfigureOptions<AuthenticationOptionsSetup>()
+            .ConfigureOptions<JwtBearerOptionsSetup>()
+            .AddScoped<IJwtService, JwtService>()
+            .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer()
+            .Services;
+
+    private static IServiceCollection AddEmails(this IServiceCollection services) =>
+        services
+            .AddScoped<IEmailService, EmailService>()
+            .AddScoped<ResendClient>();
 }

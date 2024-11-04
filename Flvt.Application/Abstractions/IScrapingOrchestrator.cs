@@ -1,9 +1,9 @@
-﻿using Flvt.Domain.Primitives.Subscribers.Filters;
+﻿using Flvt.Domain.Filters;
 using Flvt.Domain.ScrapedAdvertisements;
 
 namespace Flvt.Application.Abstractions;
 
 public interface IScrapingOrchestrator
 {
-    Task<IEnumerable<ScrapedAdvertisement>> ScrapeAsync(Filter filter);
+    Task<IEnumerable<AdvertisementsScrapeResult>> ScrapeAsync(Filter filter);
 }

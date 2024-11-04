@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Flvt.Domain", "Flvt.Domain\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Flvt.Infrastructure", "Flvt.Infrastructure\Flvt.Infrastructure.csproj", "{DADD1D96-E567-4EE2-95AF-536BA785FDF5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Flvt.API", "Flvt.API\src\Flvt.API\Flvt.API.csproj", "{A6CA0467-7286-4780-B733-9BAC51252729}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Flvt.API", "Flvt.API\Flvt.API.csproj", "{A6CA0467-7286-4780-B733-9BAC51252729}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

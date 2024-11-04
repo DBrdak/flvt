@@ -75,5 +75,4 @@ public class Result<TValue> : Result
     public static implicit operator Result<TValue>(TValue? value) => Create(value);
 
     public static implicit operator Result<TValue>(Error error) => Failure<TValue>(error);
-
 }

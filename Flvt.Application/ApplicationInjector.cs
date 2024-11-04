@@ -1,44 +1,50 @@
-﻿using Amazon.CloudWatchLogs;
-using Flvt.Application.Behaviors;
+﻿using Flvt.Application.Behaviors;
+using Flvt.Application.Subscribers.Services;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
-using Serilog.Formatting.Json;
-using Serilog.Sinks.AwsCloudWatch;
+using Serilog.Events;
 
 namespace Flvt.Application;
 
 public static class ApplicationInjector
 {
-    public static IServiceCollection AddApplication(this IServiceCollection services)
-    {
-        services.AddMediatR(
-            config =>
-            {
-                config.RegisterServicesFromAssemblyContaining<ApplicationAssemblyReference>();
-                config.AddOpenBehavior(typeof(TrackingBehavior<,>));
-            });
-
-        services.AddLogger();
-
-        return services;
-    }
+    public static IServiceCollection AddApplication(this IServiceCollection services) =>
+        services
+            .AddMediatR(
+                config =>
+                {
+                    config.RegisterServicesFromAssemblyContaining<ApplicationAssemblyReference>();
+                    config.AddOpenBehavior(typeof(TrackingBehavior<,>));
+                })
+            .AddLogger()
+            .AddServices();
 
     private static IServiceCollection AddLogger(this IServiceCollection services)
     {
-        var options = new CloudWatchSinkOptions
-        {
-            LogGroupName = "flvt",
-            LogStreamNameProvider = new DefaultLogStreamProvider(),
-            TextFormatter = new JsonFormatter()
-        };
+        var config = services
+            .BuildServiceProvider()
+            .GetRequiredService<IConfiguration>();
 
-        var client = new AmazonCloudWatchLogsClient();
-        Log.Logger = new LoggerConfiguration()
-            .Enrich.FromLogContext()
-            .WriteTo.AmazonCloudWatch(options, client)
-            .WriteTo.Console()
-            .CreateLogger();
+        Log.Logger = config["seq:uri"] switch
+        {
+            not null => new LoggerConfiguration()
+                .WriteTo.Seq(
+                    config["seq:uri"],
+                    apiKey: config["seq:key"],
+                    restrictedToMinimumLevel: LogEventLevel.Debug)
+                .Enrich.FromLogContext()
+                .CreateLogger(),
+            _ => new LoggerConfiguration()
+                .WriteTo.Console()
+                .Enrich.FromLogContext()
+                .CreateLogger()
+        };
 
         return services;
     }
+
+    private static IServiceCollection AddServices(this IServiceCollection services) =>
+        services
+            .AddScoped<FiltersService>();
 }
