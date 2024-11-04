@@ -1,4 +1,3 @@
-import './App.css'
 import {Bounce, ToastContainer} from "react-toastify";
 import {FadeContainer} from "./sharedComponents/FadeContainer.tsx";
 import {Outlet, ScrollRestoration} from "react-router-dom";

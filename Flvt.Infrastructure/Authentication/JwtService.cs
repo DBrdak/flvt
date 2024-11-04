@@ -43,7 +43,7 @@ internal sealed class JwtService : IJwtService
             .WriteToken(token);
 
         return tokenValue is null ?
-                Result.Failure<string>(authenticationFailedError) :
+                authenticationFailedError :
                 Result.Success(tokenValue);
     }
 
