@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using System.Text.RegularExpressions;
 using Flvt.Application.Abstractions;
 using Flvt.Application.Advertisements.Models;
 using Flvt.Domain.Filters;
@@ -40,7 +41,7 @@ internal sealed class FileService : IFileService
     public async Task<Result<string>> GetAdvertisementsUrlAsync(Filter filter)
     {
         if (string.IsNullOrWhiteSpace(filter.AdvertisementsFilePath) ||
-            !Path.IsPathFullyQualified(filter.AdvertisementsFilePath))
+            !Regex.IsMatch(filter.AdvertisementsFilePath, FileBucketConstants.S3FilePathPattern))
         {
             return FileServiceErrors.InvalidFilePath;
         }
