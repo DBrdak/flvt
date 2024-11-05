@@ -25,6 +25,10 @@ export default class SubscriberStore {
         }
     }
 
+    public getToken() {
+        return this.token;
+    }
+
     private setLoading(state: boolean) {
         this.loading = state
     }
@@ -91,8 +95,10 @@ export default class SubscriberStore {
         try {
             const subscriber = await agent.subscribers.get()
             this.setCurrentSubscriber(subscriber)
+
+            return subscriber
         } catch {
-            return
+            return null
         } finally {
             this.setLoading(false)
         }

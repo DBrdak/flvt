@@ -7,6 +7,7 @@ import {LoginBody} from "./requestModels/login.ts";
 import {RegisterBody} from "./requestModels/register.ts";
 import {VerifyEmailBody} from "./requestModels/verifyEmail.ts";
 import {SetNewPasswordBody} from "./requestModels/setNewPassword.ts";
+import {store} from "../stores/store.ts";
 
 const sleep = (delay: number) => {
     return new Promise((resolve) => {
@@ -16,13 +17,13 @@ const sleep = (delay: number) => {
 
 axios.defaults.baseURL = import.meta.env.API_URL
 
-// axios.interceptors.request.use(config => {
-//     const token = store.userStore.token;
-//
-//     config.headers.Authorization = `Bearer ${token}`;
-//
-//     return config;
-// })
+axios.interceptors.request.use(config => {
+    const token = store.subscriberStore.getToken()
+
+    config.headers.Authorization = `Bearer ${token}`
+
+    return config
+})
 
 const responseBody = <T> (response: AxiosResponse<T>) => response.data;
 
@@ -52,6 +53,7 @@ axios.interceptors.response.use(async(response) => {
                 toast.error('Oops, something went wrong, please try again later')
                 break
         }
+        console.log(error)
         return Promise.reject(error);
     }
 );

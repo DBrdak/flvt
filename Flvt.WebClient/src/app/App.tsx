@@ -1,6 +1,7 @@
 import {Bounce, ToastContainer} from "react-toastify";
 import {FadeContainer} from "./sharedComponents/FadeContainer.tsx";
 import {Outlet, ScrollRestoration} from "react-router-dom";
+import 'react-toastify/dist/ReactToastify.css';
 import ModalContainer from "./sharedComponents/ModalContainer.tsx";
 
 function App() {
@@ -9,12 +10,7 @@ function App() {
       <FadeContainer>
           <ScrollRestoration />
           <ModalContainer />
-          {
-              location.pathname === '/' ?
-                  <div />
-                  :
-                  <Outlet />
-          }
+          <Outlet />
           <ToastContainer
               position="bottom-right"
               autoClose={3500}

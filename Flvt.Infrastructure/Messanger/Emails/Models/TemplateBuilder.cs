@@ -232,20 +232,16 @@ internal class TemplateBuilder
              <body data-new-gr-c-s-loaded="14.1204.0">
                <div class="container">
                  <div class="header">
-                   <h1>Verification</h1>
                    <h1>New Advertisements</h1>
                  </div>
                  <div class="content">
                    <p>Hello,</p>
                    <p>We just found {{count}} new advertisements matching your filter. Click on the below link to browse them!</p>
-                   <p>Thank you for registering with us. Please use the verification code below to verify your email address.</p>
                    <div class="verification-code">
                      <a href="https://flvt.eu/filters/{{filterId}}" target="_blank" style="text-decoration: none; color: #44017a;">
                        {{filterName}} on Flvt
                      </a>
                    </div>
-                   <p>If you did not request this, please ignore this email.</p>
-                   <p>Best regards, <br>Flvt </p>
                  </div>
                  <div class="footer">
                    <p>© 2024 Flvt All rights reserved.</p>

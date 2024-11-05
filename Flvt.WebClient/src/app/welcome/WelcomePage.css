@@ -1,0 +1,102 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    text-align: center;
+}
+
+.typewriter {
+    height: 150px;
+    overflow: hidden;
+    white-space: nowrap;
+    margin: 0 auto;
+    padding: 20px;
+    cursor: default;
+    user-select: none;
+    animation:
+            typing 3.5s steps(40, end),
+            blink-caret .75s step-end infinite;
+}
+
+
+.wrapper{
+    position: fixed;
+    transform: translate(-50%, -50%);
+}
+
+.link_wrapper{
+    position: relative;
+}
+
+.start-btn{
+    border-radius: 8px;
+    display: block;
+    width: 250px;
+    height: 50px;
+    font-weight: bold;
+    text-decoration: none;
+    text-align: center;
+    text-transform: uppercase;
+    background: hsl(210, 100%, 16%);
+    cursor: pointer;
+    letter-spacing: 1px;
+    transition: all .35s;
+    border: none;
+    box-shadow: hsl(210, 100%, 16%) 0 0 50px 10px;
+}
+
+.start-btn-icon{
+    border-radius: 8px;
+    width: 50px;
+    height: 50px;
+    border: 3px solid transparent;
+    position: absolute;
+    transform: rotate(45deg);
+    right: 0;
+    top: 0;
+    z-index: -1;
+    transition: all .35s;
+}
+
+.start-btn-icon svg{
+    width: 30px;
+    position: absolute;
+    top: calc(50% - 15px);
+    left: calc(50% - 15px);
+    transform: rotate(-45deg);
+    fill: #EDF4F2;
+    transition: all .35s;
+}
+
+.start-btn:hover{
+    width: 200px;
+    border: 3px solid #d3e0dd;
+    background: transparent;
+    color: #d3e0dd;
+    box-shadow: #31473A 0 0 0px 0px;
+}
+
+.start-btn:hover + .start-btn-icon{
+    border: 3px solid #d3e0dd;
+    right: -35%;
+}
+
+.start-btn:active + .start-btn-icon{
+    border: none;
+    right: -100%;
+}
+
+.start-btn:active {
+    scale: 0.9;
+}
+
+@media (min-width: 768px) {
+    .button-73 {
+        font-size: 1.5rem;
+        padding: .75rem 2rem;
+    }
+}

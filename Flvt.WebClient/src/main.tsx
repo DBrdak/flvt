@@ -1,9 +1,9 @@
 import './index.css'
-import {CssBaseline, ThemeProvider} from "@mui/material";
+import {CssBaseline, StyledEngineProvider} from "@mui/material";
 import {RouterProvider} from "react-router-dom";
 import {router} from "./router/Routes.tsx";
-import theme from "./app/theme.ts";
 import {createRoot} from "react-dom/client";
+import AppTheme from "./app/theme/AppTheme.tsx";
 
 
 const root = createRoot(
@@ -11,8 +11,10 @@ const root = createRoot(
 )
 
 root.render(
-    <ThemeProvider theme={theme}>
+    <AppTheme>
         <CssBaseline />
-        <RouterProvider router={router} />
-    </ThemeProvider>
+        <StyledEngineProvider injectFirst>
+            <RouterProvider router={router} />
+        </StyledEngineProvider>
+    </AppTheme>
 )
