@@ -12,7 +12,7 @@ import AdvertisementsDbContext from "../data/advertisementsDbContext.ts";
 export default class SubscriberStore {
     public currentSubscriber: Subscriber | null = null
     private token: string | null = null
-    public loading: boolean = false
+    public loading: string | null = null
 
     constructor() {
         makeAutoObservable(this);
@@ -20,22 +20,26 @@ export default class SubscriberStore {
         if(!this.token) {
             this.token = localStorage.getItem('jwt')
 
-            this.setLoading(true)
-            this.loadCurrentSubscriberAsync().then(() => this.setLoading(false))
+            if(!this.token) {
+                this.loadCurrentSubscriberAsync()
+            }
         }
     }
 
     public getToken() {
-        return this.token;
+        return this.token || localStorage.getItem('jwt');
     }
 
-    private setLoading(state: boolean) {
-        this.loading = state
+    private setLoading(action: string | null): void {
+        this.loading = action
     }
 
     private setCurrentSubscriber(subscriber: Subscriber | null) {
         this.currentSubscriber = subscriber
-        subscriber?.token !== null && this.setToken(subscriber!.token)
+
+        if (subscriber?.token !== null) {
+            this.setToken(subscriber!.token)
+        }
     }
 
     private setToken = (token: string | null) => {
@@ -60,7 +64,7 @@ export default class SubscriberStore {
     }
 
     public async registerAsync(request: RegisterBody) {
-        this.setLoading(true)
+        this.setLoading('register')
 
         try {
             const subscriber = await agent.auth.register(request)
@@ -70,12 +74,12 @@ export default class SubscriberStore {
         } catch {
             return false
         } finally {
-            this.setLoading(false)
+            this.setLoading(null)
         }
     }
 
     public async loginAsync(request: LoginBody) {
-        this.setLoading(true)
+        this.setLoading('login')
 
         try {
             const subscriber = await agent.auth.login(request)
@@ -85,12 +89,12 @@ export default class SubscriberStore {
         } catch {
             return false
         } finally {
-            this.setLoading(false)
+            this.setLoading(null)
         }
     }
 
     public async loadCurrentSubscriberAsync() {
-        this.setLoading(true)
+        this.setLoading('init')
 
         try {
             const subscriber = await agent.subscribers.get()
@@ -100,25 +104,33 @@ export default class SubscriberStore {
         } catch {
             return null
         } finally {
-            this.setLoading(false)
+            this.setLoading(null)
         }
     }
 
-    public async verifyEmailAsync(request: VerifyEmailBody) {
-        this.setLoading(true)
+    public async verifyEmailAsync(verificationCode: string) {
+        this.setLoading('verify')
 
         try {
+            if(!this.currentSubscriber?.email){
+                await this.loadCurrentSubscriberAsync()
+            }
+            if(!this.currentSubscriber?.email){
+                return false
+            }
+
+            const request: VerifyEmailBody = {email: this.currentSubscriber!.email, verificationCode: verificationCode}
             const subscriber = await agent.auth.verifyEmail(request)
             this.setCurrentSubscriber(subscriber)
         } catch (e) {
-
+            return false
         } finally {
-            this.setLoading(false)
+            this.setLoading(null)
         }
     }
 
     public async requestNewPasswordAsync(email: string){
-        this.setLoading(true)
+        this.setLoading('requestNewPassword')
 
         try {
             await agent.auth.requestNewPassword(email)
@@ -126,12 +138,12 @@ export default class SubscriberStore {
         } catch (e) {
             return false
         } finally {
-            this.setLoading(false)
+            this.setLoading(null)
         }
     }
 
     public async setNewPasswordAsync(request: SetNewPasswordBody){
-        this.setLoading(true)
+        this.setLoading('setNewPassword')
 
         try {
             const subscriber = await agent.auth.setNewPassword(request)
@@ -140,12 +152,12 @@ export default class SubscriberStore {
         } catch (e) {
             return false
         } finally {
-            this.setLoading(false)
+            this.setLoading(null)
         }
     }
 
     public async resendVerificationEmailAsync(email: string) {
-        this.setLoading(true)
+        this.setLoading('resendCode')
 
         try {
             await agent.auth.resendEmail('verification', email)
@@ -153,12 +165,12 @@ export default class SubscriberStore {
         } catch (e) {
             return false
         } finally {
-            this.setLoading(false)
+            this.setLoading(null)
         }
     }
 
     public async resendNewPasswordEmailAsync(email: string) {
-        this.setLoading(true)
+        this.setLoading('resentPassword')
 
         try {
             await agent.auth.resendEmail('newPassword', email)
@@ -166,12 +178,12 @@ export default class SubscriberStore {
         } catch (e) {
             return false
         } finally {
-            this.setLoading(false)
+            this.setLoading(null)
         }
     }
 
     public async addBasicFilterAsync(request: AddBasicFilterBody){
-        this.setLoading(true)
+        this.setLoading('addBasicFilter')
 
         try {
             const filter = await agent.subscribers.addBasicFilter(request)
@@ -180,12 +192,12 @@ export default class SubscriberStore {
         } catch (e) {
             return null
         } finally {
-            this.setLoading(false)
+            this.setLoading(null)
         }
     }
 
     public async removeFilterAsync(filterId: string){
-        this.setLoading(true)
+        this.setLoading('removeFilter')
 
         try {
             await agent.subscribers.removeFilter(filterId)
@@ -195,7 +207,7 @@ export default class SubscriberStore {
         } catch (e) {
             return false
         } finally {
-            this.setLoading(false)
+            this.setLoading(null)
         }
     }
 }

@@ -32,6 +32,23 @@ export const surfacesCustomizations: Components<Theme> = {
       }),
     },
   },
+  MuiCssBaseline: {
+    styleOverrides: {
+      '*::-webkit-scrollbar': {
+        width: '10px',
+      },
+      '*::-webkit-scrollbar-track': {
+        background: 'transparent',
+      },
+      '*::-webkit-scrollbar-thumb': {
+        backgroundColor: '#888',
+        borderRadius: '15px',
+        '&:hover': {
+          backgroundColor: '#555',
+        },
+      },
+    },
+  },
   MuiAccordionSummary: {
     styleOverrides: {
       root: ({ theme }) => ({

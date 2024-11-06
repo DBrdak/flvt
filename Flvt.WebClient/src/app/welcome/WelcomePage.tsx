@@ -46,7 +46,7 @@ const WelcomePage: React.FC = () => {
             >
                 {displayedText}
             </Typography>
-            <Box sx={{margin: '2%'}}>
+            <Box className={'start-btn-container'}>
                 <StartButton onClick={() => navigate('/login')} />
             </Box>
         </Box>

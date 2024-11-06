@@ -3,6 +3,8 @@ using Flvt.Application.Messaging;
 using Flvt.Application.Subscribers.Models;
 using Flvt.Domain.Primitives.Responses;
 using Flvt.Domain.Subscribers;
+using Newtonsoft.Json;
+using Serilog;
 
 namespace Flvt.Application.Subscribers.Register;
 
@@ -24,7 +26,7 @@ internal sealed class RegisterCommandHandler : ICommandHandler<RegisterCommand, 
 
     public async Task<Result<SubscriberModel>> Handle(RegisterCommand request, CancellationToken cancellationToken)
     {
-        var registerResult = Subscriber.Register(request.Email, request.CountryCode, request.Password);
+        var registerResult = Subscriber.Register(request.Email, request.Password);
 
         if (registerResult.IsFailure)
         {
@@ -60,6 +62,7 @@ internal sealed class RegisterCommandHandler : ICommandHandler<RegisterCommand, 
 
         if (sendEmailResult.IsFailure)
         {
+            await _subscriberRepository.RemoveAsync(subscriber.Email.Value);
             return sendEmailResult.Error;
         }
 

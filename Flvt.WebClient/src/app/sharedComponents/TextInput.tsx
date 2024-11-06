@@ -5,7 +5,7 @@ import {
     Tooltip,
     FilledInputProps,
     InputProps,
-    OutlinedInputProps
+    OutlinedInputProps, FormHelperText
 } from '@mui/material';
 import {useField} from 'formik';
 import {observer} from 'mobx-react-lite';
@@ -13,7 +13,6 @@ import {observer} from 'mobx-react-lite';
 interface Props {
     placeholder: string;
     name: string;
-    showErrors?: any;
     label?: string;
     type?: string;
     maxValue?: number;
@@ -26,6 +25,7 @@ interface Props {
     color?: "error" | "primary" | "secondary" | "info" | "success" | "warning" | undefined
     autoComplete?: string
     fullwidth?: boolean
+    errorMessage?: string
 }
 
 const TextInput: React.FC<Props> = ({
@@ -33,7 +33,6 @@ const TextInput: React.FC<Props> = ({
                                         capitalize,
                                         maxLength,
                                         color,
-                                        showErrors,
                                         maxValue,
                                         minValue,
                                         inputProps,
@@ -41,6 +40,7 @@ const TextInput: React.FC<Props> = ({
                                         style,
                                         autoComplete,
                                         fullwidth,
+                                        errorMessage,
                                         ...props
                                     }) => {
     const [field, meta, helpers] = useField(props.name);
@@ -86,43 +86,25 @@ const TextInput: React.FC<Props> = ({
     };
 
     return (
-        showErrors ? (
-            <FormControl error={meta.touched && !!meta.error} style={style}>
-                <Tooltip title={meta.touched && meta.error ? meta.error : ''} placement="right">
-                    <TextField
-                        {...field}
-                        {...props}
-                        disabled={disabled}
-                        autoComplete={autoComplete}
-                        onChange={handleChange}
-                        type={type}
-                        fullWidth={fullwidth}
-                        label={props.label ? props.label : props.placeholder}
-                        variant="outlined"
-                        error={meta.touched && !!meta.error}
-                        InputProps={inputProps}
-                        color={color || 'primary'}
-                    />
-                </Tooltip>
-            </FormControl>
-        ) : (
-            <FormControl error={meta.touched && !!meta.error} fullWidth style={style}>
-                <TextField
-                    {...field}
-                    {...props}
-                    disabled={disabled}
-                    fullWidth={fullwidth}
-                    autoComplete={autoComplete}
-                    onChange={handleChange}
-                    type={type}
-                    label={props.label ? props.label : props.placeholder}
-                    variant="outlined"
-                    error={meta.touched && !!meta.error}
-                    InputProps={inputProps}
-                    color={color || 'primary'}
-                />
-            </FormControl>
-        )
+        <FormControl error={meta.touched && !!meta.error} fullWidth style={style}>
+            <TextField
+                {...field}
+                {...props}
+                disabled={disabled}
+                fullWidth={fullwidth}
+                autoComplete={autoComplete}
+                onChange={handleChange}
+                type={type}
+                label={props.label ? props.label : props.placeholder}
+                variant="outlined"
+                error={meta.touched && !!meta.error}
+                InputProps={inputProps}
+                color={color || 'primary'}
+            />
+            {errorMessage && (
+                <FormHelperText>{errorMessage}</FormHelperText>
+            )}
+        </FormControl>
     );
 }
 

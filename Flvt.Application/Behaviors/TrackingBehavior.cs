@@ -16,7 +16,6 @@ public sealed class TrackingBehavior<TRequest, TResponse> : IPipelineBehavior<TR
     {
         using (LogContext.PushProperty("CorrelationId", $"{Guid.NewGuid()}"))
         {
-            TResponse? response = null;
             Log.Logger.Information("Started processing {request}", typeof(TRequest).Name);
             var timer = new Stopwatch();
 
@@ -24,7 +23,7 @@ public sealed class TrackingBehavior<TRequest, TResponse> : IPipelineBehavior<TR
 
             try
             {
-                response = await next();
+                return await next();
             }
             catch (Exception e)
             {
@@ -32,18 +31,20 @@ public sealed class TrackingBehavior<TRequest, TResponse> : IPipelineBehavior<TR
                     "An error occurred while processing {request}: {error}",
                     typeof(TRequest).Name,
                     e);
+
+                return Error.Exception as TResponse;
             }
+            finally
+            {
+                timer.Stop();
 
-            timer.Stop();
+                Log.Logger.Information(
+                    "Processing {request} took {time}ms",
+                    typeof(TRequest).Name,
+                    timer.ElapsedMilliseconds);
 
-            Log.Logger.Information(
-                "Processing {request} took {time}ms",
-                typeof(TRequest).Name,
-                timer.ElapsedMilliseconds);
-
-            await Log.CloseAndFlushAsync();
-
-            return response;
+                await Log.CloseAndFlushAsync();
+            }
         }
     }
 }

@@ -1,6 +1,7 @@
 import {Box, Modal} from "@mui/material";
 import {observer} from "mobx-react-lite";
 import {useStore} from "../../stores/store.ts";
+import {colorSchemes} from "../theme/themePrimitives.ts";
 
 function ModalContainer() {
     const { modalStore } = useStore();
@@ -21,11 +22,14 @@ function ModalContainer() {
                     minWidth: '25%',
                     width: '100vw',
                     maxWidth: '700px',
-                    backgroundColor: 'paper',
+                    backgroundColor: colorSchemes.dark.palette.background.paper,
                     border: '1px solid #000',
                     boxShadow: 24,
                     borderRadius: '20px',
-                    p: 4
+                    paddingTop: 2,
+                    paddingBottom: 2,
+                    paddingLeft: 4,
+                    paddingRight: 4,
                 }}
             >
                 {modalStore.modal.body}
