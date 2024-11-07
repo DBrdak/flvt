@@ -5,7 +5,7 @@ namespace Flvt.Infrastructure.Messanger.Emails.Resend.Models;
 
 internal class ResendEmail
 {
-    private const string baseSender = "Flvt <notify@onyxapp.tech>";
+    private const string baseSender = "Flvt <flvt@dbrdak.com>";
 
     [JsonProperty("from")]
     public string From { get; init; }

@@ -20,7 +20,7 @@ function PrivacyPolicyDialog({ registerBody, onSubmit, onReject }: Props) {
 
     return (
         <Box sx={{overflow: 'hidden', maxHeight: '90vh', padding: 2}}>
-            <Paper variant={'elevation'} sx={{overflow: 'auto', height: '70%', maxHeight: '50vh', margin: 5}}>
+            <Paper variant={'outlined'} sx={{overflow: 'auto', height: '70%', maxHeight: '50vh', margin: 5, boxShadow: 'hsl(220, 30%, 6%) 0 0 50px 20px inset'}}>
                 <PrivacyPolicy />
             </Paper>
             <Box sx={{display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 3}}>

@@ -14,6 +14,7 @@ using Amazon;
 using Flvt.Domain;
 using Amazon.Runtime;
 using Flvt.Application.Custody.RemoveOutdatedAdvertisements;
+using Flvt.Application.Subscribers.Register;
 
 namespace Flvt.CLI;
 
@@ -45,19 +46,22 @@ public class Service : IService
     private readonly IScrapedAdvertisementRepository _scrapedAdvertisementRepository;
     private readonly IAdvertisementPhotosRepository _advertisementPhotosRepository;
     private readonly IScrapingOrchestrator _scrapingOrchestrator;
+    private readonly IEmailService _emailService;
 
     public Service(
         ISender sender,
         IProcessedAdvertisementRepository repository,
         IScrapedAdvertisementRepository scrapedAdvertisementRepository,
         IAdvertisementPhotosRepository advertisementPhotosRepository,
-        IScrapingOrchestrator scrapingOrchestrator)
+        IScrapingOrchestrator scrapingOrchestrator,
+        IEmailService emailService)
     {
         _sender = sender;
         _repository = repository;
         _scrapedAdvertisementRepository = scrapedAdvertisementRepository;
         _advertisementPhotosRepository = advertisementPhotosRepository;
         _scrapingOrchestrator = scrapingOrchestrator;
+        _emailService = emailService;
     }
 
     public async Task Run()
@@ -81,9 +85,10 @@ public class Service : IService
         //var cmd = new CheckProcessingStatusCommand();
         //var cmd = new EndProcessingCommand();
         //var cmd = new ProcessAdvertisementsCommand();
-        var cmd = new RemoveOutdatedAdvertisementsCommand();
+        //var cmd = new RemoveOutdatedAdvertisementsCommand();
+        //var cmd = new RegisterCommand(); // TODO REMOVE
 
-        var response = await _sender.Send(cmd);
+        //var response = await _sender.Send(cmd);
 
         //var adsR = await _repository.GetAllAsync();
         //var ads = adsR.Value;

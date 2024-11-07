@@ -18,7 +18,7 @@ Resources:
           - PUT
           - DELETE
         MaxAge: 600
-        AllowCredentials: false
+        AllowCredentials: true
       DefaultRouteSettings:
         DetailedMetricsEnabled: true
       Auth:

@@ -19,7 +19,7 @@ export default function LogoLoader({size}: Props) {
     // @ts-ignore
     return (
         <div className="loader" style={{width: width, height:'auto'}}>
-            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="498"
+            <svg xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" width="498"
                  zoomAndPan="magnify" viewBox="0 0 373.5 299.999988" height="400" preserveAspectRatio="xMidYMid meet"
                  version="1.0">
                 <defs>

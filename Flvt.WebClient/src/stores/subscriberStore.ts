@@ -170,7 +170,7 @@ export default class SubscriberStore {
     }
 
     public async resendNewPasswordEmailAsync(email: string) {
-        this.setLoading('resentPassword')
+        this.setLoading('resendPassword')
 
         try {
             await agent.auth.resendEmail('newPassword', email)

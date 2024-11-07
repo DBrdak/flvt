@@ -6,6 +6,7 @@ using Flvt.Application.Advertisements.Flag;
 using Flvt.Application.Advertisements.Follow;
 using Flvt.Application.Advertisements.GetAdvertisementsByFilter;
 using Flvt.Application.Advertisements.MarkAsSeen;
+using Flvt.Domain.Primitives.Responses;
 using Flvt.Infrastructure.Authentication.Models;
 using MediatR;
 
@@ -29,7 +30,7 @@ public sealed class AdvertisementsFunctions : BaseFunction
             filterId,
             subscriberEmail);
 
-        var result = await Sender.Send(query);
+        var result = await Sender.Send(query) ?? Error.Exception;
 
         return result.ReturnAPIResponse(200, 404);
     }
@@ -42,7 +43,7 @@ public sealed class AdvertisementsFunctions : BaseFunction
     {
         var command = new MarkAsSeenCommand(filterId, advertisementLink);
 
-        var result = await Sender.Send(command);
+        var result = await Sender.Send(command) ?? Error.Exception;
 
         return result.ReturnAPIResponse(200, 400);
     }
@@ -55,7 +56,7 @@ public sealed class AdvertisementsFunctions : BaseFunction
     {
         var command = new FollowCommand(filterId, advertisementLink);
 
-        var result = await Sender.Send(command);
+        var result = await Sender.Send(command) ?? Error.Exception;
 
         return result.ReturnAPIResponse(200, 400);
     }
@@ -67,7 +68,7 @@ public sealed class AdvertisementsFunctions : BaseFunction
     {
         var command = new FlagCommand(advertisementLink);
 
-        var result = await Sender.Send(command);
+        var result = await Sender.Send(command) ?? Error.Exception;
 
         return result.ReturnAPIResponse(200, 400);
     }

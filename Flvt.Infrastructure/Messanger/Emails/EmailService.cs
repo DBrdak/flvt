@@ -3,6 +3,8 @@ using Flvt.Domain.Filters;
 using Flvt.Domain.Primitives.Responses;
 using Flvt.Domain.Subscribers;
 using Flvt.Infrastructure.Messanger.Emails.Resend;
+using Newtonsoft.Json;
+using Serilog;
 using Email = Flvt.Infrastructure.Messanger.Emails.Models.Email;
 
 namespace Flvt.Infrastructure.Messanger.Emails;
