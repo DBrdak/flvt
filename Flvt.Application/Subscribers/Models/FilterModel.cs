@@ -20,6 +20,7 @@ public sealed record FilterModel
     public string? AdvertisementsFilePath { get; init; }
     public int NewAdvertisementsCount { get; init; }
     public int FollowedAdvertisementsCount { get; init; }
+    public int SeenAdvertisementsCount { get; init; }
     public int AllAdvertisementsCount { get; init; }
 
     private FilterModel(
@@ -39,7 +40,8 @@ public sealed record FilterModel
         string? advertisementsFilePath,
         int newAdvertisementsCount,
         int followedAdvertisementsCount,
-        int allAdvertisementsCount)
+        int allAdvertisementsCount,
+        int seenAdvertisementsCount)
     {
         Id = id;
         Name = name;
@@ -55,6 +57,7 @@ public sealed record FilterModel
         NewAdvertisementsCount = newAdvertisementsCount;
         FollowedAdvertisementsCount = followedAdvertisementsCount;
         AllAdvertisementsCount = allAdvertisementsCount;
+        SeenAdvertisementsCount = seenAdvertisementsCount;
         Frequency = frequency;
         LastUsed = lastUsed;
         NextUse = nextUse;
@@ -78,5 +81,6 @@ public sealed record FilterModel
             filter.AdvertisementsFilePath,
             filter.RecentlyFoundAdvertisements.Count,
             filter.FollowedAdvertisements.Count,
-            filter.FoundAdvertisements.Count);
+            filter.FoundAdvertisements.Count,
+            filter.SeenAdvertisements.Count);
 }

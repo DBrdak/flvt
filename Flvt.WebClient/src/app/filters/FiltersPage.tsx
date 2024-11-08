@@ -1,24 +1,26 @@
 import {observer} from "mobx-react-lite";
 import {useStore} from "../../stores/store.ts";
 import useSubscriber from "../../utils/hooks/useSubscriber.tsx";
-import {Box} from "@mui/material";
+import {Badge, Box, Typography} from "@mui/material";
 import {styled} from "@mui/material/styles";
 import MuiCard from "@mui/material/Card";
 import {Filter} from "../../models/filter.ts";
 import {Skeleton} from "@mui/lab";
 import FilterCard from "./FilterCard.tsx";
 import ConfirmModal from "../sharedComponents/ConfirmModal.tsx";
+import {Logout} from "@mui/icons-material";
+import Button from "@mui/material/Button";
 
 const Card = styled(MuiCard)(({ theme }) => ({
-    flexDirection: 'column',
     alignSelf: 'center',
     width: '100%',
     minHeight: '50vh',
+    height: '500px',
+    overflowY: 'auto',
+    overflowX: 'hidden',
     maxHeight: '90vh',
     padding: theme.spacing(4),
     gap: theme.spacing(1),
-    display: 'flex',
-    alignItems: 'center',
     boxShadow:
         'hsla(220, 30%, 5%, 0.05) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.05) 0px 15px 35px -5px',
     [theme.breakpoints.up('sm')]: {
@@ -58,11 +60,14 @@ function FiltersPage() {
             component="main"
             sx={[
                 (theme) => ({
-                    minHeight: '100vh',
+                    height: '100vh',
+                    overflowX: 'hidden',
                     minWidth: '100vw',
                     display: 'flex',
+                    flexDirection: 'column',
                     justifyContent: 'center',
                     alignItems: 'center',
+                    overflow: 'hidden',
                     backgroundImage:
                         'radial-gradient(ellipse at 50% 50%, hsl(210, 100%, 97%), hsl(0, 0%, 100%))',
                     backgroundRepeat: 'no-repeat',
@@ -72,6 +77,9 @@ function FiltersPage() {
                     })
                 })
             ]}>
+            <Typography variant="h1" sx={{ p: 3 }}>
+                Your filters
+            </Typography>
             {
                 ['init'].some(action => action === subscriberStore.loading) ?
                     <Card variant="outlined">

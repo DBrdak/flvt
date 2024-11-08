@@ -15,5 +15,6 @@ export interface Filter {
     advertisementsFilePath?: string;
     newAdvertisementsCount: number
     followedAdvertisementsCount: number
+    seenAdvertisementsCount: number
     allAdvertisementsCount: number
 }

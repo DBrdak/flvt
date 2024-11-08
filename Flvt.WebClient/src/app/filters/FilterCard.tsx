@@ -1,6 +1,8 @@
 import { Card, CardContent, CardActions, Typography, Button, Box, Divider } from "@mui/material";
 import { Filter } from "../../models/filter";
 import {format} from 'date-fns'
+import {Delete} from "@mui/icons-material";
+import {useNavigate} from "react-router-dom";
 
 interface Props {
     filter: Filter;
@@ -8,11 +10,22 @@ interface Props {
 }
 
 function FilterCard({ filter, onRemove }: Props) {
+    const navigate = useNavigate()
+
     return (
-        <Card sx={{ width: '100%', display: 'flex', flexDirection: 'column', padding: 2, boxShadow: 3 }}>
-            <CardContent>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <Typography variant="h6">{filter.name}</Typography>
+        <Card sx={{
+            width: '100%',
+            padding: 2,
+            marginY: 2,
+            boxShadow: 3,
+            display: 'flex',
+            flexDirection: 'column'
+        }}>
+            <CardContent sx={{}}>
+                <Box sx={{ display: 'flex', justifyContent: 'center', flexDirection: 'column', alignItems: 'center', overflowX: 'hidden' }}>
+                    <Typography variant="h6" sx={{lineBreak: 'anywhere'}}>
+                        {filter.name}
+                    </Typography>
                     <Typography variant="body2" color="text.secondary">
                          {filter.tier}
                     </Typography>
@@ -55,6 +68,10 @@ function FilterCard({ filter, onRemove }: Props) {
                 </Typography>
 
                 <Typography variant="body2" color="text.secondary">
+                    Seen Advertisements: {filter.seenAdvertisementsCount}
+                </Typography>
+
+                <Typography variant="body2" color="text.secondary">
                     Followed Advertisements: {filter.followedAdvertisementsCount}
                 </Typography>
 
@@ -63,14 +80,21 @@ function FilterCard({ filter, onRemove }: Props) {
                 </Typography>
             </CardContent>
 
-            <CardActions>
+            <CardActions sx={{justifyContent: 'space-between'}}>
                 <Button
-                    color="error"
+
                     onClick={() => onRemove(filter)}
                     size="small"
                     variant="outlined"
                 >
-                    Remove
+                    <Delete color={'error'} />
+                </Button>
+                <Button
+                    onClick={() => navigate(`${filter.id}/browse`)}
+                    size="small"
+                    variant="contained"
+                >
+                    Browse
                 </Button>
             </CardActions>
         </Card>
