@@ -13,4 +13,7 @@ export interface Filter {
     nextUse: Date;
     tier: string;
     advertisementsFilePath?: string;
+    newAdvertisementsCount: number
+    followedAdvertisementsCount: number
+    allAdvertisementsCount: number
 }

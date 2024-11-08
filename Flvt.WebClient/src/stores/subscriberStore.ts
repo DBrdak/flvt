@@ -20,9 +20,7 @@ export default class SubscriberStore {
         if(!this.token) {
             this.token = localStorage.getItem('jwt')
 
-            if(!this.token) {
-                this.loadCurrentSubscriberAsync()
-            }
+            this.loadCurrentSubscriberAsync()
         }
     }
 
@@ -43,7 +41,11 @@ export default class SubscriberStore {
     }
 
     private setToken = (token: string | null) => {
-        this.token === null ? localStorage.removeItem('jwt') : localStorage.setItem('jwt', token!)
+        if(token) {
+            localStorage.setItem('jwt', token!)
+        } else {
+            localStorage.removeItem('jwt')
+        }
 
         this.token = token
     }

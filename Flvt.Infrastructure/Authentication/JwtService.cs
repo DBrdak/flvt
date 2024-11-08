@@ -47,7 +47,7 @@ internal sealed class JwtService : IJwtService
                 Result.Success(tokenValue);
     }
 
-    public bool ValidateJwt(string? token, out string principalId)
+    public bool ValidateJwt(string? token, bool shouldValidateEmail, out string principalId)
     {
         principalId = string.Empty;
         var tokenHandler = new JwtSecurityTokenHandler();
@@ -70,16 +70,12 @@ internal sealed class JwtService : IJwtService
                 token ?? string.Empty,
                 validationParameters,
                 out var validatedToken);
-            var jwtToken = (JwtSecurityToken)validatedToken;
 
-            if (IsEmailVerified(jwtToken))
-            {
-                return false;
-            }
+            var jwtToken = (JwtSecurityToken)validatedToken;
 
             principalId = jwtToken.Subject;
 
-            return true;
+            return !shouldValidateEmail || IsEmailVerified(jwtToken);
         }
         catch
         {
@@ -90,5 +86,5 @@ internal sealed class JwtService : IJwtService
     private static bool IsEmailVerified(JwtSecurityToken jwtToken) =>
         jwtToken.Claims.FirstOrDefault(
             c => c.Type == UserRepresentationModel.EmailVerifiedClaimName &&
-                 c.Value == true.ToString()) is null;
+                 c.Value == true.ToString()) is not null;
 }

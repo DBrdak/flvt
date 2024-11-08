@@ -18,6 +18,9 @@ public sealed record FilterModel
     public DateTimeOffset NextUse { get; init; }
     public string Tier { get; init; }
     public string? AdvertisementsFilePath { get; init; }
+    public int NewAdvertisementsCount { get; init; }
+    public int FollowedAdvertisementsCount { get; init; }
+    public int AllAdvertisementsCount { get; init; }
 
     private FilterModel(
         string id,
@@ -33,7 +36,10 @@ public sealed record FilterModel
         DateTimeOffset lastUsed,
         DateTimeOffset nextUse,
         string tier,
-        string? advertisementsFilePath)
+        string? advertisementsFilePath,
+        int newAdvertisementsCount,
+        int followedAdvertisementsCount,
+        int allAdvertisementsCount)
     {
         Id = id;
         Name = name;
@@ -46,6 +52,9 @@ public sealed record FilterModel
         MaxArea = maxArea;
         Tier = tier;
         AdvertisementsFilePath = advertisementsFilePath;
+        NewAdvertisementsCount = newAdvertisementsCount;
+        FollowedAdvertisementsCount = followedAdvertisementsCount;
+        AllAdvertisementsCount = allAdvertisementsCount;
         Frequency = frequency;
         LastUsed = lastUsed;
         NextUse = nextUse;
@@ -66,5 +75,8 @@ public sealed record FilterModel
             DateTimeOffset.FromUnixTimeSeconds(filter.Frequency.LastUsed),
             DateTimeOffset.FromUnixTimeSeconds(filter.Frequency.NextUse),
             filter.Tier.Value,
-            filter.AdvertisementsFilePath);
+            filter.AdvertisementsFilePath,
+            filter.RecentlyFoundAdvertisements.Count,
+            filter.FollowedAdvertisements.Count,
+            filter.FoundAdvertisements.Count);
 }

@@ -31,6 +31,13 @@ Resources:
             Identity:
               Headers:
                 - authorization
+          FlvtAuthorizerOffEmail:
+            FunctionArn: !GetAtt FlvtAuthorizerOffEmail.Arn
+            AuthorizerPayloadFormatVersion: '2.0'
+            EnableSimpleResponses: true
+            Identity:
+              Headers:
+                - authorization
   FinishedBatchesQueue:
     Type: AWS::SQS::Queue
     Properties:
@@ -211,7 +218,7 @@ Resources:
       Timeout: 60
       Role: arn:aws:iam::975049887576:role/FullAccess
       PackageType: Zip
-      Handler: Flvt.API::Flvt.API.Functions.API.Auth.AuthorizerFunctions_FunctionHandler_Generated::FunctionHandler
+      Handler: Flvt.API::Flvt.API.Functions.API.Auth.AuthorizerFunctions_Authorizer_Generated::Authorizer
   Register:
     Type: AWS::Serverless::Function
     Metadata:
@@ -294,6 +301,8 @@ Resources:
             Path: /v1/auth/verify
             Method: POST
             ApiId: !Ref FlvtApi
+            Auth:
+              Authorizer: FlvtAuthorizerOffEmail
   GetSubscriber:
     Type: AWS::Serverless::Function
     Metadata:
@@ -590,3 +599,16 @@ Resources:
             Path: /v1/subscribers/filters/{filterId}
             Method: DELETE
             ApiId: !Ref FlvtApi
+  FlvtAuthorizerOffEmail:
+    Type: AWS::Serverless::Function
+    Metadata:
+      Tool: Amazon.Lambda.Annotations
+    Properties:
+      FunctionName: FlvtAuthorizerOffEmail
+      Runtime: dotnet8
+      CodeUri: .
+      MemorySize: 3008
+      Timeout: 60
+      Role: arn:aws:iam::975049887576:role/FullAccess
+      PackageType: Zip
+      Handler: Flvt.API::Flvt.API.Functions.API.Auth.AuthorizerFunctions_AuthorizerOffEmail_Generated::AuthorizerOffEmail

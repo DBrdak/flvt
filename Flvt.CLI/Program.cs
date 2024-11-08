@@ -14,6 +14,7 @@ using Amazon;
 using Flvt.Domain;
 using Amazon.Runtime;
 using Flvt.Application.Custody.RemoveOutdatedAdvertisements;
+using Flvt.Application.Subscribers.AddBasicFilter;
 using Flvt.Application.Subscribers.Register;
 
 namespace Flvt.CLI;

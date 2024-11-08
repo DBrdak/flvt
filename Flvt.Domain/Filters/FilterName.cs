@@ -7,7 +7,7 @@ namespace Flvt.Domain.Filters;
 public sealed record FilterName
 {
     public string Value { get; init; }
-    private const string pattern = @"^[\p{L}\p{N},./;'[\]{}:""<>?~!@#$%^&*()`_+\-=\|]{1,60}$";
+    private const string pattern = @"^[\p{L}\p{N},./;'[\]{}:""<>?~!@#$%^&*()`_+\-=\|]{1,25}$";
 
     private FilterName(string value) => Value = value;
 
