@@ -1,15 +1,12 @@
 import {observer} from "mobx-react-lite";
 import {useStore} from "../../stores/store.ts";
 import useSubscriber from "../../utils/hooks/useSubscriber.tsx";
-import {Badge, Box, Typography} from "@mui/material";
+import {Box, Typography, Skeleton} from "@mui/material";
 import {styled} from "@mui/material/styles";
 import MuiCard from "@mui/material/Card";
 import {Filter} from "../../models/filter.ts";
-import {Skeleton} from "@mui/lab";
 import FilterCard from "./FilterCard.tsx";
 import ConfirmModal from "../sharedComponents/ConfirmModal.tsx";
-import {Logout} from "@mui/icons-material";
-import Button from "@mui/material/Button";
 
 const Card = styled(MuiCard)(({ theme }) => ({
     alignSelf: 'center',
@@ -83,12 +80,12 @@ function FiltersPage() {
             {
                 ['init'].some(action => action === subscriberStore.loading) ?
                     <Card variant="outlined">
-                        {[1, 2, 3].map(_ => <Skeleton sx={{width: '100%', minHeight: '200px'}}/>)}
+                        {[1, 2, 3].map(i => <Skeleton key={i} sx={{width: '100%', minHeight: '200px'}}/>)}
                     </Card>
                     :
                     <Card variant="outlined">
                         {subscriber?.filters.map(filter => (
-                            <FilterCard filter={filter} onRemove={handleRemove}/>
+                            <FilterCard key={filter.id} filter={filter} onRemove={handleRemove}/>
                         ))}
                     </Card>
             }

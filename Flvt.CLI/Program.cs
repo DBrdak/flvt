@@ -86,10 +86,10 @@ public class Service : IService
         //var cmd = new CheckProcessingStatusCommand();
         //var cmd = new EndProcessingCommand();
         //var cmd = new ProcessAdvertisementsCommand();
-        //var cmd = new RemoveOutdatedAdvertisementsCommand();
+        var cmd = new RemoveOutdatedAdvertisementsCommand();
         //var cmd = new RegisterCommand(); // TODO REMOVE
 
-        //var response = await _sender.Send(cmd);
+        var response = await _sender.Send(cmd);
 
         //var adsR = await _repository.GetAllAsync();
         //var ads = adsR.Value;

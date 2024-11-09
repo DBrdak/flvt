@@ -61,7 +61,8 @@ internal sealed class S3Bucket
         {
             BucketName = CloudEnvironment.BucketName,
             Key = bucketFilePath,
-            Expires = DateTime.UtcNow.AddMinutes(5)
+            Expires = DateTime.UtcNow.AddMinutes(5),
+            
         };
 
         return await _s3Client.GetPreSignedURLAsync(getRequest);

@@ -15,16 +15,16 @@ public sealed record ProcessedAdvertisementModel
     public string ContactType { get; init; }
     public Money Price { get; init; }
     public Money? Deposit { get; init; }
-    public RoomsCount Rooms { get; init; }
+    public Money? Fee { get; init; }
+    public int RoomsCount { get; init; }
     public Floor Floor { get; init; }
     public Area Area { get; init; }
-    public string[] Facilities { get; init; }
     public DateTime? AddedAt { get; init; }
     public DateTime? UpdatedAt { get; init; }
     public string? AvailableFrom { get; init; }
     public bool? Pets { get; init; }
     public IEnumerable<string> Photos { get; init; }
-    public bool IsFlagged { get; private set; }
+    public bool IsFlagged { get; init; }
     public bool WasSeen { get; init; }
     public bool IsNew { get; init; }
     public bool IsFollowed { get; init; }
@@ -37,10 +37,10 @@ public sealed record ProcessedAdvertisementModel
         string contactType,
         Money price,
         Money? deposit,
-        RoomsCount rooms,
+        Money? fee,
+        int roomsCount,
         Floor floor,
         Area area,
-        string[] facilities,
         DateTime? addedAt,
         DateTime? updatedAt,
         string? availableFrom,
@@ -58,10 +58,10 @@ public sealed record ProcessedAdvertisementModel
         ContactType = contactType;
         Price = price;
         Deposit = deposit;
-        Rooms = rooms;
+        Fee = fee;
+        RoomsCount = roomsCount;
         Floor = floor;
         Area = area;
-        Facilities = facilities;
         AddedAt = addedAt;
         UpdatedAt = updatedAt;
         AvailableFrom = availableFrom;
@@ -86,11 +86,15 @@ public sealed record ProcessedAdvertisementModel
             processedAdvertisement.Description,
             processedAdvertisement.ContactType,
             processedAdvertisement.Price,
-            processedAdvertisement.Deposit,
-            processedAdvertisement.Rooms,
+            processedAdvertisement.Deposit is var deposit && deposit is not null ?
+                null :
+                new Money(deposit!.Value, processedAdvertisement.Price.Currency),
+            processedAdvertisement.Fee is var fee && fee is not null ?
+                null :
+                new Money(fee!.Value, processedAdvertisement.Price.Currency),
+            processedAdvertisement.RoomsCount,
             processedAdvertisement.Floor,
             processedAdvertisement.Area,
-            processedAdvertisement.Facilities,
             processedAdvertisement.AddedAt,
             processedAdvertisement.UpdatedAt,
             processedAdvertisement.AvailableFrom,

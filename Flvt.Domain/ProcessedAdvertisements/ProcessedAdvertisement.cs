@@ -12,12 +12,11 @@ public sealed class ProcessedAdvertisement
     public string Description { get; init; }
     public string ContactType { get; init; }
     public Money Price { get; init; }
-    public Money? Deposit { get; init; }
-    public Money? Fee { get; init; }
-    public RoomsCount Rooms { get; init; }
+    public decimal? Deposit { get; init; }
+    public decimal? Fee { get; init; }
+    public int RoomsCount { get; init; }
     public Floor Floor { get; init; }
     public Area Area { get; init; }
-    public string[] Facilities { get; init; }
     public DateTime? AddedAt { get; init; }
     public DateTime? UpdatedAt { get; init; }
     public string? AvailableFrom { get; init; }
@@ -31,12 +30,11 @@ public sealed class ProcessedAdvertisement
         string description,
         string contactType,
         Money price,
-        Money? deposit,
-        Money? fee,
-        RoomsCount rooms,
+        decimal? deposit,
+        decimal? fee,
+        int roomsCount,
         Floor floor,
         Area area,
-        string[] facilities,
         DateTime? addedAt,
         DateTime? updatedAt,
         string? availableFrom,
@@ -49,19 +47,18 @@ public sealed class ProcessedAdvertisement
         Description = description;
         ContactType = contactType;
         Price = price;
-        Fee = fee;
         Deposit = deposit;
-        Rooms = rooms;
+        Fee = fee;
+        RoomsCount = roomsCount;
         Floor = floor;
         Area = area;
-        Facilities = facilities;
         AddedAt = addedAt;
         UpdatedAt = updatedAt;
         AvailableFrom = availableFrom;
         Pets = pets;
         IsFlagged = isFlagged;
         Dedupe =
-            $"{Address?.City}-{Address?.District}-{Address?.Street}-{ContactType}-{Rooms.Value}-{Area.Amount}-{Floor.Specific}-{Floor.Total}-{Price.Amount}"
+            $"{Address?.City}-{Address?.District}-{Address?.Street}-{ContactType}-{RoomsCount}-{Area.Amount}-{Floor.Specific}-{Floor.Total}-{Price.Amount}"
                 .ToLower();
     }
 
@@ -99,34 +96,9 @@ public sealed class ProcessedAdvertisement
             throw new ArgumentException("Price currency is null.");
         }
 
-        if (Deposit is not null && Deposit.Amount < 0)
-        {
-            throw new ArgumentException("Deposit is not a positive number.");
-        }
-
-        if (Deposit is not null && string.IsNullOrWhiteSpace(Deposit.Currency?.Code))
-        {
-            throw new ArgumentException("Deposit currency is null.");
-        }
-
-        if (Fee is not null && Fee.Amount < 0)
-        {
-            throw new ArgumentException("Fee is not a positive number.");
-        }
-
-        if (Fee is not null && string.IsNullOrWhiteSpace(Fee.Currency?.Code))
-        {
-            throw new ArgumentException("Fee currency is null.");
-        }
-
-        if (Rooms.Value <= 0)
+        if (RoomsCount <= 0)
         {
             throw new ArgumentException("Rooms is not a positive number.");
-        }
-
-        if (string.IsNullOrWhiteSpace(Rooms.Unit))
-        {
-            throw new ArgumentException("Rooms unit is empty.");
         }
 
         if (Area.Amount <= 0)

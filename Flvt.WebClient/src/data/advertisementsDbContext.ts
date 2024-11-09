@@ -1,50 +1,69 @@
-import {IDBPDatabase, openDB} from "idb";
+import {openDB} from "idb";
 import {Advertisement} from "../models/advertisement.ts";
 
 export default class AdvertisementsDbContext {
-
-    private readonly dbPromise: Promise<IDBPDatabase>
-    public readonly filterId: string
-    private readonly dbName: string
+    private readonly dbName: string = "Flvt";
     private readonly rwMode = 'readwrite'
 
-    constructor(filterId: string) {
-        this.filterId = filterId
-        const dbName = `advertisements/${this.filterId}`
-        this.dbName = dbName
+    constructor() {
+    }
 
-        this.dbPromise = openDB('Flvt', 1, {
+    private getAdvertisementsStoreName(filterId: string) {
+        return `advertisements/${filterId}`
+    }
+
+    private async getOrCreateStore(storeName: string) {
+        let db = await openDB(this.dbName);
+
+        if (db.objectStoreNames.contains(storeName)) {
+            return db;
+        }
+
+        const newVersion = db.version + 1;
+        db.close();
+
+        db = await openDB(this.dbName, newVersion, {
             upgrade(db) {
-                if (!db.objectStoreNames.contains(dbName)) {
-                    db.createObjectStore(dbName, { keyPath: 'link' })
+                if (!db.objectStoreNames.contains(storeName)) {
+                    db.createObjectStore(storeName, { keyPath: 'link' });
                 }
             }
         });
+
+        return db;
     }
 
-    public async saveAdvertisementsAsync(advertisements: Advertisement[]): Promise<void> {
-        const db = await this.dbPromise
-        const tx = db.transaction(this.dbName, this.rwMode)
-        const store = tx.objectStore(this.dbName)
+    public async saveAdvertisementsAsync(filterId: string, advertisements: Advertisement[]): Promise<void> {
+        const storeName = this.getAdvertisementsStoreName(filterId);
 
-        await store.clear()
+        const currentAds = await this.getAdvertisementsAsync(filterId);
 
-        const addPromises = advertisements.map(ad => store.add(ad))
+        if (currentAds.length === advertisements.length) {
+            return;
+        }
 
-        await Promise.all(addPromises)
+        const db = await this.getOrCreateStore(storeName);
+        const tx = db.transaction(storeName, this.rwMode);
+        const store = tx.objectStore(storeName);
 
-        await tx.done
+        await store.clear();
+        const addPromises = advertisements.map(ad => store.add(ad));
+        await Promise.all(addPromises);
+
+        await tx.done;
     }
 
-    public async getAdvertisementsAsync(): Promise<Advertisement[]> {
-        const db = await this.dbPromise
-        return db.getAll(this.dbName)
+    public async getAdvertisementsAsync(filterId: string): Promise<Advertisement[]> {
+        const storeName = this.getAdvertisementsStoreName(filterId)
+        const db = await this.getOrCreateStore(storeName)
+        return db.getAll(this.getAdvertisementsStoreName(filterId))
     }
 
-    public async updateAdvertisementAsync(advertisement: Advertisement): Promise<void> {
-        const db = await this.dbPromise
-        const tx = db.transaction(this.dbName, this.rwMode)
-        const store = tx.objectStore(this.dbName)
+    public async updateAdvertisementAsync(filterId: string, advertisement: Advertisement): Promise<void> {
+        const storeName = this.getAdvertisementsStoreName(filterId)
+        const db = await this.getOrCreateStore(storeName)
+        const tx = db.transaction(storeName, this.rwMode)
+        const store = tx.objectStore(storeName)
 
         await store.put(advertisement)
 

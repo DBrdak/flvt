@@ -1,99 +1,93 @@
 import {makeAutoObservable} from "mobx";
 import agent from "../api/agent.ts";
 import AdvertisementsDbContext from "../data/advertisementsDbContext.ts";
-import {Advertisement} from "../models/advertisement.ts";
+import {Advertisement, AdvertisementFunctions} from "../models/advertisement.ts";
 
 export default class AdvertisementStore {
-    loading: boolean = false
+    loading: string | null = null
     dbContext: AdvertisementsDbContext | null = null
 
     constructor() {
+        this.dbContext = new AdvertisementsDbContext()
         makeAutoObservable(this)
     }
 
-    private setLoading(state: boolean) {
+    private setLoading(state: string | null) {
         this.loading = state
     }
 
-    private initializeDbContext(filterId: string) {
-        if(this.dbContext === null || this.dbContext.filterId !== filterId) {
-            this.dbContext = new AdvertisementsDbContext(filterId);
-        }
-    }
-
     public async loadAdvertisementsAsync(filterId: string) {
-        this.setLoading(true)
+        this.setLoading('init')
 
         try {
-            this.initializeDbContext(filterId)
             const advertisementsFileUrl = await agent.advertisements.getByFilter(filterId)
             const fileGetResponse = await fetch(advertisementsFileUrl)
 
-            if(!fileGetResponse.ok){
-                return []
+            if(fileGetResponse.status !== 200){
+                 return []
             }
 
             const advertisements: Advertisement[] = await fileGetResponse.json()
 
-            await this.dbContext!.saveAdvertisementsAsync(advertisements)
+            await this.dbContext!.saveAdvertisementsAsync(filterId, advertisements)
 
-            return await this.dbContext!.getAdvertisementsAsync()
+            return await this.dbContext!.getAdvertisementsAsync(filterId)
         } catch(e) {
             console.log(e)
             return []
         } finally {
-            this.setLoading(false)
+            this.setLoading(null)
         }
     }
 
     public async followAdvertisementAsync(advertisement: Advertisement, filterId: string) {
-        this.setLoading(true)
+        this.setLoading('follow')
 
         try {
-            advertisement.follow()
+            AdvertisementFunctions.follow(advertisement)
             await agent.advertisements.follow(advertisement.link, filterId)
-            await this.dbContext!.updateAdvertisementAsync(advertisement)
+            await this.dbContext!.updateAdvertisementAsync(filterId, advertisement)
 
             return advertisement
         } catch(e) {
             console.log(e)
             return null
         } finally {
-            this.setLoading(false)
+            this.setLoading(null)
         }
     }
 
     public async seeAdvertisementAsync(advertisement: Advertisement, filterId: string) {
-        this.setLoading(true)
+        this.setLoading('see')
 
         try {
-            advertisement.see()
+            AdvertisementFunctions.see(advertisement)
             await agent.advertisements.see(advertisement.link, filterId)
-            await this.dbContext!.updateAdvertisementAsync(advertisement)
+            await this.dbContext!.updateAdvertisementAsync(filterId, advertisement)
 
             return advertisement
         } catch(e) {
             console.log(e)
             return null
         } finally {
-            this.setLoading(false)
+            this.setLoading(null)
         }
     }
 
-    public async flagAdvertisementAsync(advertisement: Advertisement) {
-        this.setLoading(true)
+    public async flagAdvertisementAsync(advertisement: Advertisement, filterId: string) {
+        this.setLoading('flag')
 
         try {
-            advertisement.flag()
+            AdvertisementFunctions.flag(advertisement)
             await agent.advertisements.flag(advertisement.link)
-            await this.dbContext!.updateAdvertisementAsync(advertisement)
+            await this.dbContext!.updateAdvertisementAsync(filterId, advertisement)
 
             return advertisement
         } catch(e) {
             console.log(e)
             return null
         } finally {
-            this.setLoading(false)
+            this.setLoading(null)
         }
     }
 }

@@ -1,11 +1,10 @@
 import {Address} from "./address.ts"
 import {Coordinates} from "./coordinates.ts"
 import {Money} from "./money.ts"
-import {RoomsCount} from "./roomsCount.ts"
 import {Floor} from "./floor.ts"
 import {Area} from "./area.ts"
 
-export class Advertisement {
+export interface Advertisement {
     link: string
     address: Address
     geolocation?: Coordinates
@@ -13,10 +12,10 @@ export class Advertisement {
     contactType: string
     price: Money
     deposit?: Money
-    rooms: RoomsCount
+    fee?: Money
+    rooms: number
     floor: Floor
     area: Area
-    facilities: string[]
     addedAt?: Date
     updatedAt?: Date
     availableFrom?: string
@@ -26,60 +25,18 @@ export class Advertisement {
     wasSeen: boolean
     isNew: boolean
     isFollowed: boolean
+}
 
-    constructor(
-        link: string,
-        address: Address,
-        description: string,
-        contactType: string,
-        price: Money,
-        rooms: RoomsCount,
-        floor: Floor,
-        area: Area,
-        facilities: string[],
-        photos: string[],
-        isFlagged: boolean,
-        wasSeen: boolean,
-        isNew: boolean,
-        isFollowed: boolean,
-        geolocation?: Coordinates,
-        deposit?: Money,
-        addedAt?: Date,
-        updatedAt?: Date,
-        availableFrom?: string,
-        pets?: boolean
-    ) {
-        this.link = link
-        this.address = address
-        this.geolocation = geolocation
-        this.description = description
-        this.contactType = contactType
-        this.price = price
-        this.deposit = deposit
-        this.rooms = rooms
-        this.floor = floor
-        this.area = area
-        this.facilities = facilities
-        this.addedAt = addedAt
-        this.updatedAt = updatedAt
-        this.availableFrom = availableFrom
-        this.pets = pets
-        this.photos = photos
-        this.isFlagged = isFlagged
-        this.wasSeen = wasSeen
-        this.isNew = isNew
-        this.isFollowed = isFollowed
+export class AdvertisementFunctions {
+    public static follow(ad: Advertisement) {
+        ad.isFollowed = !ad.isFollowed
     }
 
-    follow() {
-        this.isFollowed = !this.isFollowed
+    public static flag(ad: Advertisement) {
+        ad.isFlagged = true
     }
 
-    flag() {
-        this.isFlagged = true
-    }
-
-    see() {
-        this.wasSeen = true
+    public static see(ad: Advertisement) {
+        ad.wasSeen = true
     }
 }

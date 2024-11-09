@@ -6,6 +6,7 @@ import LoginPage from "../app/login/LoginPage.tsx";
 import WelcomePage from "../app/welcome/WelcomePage.tsx";
 import VerificationPage from "../app/verification/VerificationPage.tsx";
 import FiltersPage from "../app/filters/FiltersPage.tsx";
+import BrowsePage from "../app/filters/browse/BrowsePage.tsx";
 
 export const routes: RouteObject[] = [
     {
@@ -16,6 +17,7 @@ export const routes: RouteObject[] = [
             {path: '/login', element: <LoginPage />},
             {path: '/verification', element: <VerificationPage />},
             {path: '/filters', element: <FiltersPage />},
+            {path: '/filters/:filterId/browse', element: <BrowsePage />},
             {path: '*', element: <RedirectPage text={'We are sorry, the content you are looking for does not exist 😔'} />},
         ]
     }
