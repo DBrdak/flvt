@@ -87,11 +87,11 @@ public sealed record ProcessedAdvertisementModel
             processedAdvertisement.ContactType,
             processedAdvertisement.Price,
             processedAdvertisement.Deposit is var deposit && deposit is not null ?
-                null :
-                new Money(deposit!.Value, processedAdvertisement.Price.Currency),
+                new Money(deposit!.Value, processedAdvertisement.Price.Currency) : 
+                null,
             processedAdvertisement.Fee is var fee && fee is not null ?
-                null :
-                new Money(fee!.Value, processedAdvertisement.Price.Currency),
+                new Money(fee!.Value, processedAdvertisement.Price.Currency) :
+                null,
             processedAdvertisement.RoomsCount,
             processedAdvertisement.Floor,
             processedAdvertisement.Area,

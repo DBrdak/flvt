@@ -34,7 +34,7 @@ internal sealed class NotifyFilterLaunchCommandHandler : ICommandHandler<NotifyF
 
         var filters = filtersGetResult.Value.ToList();
 
-        var subscribersEmails = filters.Select(f => f.SubscriberEmail);
+        var subscribersEmails = filters.Select(f => f.SubscriberEmail).Distinct();
 
         var subscribersGetResult = await _subscriberRepository.GetManyByEmailAsync(subscribersEmails);
 

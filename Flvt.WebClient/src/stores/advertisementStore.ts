@@ -6,6 +6,9 @@ import {Advertisement, AdvertisementFunctions} from "../models/advertisement.ts"
 export default class AdvertisementStore {
     loading: string | null = null
     dbContext: AdvertisementsDbContext | null = null
+    preViewedAdvertisement: Advertisement | null = null
+    viewedAdvertisement: Advertisement | null = null
+    visibleAdvertisements: Advertisement[] = []
 
     constructor() {
         this.dbContext = new AdvertisementsDbContext()
@@ -14,6 +17,37 @@ export default class AdvertisementStore {
 
     private setLoading(state: string | null) {
         this.loading = state
+    }
+
+    public setViewedAdvertisement(ad: Advertisement | null) {
+        this.viewedAdvertisement = ad
+
+        if(ad !== null) {
+            const tempAds = this.visibleAdvertisements.filter(vAd => vAd.link !== ad.link)
+            this.setVisibleAdvertisements([ad, ...tempAds])
+        }
+    }
+
+    public setPreViewedAdvertisement(ad: Advertisement | null) {
+        this.preViewedAdvertisement = ad
+
+        if(ad !== null) {
+            const tempAds = this.visibleAdvertisements.filter(vAd => vAd.link !== ad.link)
+            this.setVisibleAdvertisements([ad, ...tempAds])
+        }
+    }
+
+    public setVisibleAdvertisements(ads: Advertisement[]) {
+        ads.filter(ad => ad.link !== this.preViewedAdvertisement?.link || ad.link !== this.viewedAdvertisement?.link)
+
+        this.viewedAdvertisement && ads
+            .unshift(this.viewedAdvertisement)
+        this.preViewedAdvertisement && ads
+            .unshift(this.preViewedAdvertisement)
+
+        const map = new Map<string, Advertisement>(ads.map(ad => [ad.link, ad]))
+
+        this.visibleAdvertisements = [...map.values()]
     }
 
     public async loadAdvertisementsAsync(filterId: string) {
