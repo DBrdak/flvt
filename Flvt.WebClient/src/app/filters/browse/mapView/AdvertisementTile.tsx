@@ -13,7 +13,7 @@ import {
 import ImageSlider from "../shared/ImageSilder.tsx";
 import {keyframes} from "@emotion/react";
 import {Theme} from "@mui/material/styles";
-import {Pets} from "@mui/icons-material";
+import {Business, Favorite, Flag, GridView, Person, Pets} from "@mui/icons-material";
 import './MapView.css'
 import {colorSchemes} from "../../../theme/themePrimitives.ts";
 
@@ -31,9 +31,12 @@ const fadeIn = keyframes`
 interface Props {
     ad: Advertisement
     isFocused: boolean
+    flagAdvertisement: (ad: Advertisement) => void
+    followAdvertisement: (ad: Advertisement) => void
+    seeAdvertisement: (ad: Advertisement) => void
 }
 
-function AdvertisementTile({ad, isFocused}: Props) {
+function AdvertisementTile({ad, isFocused, flagAdvertisement, followAdvertisement, seeAdvertisement}: Props) {
 
     const tileStyles = isFocused ? [
             (theme: Theme) => ({
@@ -66,7 +69,7 @@ function AdvertisementTile({ad, isFocused}: Props) {
                     'radial-gradient(at 50% 50%, hsla(210, 100%, 16%, 0.5), hsl(220, 30%, 5%))',
             }
         }
-
+    /* @ts-ignore*/
     return (
         <Card variant={'outlined'} sx={tileStyles}>
             <CardContent>
@@ -85,13 +88,19 @@ function AdvertisementTile({ad, isFocused}: Props) {
                     <Typography variant="subtitle1" color="text.secondary">
                         {ad.price.amount} {ad.price.currency.code}
                     </Typography>
+                    <Typography variant="subtitle1" color="text.secondary">
+                        {ad.deposit ? `Deposit ${ad.deposit?.amount} ${ad.deposit?.currency.code}` : ''}
+                    </Typography>
+                    <Typography variant="subtitle1" color="text.secondary">
+                        {ad.fee ? `Fee ${ad.fee?.amount} ${ad.fee?.currency.code}` : ''}
+                    </Typography>
                 </Box>
 
                 <Divider sx={{ marginY: 1 }} />
 
                 <Box sx={{
                     display: 'flex',
-                    justifyContent: 'center',
+                    justifyContent: 'space-between',
                     flexDirection: 'row',
                     alignItems: 'center',
                     overflowX: 'hidden',
@@ -101,9 +110,27 @@ function AdvertisementTile({ad, isFocused}: Props) {
                     <Typography variant={'subtitle1'}>
                         {ad.area.amount.toFixed(0)} {ad.area.unit}
                     </Typography>
-                    <Typography variant={'subtitle1'}>
-                        {ad.roomsCount}
-                    </Typography>
+
+                    <Tooltip title={`${ad.roomsCount} room${ad.roomsCount && 's'}`}>
+                        <Typography variant={'subtitle1'} sx={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
+                            {ad.roomsCount} <GridView />
+                        </Typography>
+                    </Tooltip>
+
+                    {
+                        ad.isPrivate ?
+                            <Tooltip placement={'top'} title={'private offer'}>
+                                <Paper variant={'outlined'} className={'ad-attribute'} sx={{background: colorSchemes.dark.palette.success.light}}>
+                                    <Person />
+                                </Paper>
+                            </Tooltip>
+                            :
+                            <Tooltip placement={'top'} title={'real estate agency offer'}>
+                                <Paper variant={'outlined'} className={'ad-attribute'} sx={{background: colorSchemes.dark.palette.error.light}}>
+                                    <Business />
+                                </Paper>
+                            </Tooltip>
+                    }
                     {
                         ad.pets &&
                         <Tooltip placement={'top'} title={'pets-friendly'}>
@@ -132,8 +159,18 @@ function AdvertisementTile({ad, isFocused}: Props) {
 
             </CardContent>
 
-            <CardActions sx={{justifyContent: 'space-between'}}>
-                <Button fullWidth variant="contained" href={ad.link} target="_blank">
+            <Divider sx={{ marginY: 1 }} />
+
+            <CardActions sx={{display: 'flex', flexDirection: 'column', gap: 2, marginTop: 1}}>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%', gap: 2 }}>
+                    <Button fullWidth variant="contained" color={ad.isFollowed ? 'error' : 'secondary'} onClick={() => followAdvertisement(ad)}>
+                        <Favorite />
+                    </Button>
+                    <Button fullWidth variant={ad.isFlagged ? 'outlined' : "contained"} color={'warning'} onClick={() => flagAdvertisement(ad)}>
+                        <Flag />
+                    </Button>
+                </Box>
+                <Button fullWidth variant="contained" href={ad.link} target="_blank" onClick={() => seeAdvertisement(ad)}>
                     Check
                 </Button>
             </CardActions>

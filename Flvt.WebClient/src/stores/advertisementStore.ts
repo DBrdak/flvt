@@ -112,7 +112,7 @@ export default class AdvertisementStore {
         this.setLoading('flag')
 
         try {
-            AdvertisementFunctions.flag(advertisement)
+            advertisement.isFlagged = true
             await agent.advertisements.flag(advertisement.link)
             await this.dbContext!.updateAdvertisementAsync(filterId, advertisement)
 

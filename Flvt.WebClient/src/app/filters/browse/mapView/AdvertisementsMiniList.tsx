@@ -5,6 +5,8 @@ import { useEffect, useState, useRef } from "react"
 import { Advertisement } from "../../../../models/advertisement.ts"
 import { styled } from "@mui/material/styles"
 import MuiCard from "@mui/material/Card"
+import {useParams} from "react-router-dom";
+import {flow} from "mobx";
 
 
 const Card = styled(MuiCard)(({ theme }) => ({
@@ -33,6 +35,7 @@ function AdvertisementsMiniList() {
     const { advertisementStore } = useStore()
     const [ads, setAds] = useState<Advertisement[]>([])
     const cardRef = useRef<HTMLDivElement>(null)
+    const filterId = useParams<{filterId: string}>().filterId
 
     useEffect(() => {
         setAds(advertisementStore.visibleAdvertisements)
@@ -51,7 +54,14 @@ function AdvertisementsMiniList() {
     return (
         <Card ref={cardRef} sx={{ overflowY: 'auto', overflowX: 'hidden', minHeight: '100%' }}>
             {ads.map(ad => (
-                <AdvertisementTile key={ad.link} isFocused={isFocused(ad)} ad={ad} />
+                <AdvertisementTile
+                    key={ad.link}
+                    isFocused={isFocused(ad)}
+                    ad={ad}
+                    flagAdvertisement={ad => advertisementStore.flagAdvertisementAsync(ad, filterId!)}
+                    followAdvertisement={ad => advertisementStore.followAdvertisementAsync(ad, filterId!)}
+                    seeAdvertisement={ad => advertisementStore.seeAdvertisementAsync(ad, filterId!)}
+                />
             ))}
         </Card>
     )
