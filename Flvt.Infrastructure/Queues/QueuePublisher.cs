@@ -5,6 +5,10 @@ using Amazon.SQS;
 using Flvt.Application.Abstractions;
 using Flvt.Domain.Filters;
 using Flvt.Infrastructure.Utlis.Extensions;
+using Serilog;
+using Amazon.Runtime;
+using Flvt.Domain;
+using Flvt.Infrastructure.AWS.Contants;
 
 namespace Flvt.Infrastructure.Queues;
 
@@ -16,7 +20,7 @@ internal class QueuePublisher : IQueuePublisher
     public QueuePublisher(IConfiguration configuration)
     {
         _configuration = configuration;
-        _sqsClient = new AmazonSQSClient();
+        _sqsClient = new AmazonSQSClient(new BasicAWSCredentials(XD.LOL2, XD.LOL3), CloudEnvironment.RegionEndpoint);
     }
 
     public async Task<Result> PublishFinishedBatches()
@@ -37,12 +41,21 @@ internal class QueuePublisher : IQueuePublisher
         return await PublishMessageAsync(queueName, filtersIds);
     }
 
+    public async Task<Result> PublishScrapedLinksAsync(List<string> scrapedLinks)
+    {
+        var queueName = _configuration["queueNames:scrapedLinks"] ?? "ScrapedLinksQueue" ??
+                        throw new ArgumentNullException("queueNames:scrapedLinks");
+
+        return await PublishMessageAsync(queueName, scrapedLinks);
+    }
+
     private async Task<Result> PublishMessageAsync(string queueName, object? message)
     {
         var getQueueUrlResult = await GetQueueAsync(queueName);
 
         if (getQueueUrlResult.IsFailure)
         {
+            Log.Logger.Error("Failed to publish {queueName}", queueName);
             return getQueueUrlResult.Error;
         }
 

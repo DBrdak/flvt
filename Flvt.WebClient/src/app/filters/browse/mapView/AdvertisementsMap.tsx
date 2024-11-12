@@ -1,13 +1,13 @@
 import { MapContainer, TileLayer, Marker, useMap } from 'react-leaflet';
 import MarkerClusterGroup from 'react-leaflet-cluster';
-import { Advertisement } from "../../../models/advertisement";
-import { Coordinates } from "../../../models/coordinates";
-import AdvertisementPopup from "./AdvertisementPopup.tsx";
+import { Advertisement } from "../../../../models/advertisement.ts";
+import { Coordinates } from "../../../../models/coordinates.ts";
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
-import { useStore } from "../../../stores/store.ts";
+import { useStore } from "../../../../stores/store.ts";
 import { Box } from "@mui/material";
 import AdvertisementsMiniList from "./AdvertisementsMiniList.tsx";
+import {LeafletMouseEvent} from "leaflet";
 
 function calculateCenter(advertisements: Advertisement[]): Coordinates {
     const markers = advertisements.filter(ad => ad.geolocation);
@@ -47,12 +47,19 @@ function AdvertisementsMap({ advertisements }: Props) {
                     const { latitude, longitude } = ad.geolocation || {};
                     if (!latitude || !longitude) return false;
                     return bounds.contains([+latitude, +longitude]);
-                }).slice(0,50);
+                }).slice(0,15);
                 advertisementStore.setVisibleAdvertisements(visibleAds);
             };
 
+            const updateViewedAdvertisement = (e: LeafletMouseEvent) => {
+                if(e.target.type !== Marker) {
+                    advertisementStore.setViewedAdvertisement(null)
+                }
+            }
+
             updateVisibleAdvertisements();
 
+            map.on('click', updateViewedAdvertisement);
             map.on("moveend", updateVisibleAdvertisements);
             map.on("zoomend", updateVisibleAdvertisements);
 
@@ -91,7 +98,6 @@ function AdvertisementsMap({ advertisements }: Props) {
                     ))}
                 </MarkerClusterGroup>
 
-                {/* Invoke map bounds tracking within MapContainer context */}
                 <MapEventHandler />
 
             </MapContainer>

@@ -1,0 +1,8 @@
+.ad-attribute {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 35px;
+    flex-direction: row;
+}

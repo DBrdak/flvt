@@ -48,30 +48,11 @@ Resources:
     Properties:
       QueueName: LaunchedFiltersQueue
       VisibilityTimeout: 900
-  ScrapeAdvertisementsScrapAll:
-    Type: AWS::Serverless::Function
-    Metadata:
-      Tool: Amazon.Lambda.Annotations
+  ScrapedLinksQueue:
+    Type: AWS::SQS::Queue
     Properties:
-      FunctionName: ScrapAll
-      Runtime: dotnet8
-      CodeUri: .
-      MemorySize: 3008
-      Timeout: 900
-      Role: arn:aws:iam::975049887576:role/FullAccess
-      PackageType: Zip
-      Handler: Flvt.API::Flvt.API.Functions.Background.ScrapeAdvertisements_ScrapAll_Generated::ScrapAll
-      Events:
-        ScheduleRule:
-          Type: Schedule
-          Properties:
-            Name: ScrapAllSchedule
-            Schedule: 'cron(0 0/6 * * ? *)'
-      EventInvokeConfig:
-        DestinationConfig:
-          OnSuccess:
-            Type: Lambda
-            Destination: !GetAtt ProcessAdvertisementsStartProcessing.Arn
+      QueueName: ScrapedLinksQueue
+      VisibilityTimeout: 900
   ProcessAdvertisementsStartProcessing:
     Type: AWS::Serverless::Function
     Metadata:
@@ -612,3 +593,45 @@ Resources:
       Role: arn:aws:iam::975049887576:role/FullAccess
       PackageType: Zip
       Handler: Flvt.API::Flvt.API.Functions.API.Auth.AuthorizerFunctions_AuthorizerOffEmail_Generated::AuthorizerOffEmail
+  ScrapeAds:
+    Type: AWS::Serverless::Function
+    Metadata:
+      Tool: Amazon.Lambda.Annotations
+    Properties:
+      FunctionName: ScrapeAds
+      Runtime: dotnet8
+      CodeUri: .
+      MemorySize: 3008
+      Timeout: 900
+      Role: arn:aws:iam::975049887576:role/FullAccess
+      PackageType: Zip
+      Handler: Flvt.API::Flvt.API.Functions.Background.ScrapeAdvertisements_ScrapeAds_Generated::ScrapeAds
+      Events:
+        SqsEvent:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt ScrapedLinksQueue.Arn
+      EventInvokeConfig:
+        DestinationConfig:
+          OnSuccess:
+            Type: Lambda
+            Destination: !GetAtt ProcessAdvertisementsStartProcessing.Arn
+  ScrapeLinks:
+    Type: AWS::Serverless::Function
+    Metadata:
+      Tool: Amazon.Lambda.Annotations
+    Properties:
+      FunctionName: ScrapeLinks
+      Runtime: dotnet8
+      CodeUri: .
+      MemorySize: 3008
+      Timeout: 900
+      Role: arn:aws:iam::975049887576:role/FullAccess
+      PackageType: Zip
+      Handler: Flvt.API::Flvt.API.Functions.Background.ScrapeAdvertisements_ScrapeLinks_Generated::ScrapeLinks
+      Events:
+        ScheduleRule:
+          Type: Schedule
+          Properties:
+            Name: ScrapeLinksSchedule
+            Schedule: 'cron(0 0/6 * * ? *)'

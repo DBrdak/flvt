@@ -12,12 +12,11 @@ public sealed record ProcessedAdvertisementModel
     public Address Address { get; init; }
     public Coordinates? Geolocation { get; init; }
     public string Description { get; init; }
-    public string ContactType { get; init; }
+    public bool IsPrivate { get; init; }
     public Money Price { get; init; }
     public Money? Deposit { get; init; }
     public Money? Fee { get; init; }
     public int RoomsCount { get; init; }
-    public Floor Floor { get; init; }
     public Area Area { get; init; }
     public DateTime? AddedAt { get; init; }
     public DateTime? UpdatedAt { get; init; }
@@ -34,12 +33,11 @@ public sealed record ProcessedAdvertisementModel
         Address address,
         Coordinates? geolocation,
         string description,
-        string contactType,
+        bool isPrivate,
         Money price,
         Money? deposit,
         Money? fee,
         int roomsCount,
-        Floor floor,
         Area area,
         DateTime? addedAt,
         DateTime? updatedAt,
@@ -55,12 +53,11 @@ public sealed record ProcessedAdvertisementModel
         Address = address;
         Geolocation = geolocation;
         Description = description;
-        ContactType = contactType;
+        IsPrivate = isPrivate;
         Price = price;
         Deposit = deposit;
         Fee = fee;
         RoomsCount = roomsCount;
-        Floor = floor;
         Area = area;
         AddedAt = addedAt;
         UpdatedAt = updatedAt;
@@ -84,7 +81,7 @@ public sealed record ProcessedAdvertisementModel
             processedAdvertisement.Address,
             processedAdvertisement.Geolocation,
             processedAdvertisement.Description,
-            processedAdvertisement.ContactType,
+            processedAdvertisement.IsPrivate,
             processedAdvertisement.Price,
             processedAdvertisement.Deposit is var deposit && deposit is not null ?
                 new Money(deposit!.Value, processedAdvertisement.Price.Currency) : 
@@ -93,7 +90,6 @@ public sealed record ProcessedAdvertisementModel
                 new Money(fee!.Value, processedAdvertisement.Price.Currency) :
                 null,
             processedAdvertisement.RoomsCount,
-            processedAdvertisement.Floor,
             processedAdvertisement.Area,
             processedAdvertisement.AddedAt,
             processedAdvertisement.UpdatedAt,

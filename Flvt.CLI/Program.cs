@@ -48,6 +48,7 @@ public class Service : IService
     private readonly IAdvertisementPhotosRepository _advertisementPhotosRepository;
     private readonly IScrapingOrchestrator _scrapingOrchestrator;
     private readonly IEmailService _emailService;
+    private readonly IQueuePublisher _queuePublisher;
 
     public Service(
         ISender sender,
@@ -55,7 +56,8 @@ public class Service : IService
         IScrapedAdvertisementRepository scrapedAdvertisementRepository,
         IAdvertisementPhotosRepository advertisementPhotosRepository,
         IScrapingOrchestrator scrapingOrchestrator,
-        IEmailService emailService)
+        IEmailService emailService,
+        IQueuePublisher queuePublisher)
     {
         _sender = sender;
         _repository = repository;
@@ -63,6 +65,7 @@ public class Service : IService
         _advertisementPhotosRepository = advertisementPhotosRepository;
         _scrapingOrchestrator = scrapingOrchestrator;
         _emailService = emailService;
+        _queuePublisher = queuePublisher;
     }
 
     public async Task Run()
@@ -86,10 +89,10 @@ public class Service : IService
         //var cmd = new CheckProcessingStatusCommand();
         //var cmd = new EndProcessingCommand();
         //var cmd = new ProcessAdvertisementsCommand();
-        var cmd = new RemoveOutdatedAdvertisementsCommand();
+        //var cmd = new RemoveOutdatedAdvertisementsCommand();
         //var cmd = new RegisterCommand(); // TODO REMOVE
 
-        var response = await _sender.Send(cmd);
+        //var response = await _sender.Send(cmd);
 
         //var adsR = await _repository.GetAllAsync();
         //var ads = adsR.Value;
@@ -108,7 +111,15 @@ public class Service : IService
 
         //Console.WriteLine(stopwatch.ElapsedMilliseconds);
         //Console.WriteLine();
-     }
+
+        var ads = (await _repository.GetAllAsync()).Value.ToList();
+
+        var links = ads.Where(ad => ad.RoomsCount <= 0).Select(ad => ad.Link).ToList();
+
+        var result = await _queuePublisher.PublishScrapedLinksAsync(links);
+
+        Console.WriteLine(result.IsSuccess);
+    }
 
     public async Task UploadJsonToS3Async(IEnumerable<ProcessedAdvertisement> ads, string bucketName, string key)
     {

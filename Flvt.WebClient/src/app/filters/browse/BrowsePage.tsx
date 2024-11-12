@@ -2,14 +2,14 @@ import {observer} from "mobx-react-lite";
 import {useStore} from "../../../stores/store.ts";
 import {useEffect, useState} from "react";
 import {Advertisement} from "../../../models/advertisement.ts";
-import AdvertisementsMap from "./AdvertisementsMap.tsx";
+import AdvertisementsMap from "./mapView/AdvertisementsMap.tsx";
 import LoadingPage from "../../sharedComponents/LoadingPage.tsx";
 import {useNavigate, useParams} from "react-router-dom";
 import 'leaflet/dist/leaflet.css';
 import {toast} from "react-toastify";
 import {Box} from "@mui/material";
-import ViewSelector from "./ViewSelector.tsx";
-import AdvertisementsList from "./AdvertisementsList.tsx";
+import ViewSelector from "./shared/ViewSelector.tsx";
+import AdvertisementsList from "./listView/AdvertisementsList.tsx";
 
 function BrowsePage() {
     const navigate = useNavigate();

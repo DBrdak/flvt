@@ -92,7 +92,7 @@ public static class InfrastructureInjector
     private static IServiceCollection AddMonitoring(this IServiceCollection services) =>
         services
             .AddTransient<GPTMonitor>()
-            .AddTransient<ScrapingMonitor>();
+            .AddTransient<AdsScrapingMonitor>();
 
     private static IServiceCollection AddAuthentication(this IServiceCollection services) =>
         services

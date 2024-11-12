@@ -1,7 +1,6 @@
 import {Address} from "./address.ts"
 import {Coordinates} from "./coordinates.ts"
 import {Money} from "./money.ts"
-import {Floor} from "./floor.ts"
 import {Area} from "./area.ts"
 
 export interface Advertisement {
@@ -9,12 +8,11 @@ export interface Advertisement {
     address: Address
     geolocation?: Coordinates
     description: string
-    contactType: string
+    isPrivate: boolean
     price: Money
     deposit?: Money
     fee?: Money
-    rooms: number
-    floor: Floor
+    roomsCount: number
     area: Area
     addedAt?: Date
     updatedAt?: Date

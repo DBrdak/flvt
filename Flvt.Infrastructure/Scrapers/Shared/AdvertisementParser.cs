@@ -4,7 +4,7 @@ using HtmlAgilityPack;
 
 namespace Flvt.Infrastructure.Scrapers.Shared;
 
-public abstract class AdvertisementParser
+internal abstract class AdvertisementParser
 {
     private HtmlDocument? _document;
     protected HtmlDocument Document =>
@@ -19,7 +19,7 @@ public abstract class AdvertisementParser
     protected abstract string GetContentNodeSelector();
     protected abstract string GetBaseUrl();
     protected abstract string GetBaseQueryRelativeUrl();
-    public abstract string ParseQueryUrl(Filter filter);
+    public abstract string ParseQueryUrl(ScrapingFilter filter);
     public abstract string ParsePagedQueryUrl(string baseQueryUrl, int page);
     public abstract List<string> ParseAdvertisementsLinks();
     public abstract ScrapedAdContent ParseContent();

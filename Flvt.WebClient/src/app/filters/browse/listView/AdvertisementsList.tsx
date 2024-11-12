@@ -1,4 +1,4 @@
-import {Advertisement} from "../../../models/advertisement.ts";
+import {Advertisement} from "../../../../models/advertisement.ts";
 
 interface Props {
     advertisements: Advertisement[]

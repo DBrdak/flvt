@@ -10,12 +10,11 @@ public sealed class ProcessedAdvertisement
     public Address Address { get; init; }
     public Coordinates? Geolocation { get; init; }
     public string Description { get; init; }
-    public string ContactType { get; init; }
+    public bool IsPrivate { get; set; }
     public Money Price { get; init; }
     public decimal? Deposit { get; init; }
     public decimal? Fee { get; init; }
     public int RoomsCount { get; init; }
-    public Floor Floor { get; init; }
     public Area Area { get; init; }
     public DateTime? AddedAt { get; init; }
     public DateTime? UpdatedAt { get; init; }
@@ -28,12 +27,11 @@ public sealed class ProcessedAdvertisement
         Address address,
         Coordinates? geolocation,
         string description,
-        string contactType,
+        bool isPrivate,
         Money price,
         decimal? deposit,
         decimal? fee,
         int roomsCount,
-        Floor floor,
         Area area,
         DateTime? addedAt,
         DateTime? updatedAt,
@@ -45,12 +43,11 @@ public sealed class ProcessedAdvertisement
         Address = address;
         Geolocation = geolocation;
         Description = description;
-        ContactType = contactType;
+        IsPrivate = isPrivate;
         Price = price;
         Deposit = deposit;
         Fee = fee;
         RoomsCount = roomsCount;
-        Floor = floor;
         Area = area;
         AddedAt = addedAt;
         UpdatedAt = updatedAt;
@@ -58,7 +55,7 @@ public sealed class ProcessedAdvertisement
         Pets = pets;
         IsFlagged = isFlagged;
         Dedupe =
-            $"{Address?.City}-{Address?.District}-{Address?.Street}-{ContactType}-{RoomsCount}-{Area.Amount}-{Floor.Specific}-{Floor.Total}-{Price.Amount}"
+            $"{Address?.City}-{Address?.District}-{Address?.Street}-{IsPrivate}-{RoomsCount}-{Area.Amount}-{Price.Amount}"
                 .ToLower();
     }
 
@@ -74,11 +71,6 @@ public sealed class ProcessedAdvertisement
         if (string.IsNullOrWhiteSpace(Description))
         {
             throw new ArgumentException("Description is empty.");
-        }
-
-        if (string.IsNullOrWhiteSpace(ContactType))
-        {
-            throw new ArgumentException("ContactType is empty.");
         }
 
         if (Price is null)
@@ -109,16 +101,6 @@ public sealed class ProcessedAdvertisement
         if (string.IsNullOrWhiteSpace(Area.Unit))
         {
             throw new ArgumentException("Area unit is empty.");
-        }
-
-        if (Floor.Specific < 0)
-        {
-            throw new ArgumentException("Floor is not a positive number.");
-        }
-
-        if (Floor.Total < 0)
-        {
-            throw new ArgumentException("Floor is not a positive number.");
         }
     }
 }

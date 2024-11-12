@@ -10,11 +10,8 @@ internal sealed class BasicProcessorInstructions
             "link": <string>,
             "address": {
               "country": <string>,
-              "province": <string>,
-              "region": <string>,
               "city": <string>,
               "district": <string>,
-              "subdistrict": <string>,
               "street": <string>,
               "houseNumber": <string>
             },
@@ -23,7 +20,7 @@ internal sealed class BasicProcessorInstructions
                 "longitude": <string>
             },
             "description": <string>,
-            "contactType": <string>,
+            "isPrivate": <boolean>,
             "price": {
               "amount": <decimal>,
               "currency": {
@@ -33,10 +30,6 @@ internal sealed class BasicProcessorInstructions
             "deposit": <decimal?>,
             "fee": <decimal?>,
             "roomsCount": <int>,
-            "floor": {
-                "specific": <int>,
-                "total": <int>
-            },
             "area": {
               "amount": <decimal>,
               "unit": <string>
@@ -55,12 +48,10 @@ internal sealed class BasicProcessorInstructions
         "Geolocation - Provide if given in the original object and skip if not";
     private const string descriptionInstruction =
         "Description - create a informative and short description for given advertisement, up to 200 characters.";
-    private const string contactTypeInstruction =
-        "ContactType - find the contact type from the previous advertisement and standarize it, to \"real estate agency\" or \"private\" but translated to the original advertisement languange. If field is empty in previous object, find information in description and update.";
+    private const string isPrivateInstruction =
+        "IsPrivate - find the contact type from the advertisement, set this value to true if it is private offer, or false if this is not private offer (e.g. real estate agency).";
     private const string roomsInstruction =
-        "RoomsCount - count of the rooms in the flat";
-    private const string floorInstruction =
-        "Floor - specific is the floor on which the flat is placed and total is the total amout of floors in the builiding. If floor is specified as groundfloor, set 0 then";
+        "RoomsCount - count of the rooms in the flat, this value must be greater than 0";
     private const string priceInstruction =
         "Price - This field must sum all costs that a customer will pay for the flat. You would likely search for this information in the Description or Characteristics field. Example scenario: Price = 2500 and Administrative Rent = 300, so this field in your response should be 2800";
     private const string depositInstruction =
@@ -72,8 +63,8 @@ internal sealed class BasicProcessorInstructions
     private const string petsInstruction =
         "Pets - put true if pets are allowed, false if not allowed and null if information is not provided";
     private const string endingInstructions =
-        "You should copy other fields as long as there is no error (e.g. missing field etc.). " +
-        "If there is any error, you can fix it if you have enough information to do so (e.g. missing field 'unit' in rooms - you can add it, etc.). " +
+        "You should copy other fields. " +
+        "If there is any error, you can fix it if you have enough information to do so." +
         "Please note that, all currencies must be given in international currency code. " +
         "All text data should be returned in english.";
 
@@ -87,9 +78,8 @@ internal sealed class BasicProcessorInstructions
         addressInstruction,
         geolocationInstruction,
         descriptionInstruction,
-        contactTypeInstruction,
+        isPrivateInstruction,
         roomsInstruction,
-        floorInstruction,
         priceInstruction,
         depositInstruction,
         feeInstruction,
