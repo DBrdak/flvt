@@ -96,11 +96,11 @@ const advertisements = {
     getByFilter: (filterId: string) =>
         requests.get<string>(`/v1/advertisements?filterId=${filterId}`).then(resultValue),
     follow: (advertisementId: string, filterId: string) =>
-        requests.put(`/v1/advertisements/follow?advertisementId=${advertisementId}&filterId=${filterId}`),
+        requests.put(`/v1/advertisements/follow?advertisementLink=${advertisementId}&filterId=${filterId}`),
     flag: (advertisementId: string) =>
-        requests.put(`/v1/advertisements/flag?advertisementId=${advertisementId}`),
+        requests.put(`/v1/advertisements/flag?advertisementLink=${advertisementId}`),
     see: (advertisementId: string, filterId: string) =>
-        requests.put(`/v1/advertisements/see?advertisementId=${advertisementId}&filterId=${filterId}`),
+        requests.put(`/v1/advertisements/see?advertisementLink=${advertisementId}&filterId=${filterId}`),
 }
 
 const agent = {

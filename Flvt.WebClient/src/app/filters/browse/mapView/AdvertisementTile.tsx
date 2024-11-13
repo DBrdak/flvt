@@ -16,6 +16,8 @@ import {Theme} from "@mui/material/styles";
 import {Business, Favorite, Flag, GridView, Person, Pets} from "@mui/icons-material";
 import './MapView.css'
 import {colorSchemes} from "../../../theme/themePrimitives.ts";
+import {observer} from "mobx-react-lite";
+import {useStore} from "../../../../stores/store.ts";
 
 const fadeIn = keyframes`
   from {
@@ -37,6 +39,7 @@ interface Props {
 }
 
 function AdvertisementTile({ad, isFocused, flagAdvertisement, followAdvertisement, seeAdvertisement}: Props) {
+    const {advertisementStore} = useStore()
 
     const tileStyles = isFocused ? [
             (theme: Theme) => ({
@@ -71,7 +74,13 @@ function AdvertisementTile({ad, isFocused, flagAdvertisement, followAdvertisemen
         }
     /* @ts-ignore*/
     return (
-        <Card variant={'outlined'} sx={tileStyles}>
+        <Card
+            variant={'outlined'}
+            sx={tileStyles}
+            onClick={() => advertisementStore.setViewedAdvertisement(ad)}
+            onMouseEnter={() => advertisementStore.setPreViewedAdvertisement(ad)}
+            onMouseLeave={() => advertisementStore.setPreViewedAdvertisement(null)}
+        >
             <CardContent>
                 <Box sx={{
                     display: 'flex',
@@ -163,14 +172,31 @@ function AdvertisementTile({ad, isFocused, flagAdvertisement, followAdvertisemen
 
             <CardActions sx={{display: 'flex', flexDirection: 'column', gap: 2, marginTop: 1}}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%', gap: 2 }}>
-                    <Button fullWidth variant="contained" color={ad.isFollowed ? 'error' : 'secondary'} onClick={() => followAdvertisement(ad)}>
-                        <Favorite />
+                    <Button
+                        fullWidth
+                        variant={ad.isFollowed ? 'outlined' : "contained"}
+                        color={'secondary'}
+                        onClick={() => followAdvertisement(ad)}
+                    >
+                        <Favorite color={ad.isFollowed ? 'error': 'inherit'} />
                     </Button>
-                    <Button fullWidth variant={ad.isFlagged ? 'outlined' : "contained"} color={'warning'} onClick={() => flagAdvertisement(ad)}>
+                    <Button
+                        fullWidth
+                        variant={'contained'}
+                        color={'warning'}
+                        onClick={() => flagAdvertisement(ad)}
+                        disabled={ad.isFlagged}
+                    >
                         <Flag />
                     </Button>
                 </Box>
-                <Button fullWidth variant="contained" href={ad.link} target="_blank" onClick={() => seeAdvertisement(ad)}>
+                <Button
+                    fullWidth
+                    variant={ad.wasSeen ? 'outlined' : "contained"}
+                    href={ad.link}
+                    target="_blank"
+                    onClick={() => seeAdvertisement(ad)}
+                >
                     Check
                 </Button>
             </CardActions>
@@ -178,4 +204,4 @@ function AdvertisementTile({ad, isFocused, flagAdvertisement, followAdvertisemen
     )
 }
 
-export default AdvertisementTile
+export default observer(AdvertisementTile)

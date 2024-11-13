@@ -41,6 +41,7 @@ internal abstract class AdvertisementLinkScraper
                 "Exception occured when trying to scrape advertisement link: {error}", e);
         }
 
+        SuccessfullyScrapedLinks = _advertisementsLinks.Count;
         await _monitor.DisposeAsync();
 
         return _advertisementsLinks;

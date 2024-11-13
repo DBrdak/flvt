@@ -19,7 +19,7 @@ export default function ViewSelector({currentView, setCurrentView}: Props) {
     const listStyles = styles('list');
 
     return (
-        <ButtonGroup>
+        <ButtonGroup sx={{zIndex: 2000}}>
             <Button
                 color={mapStyles.color}
                 variant={mapStyles.variant}

@@ -116,6 +116,8 @@ RootGet = ["Path", "Method"]
 
 
 
+
+
 [function_build_definitions.8b2df700-a482-4e51-bf94-09215aeff233]
 codeuri = "C:\\Users\\Brdak\\source\\repos\\flvt\\Flvt.API"
 runtime = "dotnet8"
@@ -131,6 +133,8 @@ SyncedEvents = ["RootPost"]
 
 [function_build_definitions.8b2df700-a482-4e51-bf94-09215aeff233.metadata.SyncedEventProperties]
 RootPost = ["Path", "Method"]
+
+
 
 
 
@@ -322,6 +326,8 @@ RootPut = ["Path", "Method"]
 
 
 
+
+
 [function_build_definitions.5d8cc8d9-08c3-4a72-a402-19cdcec65d15]
 codeuri = "C:\\Users\\Brdak\\source\\repos\\flvt\\Flvt.API"
 runtime = "dotnet8"
@@ -337,6 +343,8 @@ SyncedEvents = ["RootDelete"]
 
 [function_build_definitions.5d8cc8d9-08c3-4a72-a402-19cdcec65d15.metadata.SyncedEventProperties]
 RootDelete = ["Path", "Method"]
+
+
 
 
 

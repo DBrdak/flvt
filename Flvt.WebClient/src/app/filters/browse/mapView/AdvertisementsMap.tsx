@@ -8,6 +8,8 @@ import { useStore } from "../../../../stores/store.ts";
 import { Box } from "@mui/material";
 import AdvertisementsMiniList from "./AdvertisementsMiniList.tsx";
 import {LeafletMouseEvent} from "leaflet";
+import {createIcon} from "./AdvertisementMarker.tsx";
+import advertisementsList from "../listView/AdvertisementsList.tsx";
 
 function calculateCenter(advertisements: Advertisement[]): Coordinates {
     const markers = advertisements.filter(ad => ad.geolocation);
@@ -24,18 +26,14 @@ function calculateCenter(advertisements: Advertisement[]): Coordinates {
     };
 }
 
-interface Props {
-    advertisements: Advertisement[];
-}
-
-function AdvertisementsMap({ advertisements }: Props) {
-    const [center, setCenter] = useState<Coordinates>(calculateCenter(advertisements));
+function AdvertisementsMap() {
     const { advertisementStore } = useStore();
-    const markers = advertisements.map(ad => ad.geolocation ? ad : { ...ad, geolocation: center });
+    const [center, setCenter] = useState<Coordinates>(calculateCenter(advertisementStore.advertisements));
+    const markers = advertisementStore.advertisements.map(ad => ad.geolocation ? ad : { ...ad, geolocation: center });
 
     useEffect(() => {
-        setCenter(calculateCenter(advertisements));
-    }, [advertisements]);
+        setCenter(calculateCenter(advertisementStore.advertisements));
+    }, [advertisementStore.advertisements]);
 
     const MapEventHandler = () => {
         const map = useMap();
@@ -43,7 +41,7 @@ function AdvertisementsMap({ advertisements }: Props) {
         useEffect(() => {
             const updateVisibleAdvertisements = () => {
                 const bounds = map.getBounds();
-                const visibleAds = advertisements.filter(ad => {
+                const visibleAds = advertisementStore.advertisements.filter(ad => {
                     const { latitude, longitude } = ad.geolocation || {};
                     if (!latitude || !longitude) return false;
                     return bounds.contains([+latitude, +longitude]);
@@ -54,6 +52,7 @@ function AdvertisementsMap({ advertisements }: Props) {
             const updateViewedAdvertisement = (e: LeafletMouseEvent) => {
                 if(e.target.type !== Marker) {
                     advertisementStore.setViewedAdvertisement(null)
+                    advertisementStore.setPreViewedAdvertisement(null)
                 }
             }
 
@@ -67,7 +66,7 @@ function AdvertisementsMap({ advertisements }: Props) {
                 map.off("moveend", updateVisibleAdvertisements);
                 map.off("zoomend", updateVisibleAdvertisements);
             };
-        }, [map, advertisements]);
+        }, [map, advertisementStore.advertisements]);
 
         return null;
     };
@@ -79,23 +78,50 @@ function AdvertisementsMap({ advertisements }: Props) {
                 zoom={10} maxZoom={17} minZoom={5}
                 style={{ height: "100vh", width: "100vw" }}
                 zoomControl={false}
+
             >
                 <TileLayer
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
                 <MarkerClusterGroup>
-                    {markers.map((ad, index) => (
-                        <Marker
-                            key={index}
-                            position={[+ad.geolocation!.latitude, +ad.geolocation!.longitude]}
-                            eventHandlers={{
-                                mouseover: () => advertisementStore.setPreViewedAdvertisement(ad),
-                                mouseout: () => advertisementStore.setPreViewedAdvertisement(null),
-                                click: () => advertisementStore.setViewedAdvertisement(ad),
-                            }}
-                        />
-                    ))}
+                    {markers.map((ad, index) => {
+                        // Determine if this marker should bounce
+                        const shouldBounce =
+                            advertisementStore.preViewedAdvertisement?.link === ad.link ||
+                            advertisementStore.viewedAdvertisement?.link === ad.link
+
+                        const color =
+                            advertisementStore.preViewedAdvertisement?.link === ad.link ||
+                            advertisementStore.viewedAdvertisement?.link === ad.link
+                                ? 'green'
+                                : ad.isFollowed
+                                    ? 'red'
+                                    : ad.isNew
+                                        ? 'blue'
+                                        : ad.wasSeen
+                                            ? 'grey'
+                                            : 'black'
+
+                        return (
+                            <Marker
+                                key={index}
+                                position={[+ad.geolocation!.latitude, +ad.geolocation!.longitude]}
+                                eventHandlers={{
+                                    mouseover: () => {
+                                        advertisementStore.setPreViewedAdvertisement(ad)
+                                    },
+                                    mouseout: () => {
+                                        advertisementStore.setPreViewedAdvertisement(null)
+                                    },
+                                    click: () => {
+                                        advertisementStore.setViewedAdvertisement(ad)
+                                    },
+                                }}
+                                icon={createIcon(color, shouldBounce)}
+                            />
+                        )
+                    })}
                 </MarkerClusterGroup>
 
                 <MapEventHandler />

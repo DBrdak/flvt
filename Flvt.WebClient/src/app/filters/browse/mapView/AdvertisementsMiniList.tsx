@@ -6,7 +6,6 @@ import { Advertisement } from "../../../../models/advertisement.ts"
 import { styled } from "@mui/material/styles"
 import MuiCard from "@mui/material/Card"
 import {useParams} from "react-router-dom";
-import {flow} from "mobx";
 
 
 const Card = styled(MuiCard)(({ theme }) => ({

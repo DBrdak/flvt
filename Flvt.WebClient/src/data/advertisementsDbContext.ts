@@ -65,7 +65,9 @@ export default class AdvertisementsDbContext {
         const tx = db.transaction(storeName, this.rwMode)
         const store = tx.objectStore(storeName)
 
-        await store.put(advertisement)
+        const ad = JSON.parse(JSON.stringify(advertisement))
+
+        await store.put(ad)
 
         await tx.done
     }

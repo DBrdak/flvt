@@ -4,7 +4,7 @@ interface Props {
     advertisements: Advertisement[]
 }
 
-function AdvertisementsList({advertisements}: Props) {
+function AdvertisementsList() {
 
     return <div />
 }

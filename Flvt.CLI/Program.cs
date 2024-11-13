@@ -13,6 +13,7 @@ using System.Text;
 using Amazon;
 using Flvt.Domain;
 using Amazon.Runtime;
+using Flvt.Application.Advertisements.Flag;
 using Flvt.Application.Custody.RemoveOutdatedAdvertisements;
 using Flvt.Application.Subscribers.AddBasicFilter;
 using Flvt.Application.Subscribers.Register;
@@ -114,11 +115,11 @@ public class Service : IService
 
         var ads = (await _repository.GetAllAsync()).Value.ToList();
 
-        var links = ads.Where(ad => ad.RoomsCount <= 0).Select(ad => ad.Link).ToList();
+        var link = ads[0].Link;
+        var cmd = new FlagCommand(link);
 
-        var result = await _queuePublisher.PublishScrapedLinksAsync(links);
 
-        Console.WriteLine(result.IsSuccess);
+        Console.WriteLine((await _sender.Send(cmd)).IsSuccess);
     }
 
     public async Task UploadJsonToS3Async(IEnumerable<ProcessedAdvertisement> ads, string bucketName, string key)

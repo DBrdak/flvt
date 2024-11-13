@@ -15,7 +15,6 @@ function BrowsePage() {
     const navigate = useNavigate();
     const filterId = useParams<{filterId: string}>().filterId
     const {advertisementStore} = useStore()
-    const [advertisements, setAdvertisements] = useState<Advertisement[]>([])
     const [currentView, setCurrentView] = useState<'list' | 'map'>('map')
 
     useEffect(() => {
@@ -30,10 +29,9 @@ function BrowsePage() {
                 return
             }
 
-            const ads = await advertisementStore.loadAdvertisementsAsync(filterId)
-            setAdvertisements(ads)
+            const isLoaded = await advertisementStore.loadAdvertisementsAsync(filterId)
 
-            if(ads.length === 0) {
+            if(!isLoaded || advertisementStore.advertisements.length === 0) {
                 noAdsFallback()
                 return
             }
@@ -43,13 +41,13 @@ function BrowsePage() {
     }, [filterId]);
 
     return (
-        advertisementStore.loading === 'init' || !filterId || advertisements.length === 0 ?
+        advertisementStore.loading === 'init' || !filterId || advertisementStore.advertisements.length === 0 ?
             <LoadingPage  variant={'logo'} /> :
             <Box sx={{width: '100vw', height: '100vh'}}>
                 {
                     currentView == 'map' ?
-                        <AdvertisementsMap advertisements={advertisements} /> :
-                        <AdvertisementsList advertisements={advertisements} />
+                        <AdvertisementsMap /> :
+                        <AdvertisementsList />
                 }
                 <Box sx={{
                     position: 'absolute',
