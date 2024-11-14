@@ -43,10 +43,18 @@ internal class QueuePublisher : IQueuePublisher
 
     public async Task<Result> PublishScrapedLinksAsync(List<string> scrapedLinks)
     {
-        var queueName = _configuration["queueNames:scrapedLinks"] ?? "ScrapedLinksQueue" ??
+        var queueName = _configuration["queueNames:scrapedLinks"] ??
                         throw new ArgumentNullException("queueNames:scrapedLinks");
 
         return await PublishMessageAsync(queueName, scrapedLinks);
+    }
+
+    public async Task<Result> PublishScrapedAdsAsync()
+    {
+        var queueName = _configuration["queueNames:scrapedAds"] ??
+                        throw new ArgumentNullException("queueNames:scrapedAds");
+
+        return await PublishMessageAsync(queueName, null);
     }
 
     private async Task<Result> PublishMessageAsync(string queueName, object? message)

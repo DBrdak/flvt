@@ -10,7 +10,7 @@ internal sealed class RemoveOutdatedAdvertisementsCommandHandler : ICommandHandl
 {
     private readonly IProcessedAdvertisementRepository _processedAdvertisementRepository;
     private readonly ICustodian _custodian;
-    private const int checkLimit = 1000;
+    private const int checkLimit = 512;
 
     public RemoveOutdatedAdvertisementsCommandHandler(
         IProcessedAdvertisementRepository processedAdvertisementRepository,

@@ -129,9 +129,9 @@ public class Service : IService
             "https://www.morizon.pl/oferta/wynajem-mieszkanie-warszawa-praga-polnoc-siedlecka-50m2-mzn2044602866");
         
 
-        var nodes = a.DocumentNode.SelectNodes("//script[@type='application/ld+json']");
+        var nodes = a.DocumentNode.SelectNodes("//script[@type='application/ld+json']").FirstOrDefault(node => node.InnerText.Contains("Offer"));
 
-        Console.WriteLine(nodes[0].InnerText);
+        Console.WriteLine(nodes.InnerText);
     }
 
     public async Task UploadJsonToS3Async(IEnumerable<ProcessedAdvertisement> ads, string bucketName, string key)

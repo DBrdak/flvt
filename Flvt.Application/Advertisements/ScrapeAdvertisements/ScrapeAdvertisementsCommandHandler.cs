@@ -12,15 +12,18 @@ internal sealed class ScrapeAdvertisementsCommandHandler : ICommandHandler<Scrap
     private readonly IScrapingOrchestrator _scrapingOrchestrator;
     private readonly IScrapedAdvertisementRepository _scrapedAdvertisementRepository;
     private readonly IAdvertisementPhotosRepository _advertisementPhotosRepository;
+    private readonly IQueuePublisher _queuePublisher;
 
     public ScrapeAdvertisementsCommandHandler(
         IScrapingOrchestrator scrapingOrchestrator,
         IScrapedAdvertisementRepository scrapedAdvertisementRepository,
-        IAdvertisementPhotosRepository advertisementPhotosRepository)
+        IAdvertisementPhotosRepository advertisementPhotosRepository,
+        IQueuePublisher queuePublisher)
     {
         _scrapingOrchestrator = scrapingOrchestrator;
         _scrapedAdvertisementRepository = scrapedAdvertisementRepository;
         _advertisementPhotosRepository = advertisementPhotosRepository;
+        _queuePublisher = queuePublisher;
     }
 
     public async Task<Result> Handle(ScrapeAdvertisementsCommand request, CancellationToken cancellationToken)
@@ -58,5 +61,6 @@ internal sealed class ScrapeAdvertisementsCommandHandler : ICommandHandler<Scrap
         List<AdvertisementPhotos> scrapedPhotos) =>
         Result.Aggregate(await Task.WhenAll(
             _scrapedAdvertisementRepository.AddRangeAsync(scrapedAdvertisementsToInsert),
-            _advertisementPhotosRepository.AddRangeAsync(scrapedPhotos)));
+            _advertisementPhotosRepository.AddRangeAsync(scrapedPhotos),
+            _queuePublisher.PublishScrapedAdsAsync()));
 }

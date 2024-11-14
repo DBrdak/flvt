@@ -33,12 +33,13 @@ const fadeIn = keyframes`
 interface Props {
     ad: Advertisement
     isFocused: boolean
+    enableHover?: boolean
     flagAdvertisement: (ad: Advertisement) => void
     followAdvertisement: (ad: Advertisement) => void
     seeAdvertisement: (ad: Advertisement) => void
 }
 
-function AdvertisementTile({ad, isFocused, flagAdvertisement, followAdvertisement, seeAdvertisement}: Props) {
+function AdvertisementTile({ad, isFocused, enableHover, flagAdvertisement, followAdvertisement, seeAdvertisement}: Props) {
     const {advertisementStore} = useStore()
 
     const tileStyles = isFocused ? [
@@ -46,7 +47,6 @@ function AdvertisementTile({ad, isFocused, flagAdvertisement, followAdvertisemen
                 userSelect: 'none',
                 width: '100%',
                 padding: 2.5,
-                marginY: 2,
                 boxShadow: 3,
                 borderRadius: '10px',
                 animation: `${fadeIn} 0.4s ease`,
@@ -63,7 +63,6 @@ function AdvertisementTile({ad, isFocused, flagAdvertisement, followAdvertisemen
             userSelect: 'none',
             width: '100%',
             padding: 2.5,
-            marginY: 2,
             boxShadow: 3,
             borderRadius: '10px',
             animation: `${fadeIn} 0.4s ease`,
@@ -77,9 +76,8 @@ function AdvertisementTile({ad, isFocused, flagAdvertisement, followAdvertisemen
         <Card
             variant={'outlined'}
             sx={tileStyles}
-            onClick={() => advertisementStore.setViewedAdvertisement(ad)}
-            onMouseEnter={() => advertisementStore.setPreViewedAdvertisement(ad)}
-            onMouseLeave={() => advertisementStore.setPreViewedAdvertisement(null)}
+            onMouseOver={() => enableHover && advertisementStore.setPreViewedAdvertisement(ad)}
+            onMouseLeave={() => enableHover && advertisementStore.setPreViewedAdvertisement(null)}
         >
             <CardContent>
                 <Box sx={{
@@ -91,11 +89,14 @@ function AdvertisementTile({ad, isFocused, flagAdvertisement, followAdvertisemen
                     gap: 1
                 }}>
                     <ImageSlider photosLinks={ad.photos} />
-                    <Typography variant="h6" sx={{lineBreak: 'normal', paddingTop: 1}}>
+                    <Typography variant="h6" sx={{lineBreak: 'normal', paddingTop: 1, textAlign: 'center'}}>
                         {ad.address.district} {ad.address.street && ad.address.street.length > 0 ? `, ${ad.address.street}` : ''}
                     </Typography>
+                    <Typography variant="body2" sx={{textAlign: 'center'}}>
+                        {ad.description}
+                    </Typography>
                     <Typography variant="subtitle1" color="text.secondary">
-                        {ad.price.amount} {ad.price.currency.code}
+                        Price {ad.price.amount} {ad.price.currency.code}
                     </Typography>
                     <Typography variant="subtitle1" color="text.secondary">
                         {ad.deposit ? `Deposit ${ad.deposit?.amount} ${ad.deposit?.currency.code}` : ''}

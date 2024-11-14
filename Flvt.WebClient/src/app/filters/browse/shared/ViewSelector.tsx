@@ -1,12 +1,16 @@
 import {Button, ButtonGroup} from "@mui/material";
-import {GridView, Map} from "@mui/icons-material";
+import {GridView, Map, Settings} from "@mui/icons-material";
+import {useStore} from "../../../../stores/store.ts";
+import {observer} from "mobx-react-lite";
+import FilterDialog from "./FilterDialog.tsx";
 
 interface Props {
     currentView: 'list' | 'map'
     setCurrentView: (currentView: 'list' | 'map') => void
 }
 
-export default function ViewSelector({currentView, setCurrentView}: Props) {
+function ViewSelector({currentView, setCurrentView}: Props) {
+    const {modalStore} = useStore()
 
     const styles = (viewName: string): {variant: 'outlined' | 'contained', color: 'secondary' | 'primary'} => (
         {
@@ -28,6 +32,12 @@ export default function ViewSelector({currentView, setCurrentView}: Props) {
                 <Map />
             </Button>
             <Button
+                variant={'contained'}
+                onClick={() => modalStore.openModal(<FilterDialog />)}
+            >
+                <Settings />
+            </Button>
+            <Button
                 color={listStyles.color}
                 variant={listStyles.variant}
                 onClick={() => setCurrentView('list')}
@@ -37,3 +47,5 @@ export default function ViewSelector({currentView, setCurrentView}: Props) {
         </ButtonGroup>
     )
 }
+
+export default observer(ViewSelector)

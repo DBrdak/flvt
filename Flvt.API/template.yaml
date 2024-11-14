@@ -53,6 +53,11 @@ Resources:
     Properties:
       QueueName: ScrapedLinksQueue
       VisibilityTimeout: 900
+  ScrapedAdsQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: ScrapedAdsQueue
+      VisibilityTimeout: 900
   ProcessAdvertisementsStartProcessing:
     Type: AWS::Serverless::Function
     Metadata:
@@ -66,6 +71,11 @@ Resources:
       Role: arn:aws:iam::975049887576:role/FullAccess
       PackageType: Zip
       Handler: Flvt.API::Flvt.API.Functions.Background.ProcessAdvertisements_StartProcessing_Generated::StartProcessing
+      Events:
+        SqsEvent:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt ScrapedAdsQueue.Arn
   ProcessAdvertisementsCheckProcessingStatus:
     Type: AWS::Serverless::Function
     Metadata:
@@ -121,7 +131,7 @@ Resources:
           Type: Schedule
           Properties:
             Name: RemoveOutdatedSchedule
-            Schedule: 'cron(0 1 * * ? *)'
+            Schedule: 'rate(1 hour)'
   CustodyFunctionsRemoveDuplicates:
     Type: AWS::Serverless::Function
     Metadata:
@@ -533,11 +543,6 @@ Resources:
           Type: SQS
           Properties:
             Queue: !GetAtt ScrapedLinksQueue.Arn
-      EventInvokeConfig:
-        DestinationConfig:
-          OnSuccess:
-            Type: Lambda
-            Destination: !GetAtt ProcessAdvertisementsStartProcessing.Arn
   ScrapeLinks:
     Type: AWS::Serverless::Function
     Metadata:
@@ -582,6 +587,7 @@ Resources:
           Properties:
             Path: /v1/subscribers
             Method: GET
+            ApiId: !Ref FlvtApi
   AddBasicFilter:
     Type: AWS::Serverless::Function
     Metadata:
@@ -607,6 +613,7 @@ Resources:
           Properties:
             Path: /v1/subscribers/filters/basic
             Method: POST
+            ApiId: !Ref FlvtApi
   RemoveFilter:
     Type: AWS::Serverless::Function
     Metadata:
@@ -632,3 +639,4 @@ Resources:
           Properties:
             Path: /v1/subscribers/filters/{filterId}
             Method: DELETE
+            ApiId: !Ref FlvtApi

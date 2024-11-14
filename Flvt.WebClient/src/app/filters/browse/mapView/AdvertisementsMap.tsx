@@ -10,6 +10,9 @@ import AdvertisementsMiniList from "./AdvertisementsMiniList.tsx";
 import {LeafletMouseEvent} from "leaflet";
 import {createIcon} from "./AdvertisementMarker.tsx";
 import advertisementsList from "../listView/AdvertisementsList.tsx";
+import AdvertisementPreview from "./AdvertisementPreview.tsx";
+import AdvertisementTile from "./AdvertisementTile.tsx";
+import {useParams} from "react-router-dom";
 
 function calculateCenter(advertisements: Advertisement[]): Coordinates {
     const markers = advertisements.filter(ad => ad.geolocation);
@@ -28,6 +31,7 @@ function calculateCenter(advertisements: Advertisement[]): Coordinates {
 
 function AdvertisementsMap() {
     const { advertisementStore } = useStore();
+    const filterId = useParams<{filterId: string}>().filterId
     const [center, setCenter] = useState<Coordinates>(calculateCenter(advertisementStore.advertisements));
     const markers = advertisementStore.advertisements.map(ad => ad.geolocation ? ad : { ...ad, geolocation: center });
 
@@ -70,6 +74,9 @@ function AdvertisementsMap() {
 
         return null;
     };
+    const isFocused = (ad: Advertisement) =>
+        advertisementStore.preViewedAdvertisement?.link === ad.link ||
+        advertisementStore.viewedAdvertisement?.link === ad.link
 
     return (
         <Box sx={{width: '100vw', height: '100vh'}}>
@@ -127,19 +134,62 @@ function AdvertisementsMap() {
                 <MapEventHandler />
 
             </MapContainer>
-            <Box sx={{
-                position: 'absolute',
-                zIndex: 1001,
-                bottom: 0, top: 0, left: 0,
-                width: '25vw',
-                minWidth: '500px',
-                overflowY: 'auto',
-                overflowX: 'hidden',
-                borderRadius: '20px',
-                m: 3
-            }}>
-                <AdvertisementsMiniList />
-            </Box>
+            {
+                advertisementStore.viewedAdvertisement &&
+                    <Box sx={{
+                        position: 'absolute',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        zIndex: 1002,
+                        bottom: 0, left: 0, top: 0,
+                        width: '25vw',
+                        minWidth: '400px',
+                        maxWidth: '600px',
+                        overflowY: 'auto',
+                        overflowX: 'hidden',
+                        borderRadius: '20px',
+                        p: 1,
+                    }}>
+                        <AdvertisementTile
+                            key={advertisementStore.viewedAdvertisement .link}
+                            isFocused={isFocused(advertisementStore.viewedAdvertisement )}
+                            ad={advertisementStore.viewedAdvertisement}
+                            flagAdvertisement={ad => advertisementStore.flagAdvertisementAsync(ad, filterId!)}
+                            followAdvertisement={ad => advertisementStore.followAdvertisementAsync(ad, filterId!)}
+                            seeAdvertisement={ad => advertisementStore.seeAdvertisementAsync(ad, filterId!)}
+                        />
+                    </Box>
+            }
+            {
+                advertisementStore.preViewedAdvertisement &&
+                    <Box sx={{
+                        position: 'absolute',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        zIndex: 1002,
+                        bottom: 0, right: 0, top: 0,
+                        width: '25vw',
+                        minHeight: '800px',
+                        minWidth: '400px',
+                        maxWidth: '600px',
+                        overflowY: 'auto',
+                        overflowX: 'hidden',
+                        borderRadius: '20px',
+                        p: 1,
+                    }}>
+                            <AdvertisementTile
+                                key={advertisementStore.preViewedAdvertisement .link}
+                                isFocused={isFocused(advertisementStore.preViewedAdvertisement )}
+                                ad={advertisementStore.preViewedAdvertisement}
+                                enableHover
+                                flagAdvertisement={ad => advertisementStore.flagAdvertisementAsync(ad, filterId!)}
+                                followAdvertisement={ad => advertisementStore.followAdvertisementAsync(ad, filterId!)}
+                                seeAdvertisement={ad => advertisementStore.seeAdvertisementAsync(ad, filterId!)}
+                            />
+                    </Box>
+            }
         </Box>
     );
 }

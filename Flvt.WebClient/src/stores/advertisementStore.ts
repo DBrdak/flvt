@@ -26,30 +26,13 @@ export default class AdvertisementStore {
 
     public setViewedAdvertisement(ad: Advertisement | null) {
         this.viewedAdvertisement = ad
-
-        if(ad !== null) {
-            const tempAds = this.visibleAdvertisements.filter(vAd => vAd.link !== ad.link)
-            this.setVisibleAdvertisements([ad, ...tempAds])
-        }
     }
 
     public setPreViewedAdvertisement(ad: Advertisement | null) {
         this.preViewedAdvertisement = ad
-
-        if(ad !== null) {
-            const tempAds = this.visibleAdvertisements.filter(vAd => vAd.link !== ad.link)
-            this.setVisibleAdvertisements([ad, ...tempAds])
-        }
     }
 
     public setVisibleAdvertisements(ads: Advertisement[]) {
-        ads.filter(ad => ad.link !== this.preViewedAdvertisement?.link || ad.link !== this.viewedAdvertisement?.link)
-
-        this.viewedAdvertisement && ads
-            .unshift(this.viewedAdvertisement)
-        this.preViewedAdvertisement && ads
-            .unshift(this.preViewedAdvertisement)
-
         const map = new Map<string, Advertisement>(ads.map(ad => [ad.link, ad]))
 
         this.visibleAdvertisements = [...map.values()]
