@@ -2,7 +2,10 @@
 using Flvt.Domain.Primitives.Responses;
 using Flvt.Domain.ProcessedAdvertisements;
 using Flvt.Infrastructure.Data.DataModels;
+using Flvt.Infrastructure.Data.DataModels.Photos;
 using Flvt.Infrastructure.Data.DataModels.ProcessedAdvertisements;
+using Flvt.Infrastructure.Data.DataModels.ScrapedAdvertisements;
+using Flvt.Infrastructure.Data.Extensions;
 using Filter = Flvt.Domain.Filters.Filter;
 
 namespace Flvt.Infrastructure.Data.Repositories;
@@ -20,6 +23,27 @@ internal sealed class ProcessedAdvertisementRepository : Repository<ProcessedAdv
     public async Task<Result<IEnumerable<ProcessedAdvertisement>>> GetManyByLinkAsync(
         IEnumerable<string> links) =>
         await GetManyByIdAsync(links);
+
+    public async Task<Result<IEnumerable<string>>> GetAdvertisementsLinksForDateCheckAsync(int limit)
+    {
+        var scanFilter = new ScanFilter();
+
+        scanFilter.AddCondition(
+            nameof(ProcessedAdvertisementDataModel.NextOutdateCheck),
+            ScanOperator.LessThanOrEqual,
+            DateTimeOffset.UtcNow.ToUnixTimeMilliseconds());
+
+        var docsGetResult = await GetWhereAsync(scanFilter, limit, [nameof(ProcessedAdvertisementDataModel.Link)]);
+
+        return docsGetResult.IsSuccess
+            ?
+            Result.Success(
+                docsGetResult.Value.Select(
+                    doc => doc.GetProperty(nameof(ProcessedAdvertisementDataModel.Link))
+                        .AsString()))
+            : 
+            Result.Failure<IEnumerable<string>>(docsGetResult.Error);
+    }
 
     public async Task<Result<ProcessedAdvertisement>> GetByLinkAsync(string link) =>
         await GetByIdAsync(link);
@@ -76,5 +100,19 @@ internal sealed class ProcessedAdvertisementRepository : Repository<ProcessedAdv
         }
 
         return await GetWhereAsync(scanFilter);
+    }
+
+
+    public async Task<Result<IEnumerable<string>>> GetAllLinksAsync()
+    {
+        var getResult = await GetAllAsync(null, [nameof(ProcessedAdvertisementDataModel.Link)]);
+
+        return getResult.IsSuccess
+            ?
+            Result.Success(
+                getResult.Value.Select(
+                    doc => doc.GetProperty(nameof(ProcessedAdvertisementDataModel.Link))
+                        .AsString()))
+            : Result.Failure<IEnumerable<string>>(getResult.Error);
     }
 }

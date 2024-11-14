@@ -31,6 +31,7 @@ internal sealed class ProcessedAdvertisementDataModel : IDataModel<ProcessedAdve
     public string? AvailableFrom { get; init; }
     public bool? Pets { get; init; }
     public bool IsFlagged { get; init; }
+    public long NextOutdateCheck { get; set; }
 
     private ProcessedAdvertisementDataModel(ProcessedAdvertisement original)
     {
@@ -57,6 +58,7 @@ internal sealed class ProcessedAdvertisementDataModel : IDataModel<ProcessedAdve
         AvailableFrom = original.AvailableFrom;
         Pets = original.Pets;
         IsFlagged = original.IsFlagged;
+        NextOutdateCheck = original.NextOutdateCheck;
     }
 
     private ProcessedAdvertisementDataModel(Document doc)
@@ -84,6 +86,7 @@ internal sealed class ProcessedAdvertisementDataModel : IDataModel<ProcessedAdve
         AvailableFrom = doc.GetNullableProperty(nameof(AvailableFrom))?.AsNullableString();
         Pets = doc.GetNullableProperty(nameof(Pets))?.AsNullableBoolean();
         IsFlagged = doc.GetProperty(nameof(IsFlagged)).AsBoolean();
+        NextOutdateCheck = doc.GetProperty(nameof(NextOutdateCheck)).AsLong();
     }
 
     public Type GetDomainModelType() => typeof(ProcessedAdvertisement);
@@ -125,6 +128,7 @@ internal sealed class ProcessedAdvertisementDataModel : IDataModel<ProcessedAdve
             updatedAt,
             AvailableFrom,
             Pets,
+            NextOutdateCheck,
             IsFlagged);
     }
 }

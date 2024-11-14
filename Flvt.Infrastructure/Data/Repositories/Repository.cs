@@ -1,6 +1,8 @@
-﻿using Amazon.DynamoDBv2.DocumentModel;
+﻿using Amazon.DynamoDBv2;
+using Amazon.DynamoDBv2.DocumentModel;
 using Flvt.Domain.Primitives.Responses;
 using Flvt.Infrastructure.Data.DataModels;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 
 namespace Flvt.Infrastructure.Data.Repositories;
@@ -22,14 +24,7 @@ internal abstract class Repository<TEntity>
 
     public virtual async Task<Result<IEnumerable<TEntity>>> GetAllAsync()
     {
-        var config = new ScanOperationConfig
-        {
-            Select = SelectValues.AllAttributes,
-            Filter = new ScanFilter(),
-            Limit = 1000,
-        };
-
-        var scanner = Table.Scan(config);
+        var scanner = Table.Scan(new ScanFilter());
         var docs = new List<Document>();
 
         do
@@ -40,6 +35,34 @@ internal abstract class Repository<TEntity>
         var entities = records.Select(record => record.ToDomainModel());
 
         return Result.Create(entities);
+    }
+
+    protected virtual async Task<Result<IEnumerable<Document>>> GetAllAsync(
+        int? limit = null,
+        List<string>? attributesToGet = null)
+    {
+        var config = new ScanOperationConfig();
+
+        if (limit.HasValue)
+        {
+            config.Limit = limit.Value;
+        }
+
+        if (attributesToGet is not null)
+        {
+            config.AttributesToGet = attributesToGet;
+            config.Select = SelectValues.SpecificAttributes;
+        }
+
+        var scanner = Table.Scan(config);
+
+        var docs = new List<Document>();
+
+        do
+            docs.AddRange(await scanner.GetNextSetAsync());
+        while (docs.Count <= limit || !scanner.IsDone);
+
+        return Result.Create(docs.Take(limit ?? docs.Count));
     }
 
     protected virtual async Task<Result<IEnumerable<TEntity>>> GetWhereAsync(ScanFilter filter)
@@ -56,6 +79,66 @@ internal abstract class Repository<TEntity>
         var entities = records.Select(record => record.ToDomainModel());
 
         return Result.Create(entities);
+    }
+
+    protected virtual async Task<Result<IEnumerable<TEntity>>> GetWhereAsync(
+        ScanFilter filter,
+        int? limit = null)
+    {
+        var config = new ScanOperationConfig
+        {
+            Filter = filter,
+        };
+
+        if (limit.HasValue)
+        {
+            config.Limit = limit.Value;
+        }
+
+        var scanner = Table.Scan(config);
+
+        var docs = new List<Document>();
+
+        do
+            docs.AddRange(await scanner.GetNextSetAsync());
+        while (docs.Count <= limit || !scanner.IsDone);
+
+        var records = docs.Select(_dataModelService.ConvertDocumentToDataModel);
+        var entities = records.Select(record => record.ToDomainModel()).ToList();
+
+        return Result.Create(entities.Take(limit ?? entities.Count));
+    }
+
+    protected virtual async Task<Result<IEnumerable<Document>>> GetWhereAsync(
+        ScanFilter filter,
+        int? limit = null,
+        List<string>? attributesToGet = null)
+    {
+        var config = new ScanOperationConfig
+        {
+            Filter = filter,
+        };
+
+        if (limit.HasValue)
+        {
+            config.Limit = limit.Value;
+        }
+
+        if (attributesToGet is not null)
+        {
+            config.AttributesToGet = attributesToGet;
+            config.Select = SelectValues.SpecificAttributes;
+        }
+
+        var scanner = Table.Scan(config);
+
+        var docs = new List<Document>();
+
+        do
+            docs.AddRange(await scanner.GetNextSetAsync());
+        while (docs.Count <= limit || !scanner.IsDone);
+
+        return Result.Create(docs.Take(limit ?? docs.Count));
     }
 
 

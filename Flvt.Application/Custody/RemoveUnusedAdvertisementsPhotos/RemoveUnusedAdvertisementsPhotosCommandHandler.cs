@@ -30,9 +30,9 @@ internal sealed class RemoveUnusedAdvertisementsPhotosCommandHandler :
 
     public async Task<Result> Handle(RemoveUnusedAdvertisementsPhotosCommand request, CancellationToken cancellationToken)
     {
-        var processedAdvertisementsGetTask = _processedAdvertisementRepository.GetAllAsync();
-        var scrapedAdvertisementsGetTask = _scrapedAdvertisementRepository.GetAllAsync();
-        var photosGetTask = _advertisementPhotosRepository.GetAllAsync();
+        var processedAdvertisementsGetTask = _processedAdvertisementRepository.GetAllLinksAsync();
+        var scrapedAdvertisementsGetTask = _scrapedAdvertisementRepository.GetAllLinksAsync();
+        var photosGetTask = _advertisementPhotosRepository.GetAllAdvertisementsLinksAsync();
 
         await Task.WhenAll(processedAdvertisementsGetTask, scrapedAdvertisementsGetTask, photosGetTask);
 
@@ -51,15 +51,13 @@ internal sealed class RemoveUnusedAdvertisementsPhotosCommandHandler :
             return result.Error;
         }
 
-        var advertisementsLinks = processedAdvertisementsGetResult.Value
-            .Select(ad => ad.Link)
-            .ToList();
-        advertisementsLinks.AddRange(scrapedAdvertisementsGetResult.Value.Select(ad => ad.Link));
-        var photosLinks = photosGetResult.Value.Select(photo => photo.AdvertisementLink).ToList();
+        var advertisementsLinks = processedAdvertisementsGetResult.Value.ToList();
+        advertisementsLinks.AddRange(scrapedAdvertisementsGetResult.Value);
+        var photosAdvertisementsLinks = photosGetResult.Value.ToList();
 
         var photosToRemove = (await _custodian.FindUnusedAdvertisementPhotos(
             advertisementsLinks,
-            photosLinks)).ToList();
+            photosAdvertisementsLinks)).ToList();
      
         Log.Logger.Information("Found {photosCount} photos to remove", photosToRemove.Count());
         

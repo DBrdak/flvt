@@ -17,6 +17,7 @@ using Flvt.Application.Advertisements.Flag;
 using Flvt.Application.Custody.RemoveOutdatedAdvertisements;
 using Flvt.Application.Subscribers.AddBasicFilter;
 using Flvt.Application.Subscribers.Register;
+using HtmlAgilityPack;
 
 namespace Flvt.CLI;
 
@@ -113,13 +114,24 @@ public class Service : IService
         //Console.WriteLine(stopwatch.ElapsedMilliseconds);
         //Console.WriteLine();
 
-        var ads = (await _repository.GetAllAsync()).Value.ToList();
+        //var ads = (await _repository.GetAllAsync()).Value.ToList();
 
-        var link = ads[0].Link;
-        var cmd = new FlagCommand(link);
+        //var link = ads[0].Link;
+        //var cmd = new FlagCommand(link);
 
+        //await _repository.UpdateRangeAsync(ads);
+        //Console.WriteLine((await _sender.Send(cmd)).IsSuccess);
 
-        Console.WriteLine((await _sender.Send(cmd)).IsSuccess);
+        //TODO THIS WORKS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        var web = new HtmlWeb();
+
+        var a = await web.LoadFromWebAsync(
+            "https://www.morizon.pl/oferta/wynajem-mieszkanie-warszawa-praga-polnoc-siedlecka-50m2-mzn2044602866");
+        
+
+        var nodes = a.DocumentNode.SelectNodes("//script[@type='application/ld+json']");
+
+        Console.WriteLine(nodes[0].InnerText);
     }
 
     public async Task UploadJsonToS3Async(IEnumerable<ProcessedAdvertisement> ads, string bucketName, string key)

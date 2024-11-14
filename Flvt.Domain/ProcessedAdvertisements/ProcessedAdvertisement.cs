@@ -21,6 +21,7 @@ public sealed class ProcessedAdvertisement
     public string? AvailableFrom { get; init; }
     public bool? Pets { get; init; }
     public bool IsFlagged { get; private set; }
+    public long NextOutdateCheck { get; private set; }
 
     public ProcessedAdvertisement(
         string link,
@@ -37,6 +38,7 @@ public sealed class ProcessedAdvertisement
         DateTime? updatedAt,
         string? availableFrom,
         bool? pets,
+        long nextOutdateCheck,
         bool isFlagged = false)
     {
         Link = link;
@@ -53,6 +55,7 @@ public sealed class ProcessedAdvertisement
         UpdatedAt = updatedAt;
         AvailableFrom = availableFrom;
         Pets = pets;
+        NextOutdateCheck = nextOutdateCheck;
         IsFlagged = isFlagged;
         Dedupe =
             $"{Address?.City}-{Address?.District}-{Address?.Street}-{IsPrivate}-{RoomsCount}-{Area.Amount}-{Price.Amount}"
@@ -60,6 +63,8 @@ public sealed class ProcessedAdvertisement
     }
 
     public void Flag() => IsFlagged = true;
+
+    public void CheckedForOutdate() => NextOutdateCheck = DateTimeOffset.UtcNow.AddDays(2).ToUnixTimeSeconds();
 
     public void ValidateFields()
     {

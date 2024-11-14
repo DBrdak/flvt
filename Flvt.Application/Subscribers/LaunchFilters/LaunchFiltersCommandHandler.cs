@@ -50,7 +50,9 @@ internal sealed class LaunchFiltersCommandHandler : ICommandHandler<LaunchFilter
         
         var writeTask = _filterRepository.ExecuteBatchWriteAsync();
 
-        var publishTask = _queuePublisher.PublishLaunchedFilters(launchedFilters);
+        var notifyFilters = launchedFilters.Where(f => f.RecentlyFoundAdvertisements.Any()).ToList();
+
+        var publishTask = _queuePublisher.PublishLaunchedFilters(notifyFilters);
 
         LogAboutLaunchedFilters(launchedFilters, filtersToLaunch);
 

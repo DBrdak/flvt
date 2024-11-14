@@ -30,12 +30,14 @@ internal sealed class UpdateUnsucessfullyProcessedAdvertisementsCommandHandler :
             return scrapedAdvertisementsGetResult.Error;
         }
 
-        var scrapedAdvertisements = scrapedAdvertisementsGetResult.Value;
+        var scrapedAdvertisements = scrapedAdvertisementsGetResult.Value.ToList();
 
-        scrapedAdvertisements = await _custodian.FindUnsucessfullyProcessedAdvertisements(scrapedAdvertisements);
+        var unsucessfullyProcessedAdvertisements = (await _custodian.FindUnsucessfullyProcessedAdvertisements(scrapedAdvertisements)).ToList();
+
+        unsucessfullyProcessedAdvertisements.AddRange(scrapedAdvertisements.Where(ad => string.IsNullOrWhiteSpace(ad.AdContent)));
 
         _scrapedAdvertisementRepository.StartBatchWrite();
-        _scrapedAdvertisementRepository.AddManyItemsToBatchWrite(scrapedAdvertisements);
+        _scrapedAdvertisementRepository.AddManyItemsToBatchWrite(unsucessfullyProcessedAdvertisements);
         await _scrapedAdvertisementRepository.ExecuteBatchWriteAsync();
 
         return Result.Success();

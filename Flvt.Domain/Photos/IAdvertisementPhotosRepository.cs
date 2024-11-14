@@ -11,4 +11,6 @@ public interface IAdvertisementPhotosRepository
     Task<Result<IEnumerable<AdvertisementPhotos>>> GetAllAsync();
 
     Task<Result> RemoveRangeAsync(IEnumerable<string> photosToRemove);
+
+    Task<Result<IEnumerable<string>>> GetAllAdvertisementsLinksAsync();
 }
