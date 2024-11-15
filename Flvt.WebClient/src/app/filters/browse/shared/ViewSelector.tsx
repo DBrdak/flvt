@@ -2,7 +2,7 @@ import {Button, ButtonGroup} from "@mui/material";
 import {GridView, Map, Settings} from "@mui/icons-material";
 import {useStore} from "../../../../stores/store.ts";
 import {observer} from "mobx-react-lite";
-import FilterDialog from "./FilterDialog.tsx";
+import FilterDialog from "./SettingsDialog.tsx";
 
 interface Props {
     currentView: 'list' | 'map'

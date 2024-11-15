@@ -10,6 +10,10 @@ export default class AdvertisementStore {
     preViewedAdvertisement: Advertisement | null = null
     viewedAdvertisement: Advertisement | null = null
     visibleAdvertisements: Advertisement[] = []
+    showFollowedAds: boolean = true
+    showSeenAds: boolean = true
+    showNotSeenAds: boolean = true
+    showNewAds: boolean = true
 
     constructor() {
         this.dbContext = new AdvertisementsDbContext()
@@ -22,6 +26,7 @@ export default class AdvertisementStore {
 
     private setAdvertisements(ads: Advertisement[]) {
         this.advertisements = ads
+        this.visibleAdvertisements = ads
     }
 
     public setViewedAdvertisement(ad: Advertisement | null) {
@@ -33,9 +38,30 @@ export default class AdvertisementStore {
     }
 
     public setVisibleAdvertisements(ads: Advertisement[]) {
+
         const map = new Map<string, Advertisement>(ads.map(ad => [ad.link, ad]))
 
         this.visibleAdvertisements = [...map.values()]
+    }
+
+    public setShowFollowedAds(state?: boolean) {
+        this.showFollowedAds = state || !this.showFollowedAds
+    }
+
+    public setShowSeenAds(state?: boolean) {
+        this.showSeenAds = state || !this.showSeenAds
+    }
+
+    public setShowNotSeenAds(state?: boolean) {
+        this.showNotSeenAds = state || !this.showNotSeenAds
+    }
+
+    public setShowNewAds(state?: boolean) {
+        this.showNewAds = state || !this.showNewAds
+    }
+
+    public filterAds() {
+        //TODO Implement
     }
 
     public async loadAdvertisementsAsync(filterId: string) {

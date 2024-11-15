@@ -6,13 +6,12 @@ import { useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { useStore } from "../../../../stores/store.ts";
 import { Box } from "@mui/material";
-import AdvertisementsMiniList from "./AdvertisementsMiniList.tsx";
 import {LeafletMouseEvent} from "leaflet";
 import {createIcon} from "./AdvertisementMarker.tsx";
-import advertisementsList from "../listView/AdvertisementsList.tsx";
-import AdvertisementPreview from "./AdvertisementPreview.tsx";
 import AdvertisementTile from "./AdvertisementTile.tsx";
 import {useParams} from "react-router-dom";
+import {Simulate} from "react-dom/test-utils";
+import mouseOver = Simulate.mouseOver;
 
 function calculateCenter(advertisements: Advertisement[]): Coordinates {
     const markers = advertisements.filter(ad => ad.geolocation);
@@ -33,7 +32,7 @@ function AdvertisementsMap() {
     const { advertisementStore } = useStore();
     const filterId = useParams<{filterId: string}>().filterId
     const [center, setCenter] = useState<Coordinates>(calculateCenter(advertisementStore.advertisements));
-    const markers = advertisementStore.advertisements.map(ad => ad.geolocation ? ad : { ...ad, geolocation: center });
+    const markers = advertisementStore.visibleAdvertisements.map(ad => ad.geolocation ? ad : { ...ad, geolocation: center });
 
     useEffect(() => {
         setCenter(calculateCenter(advertisementStore.advertisements));
@@ -43,15 +42,6 @@ function AdvertisementsMap() {
         const map = useMap();
 
         useEffect(() => {
-            const updateVisibleAdvertisements = () => {
-                const bounds = map.getBounds();
-                const visibleAds = advertisementStore.advertisements.filter(ad => {
-                    const { latitude, longitude } = ad.geolocation || {};
-                    if (!latitude || !longitude) return false;
-                    return bounds.contains([+latitude, +longitude]);
-                }).slice(0,15);
-                advertisementStore.setVisibleAdvertisements(visibleAds);
-            };
 
             const updateViewedAdvertisement = (e: LeafletMouseEvent) => {
                 if(e.target.type !== Marker) {
@@ -60,16 +50,8 @@ function AdvertisementsMap() {
                 }
             }
 
-            updateVisibleAdvertisements();
-
             map.on('click', updateViewedAdvertisement);
-            map.on("moveend", updateVisibleAdvertisements);
-            map.on("zoomend", updateVisibleAdvertisements);
 
-            return () => {
-                map.off("moveend", updateVisibleAdvertisements);
-                map.off("zoomend", updateVisibleAdvertisements);
-            };
         }, [map, advertisementStore.advertisements]);
 
         return null;
@@ -82,7 +64,7 @@ function AdvertisementsMap() {
         <Box sx={{width: '100vw', height: '100vh'}}>
             <MapContainer
                 center={[+center.latitude, +center.longitude]}
-                zoom={10} maxZoom={17} minZoom={5}
+                zoom={10} maxZoom={18} minZoom={5}
                 style={{ height: "100vh", width: "100vw" }}
                 zoomControl={false}
 
@@ -93,7 +75,6 @@ function AdvertisementsMap() {
                 />
                 <MarkerClusterGroup>
                     {markers.map((ad, index) => {
-                        // Determine if this marker should bounce
                         const shouldBounce =
                             advertisementStore.preViewedAdvertisement?.link === ad.link ||
                             advertisementStore.viewedAdvertisement?.link === ad.link
@@ -117,9 +98,6 @@ function AdvertisementsMap() {
                                 eventHandlers={{
                                     mouseover: () => {
                                         advertisementStore.setPreViewedAdvertisement(ad)
-                                    },
-                                    mouseout: () => {
-                                        advertisementStore.setPreViewedAdvertisement(null)
                                     },
                                     click: () => {
                                         advertisementStore.setViewedAdvertisement(ad)
@@ -163,6 +141,7 @@ function AdvertisementsMap() {
             }
             {
                 advertisementStore.preViewedAdvertisement &&
+                advertisementStore.preViewedAdvertisement.link !== advertisementStore.viewedAdvertisement?.link &&
                     <Box sx={{
                         position: 'absolute',
                         display: 'flex',
