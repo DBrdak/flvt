@@ -99,8 +99,9 @@ function AdvertisementsMap() {
                                     mouseover: () => {
                                         advertisementStore.setPreViewedAdvertisement(ad)
                                     },
-                                    click: () => {
+                                    click: async () => {
                                         advertisementStore.setViewedAdvertisement(ad)
+                                        await advertisementStore.seeAdvertisementAsync(ad, filterId!)
                                     },
                                 }}
                                 icon={createIcon(color, shouldBounce)}

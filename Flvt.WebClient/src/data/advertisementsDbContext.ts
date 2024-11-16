@@ -39,7 +39,7 @@ export default class AdvertisementsDbContext {
         const currentAds = await this.getAdvertisementsAsync(filterId);
 
         if (currentAds.length === advertisements.length) {
-            return;
+            return
         }
 
         const db = await this.getOrCreateStore(storeName);

@@ -46,22 +46,46 @@ export default class AdvertisementStore {
 
     public setShowFollowedAds(state?: boolean) {
         this.showFollowedAds = state || !this.showFollowedAds
+        this.filterAds()
     }
 
     public setShowSeenAds(state?: boolean) {
         this.showSeenAds = state || !this.showSeenAds
+        this.filterAds()
     }
 
     public setShowNotSeenAds(state?: boolean) {
         this.showNotSeenAds = state || !this.showNotSeenAds
+        this.filterAds()
     }
 
     public setShowNewAds(state?: boolean) {
         this.showNewAds = state || !this.showNewAds
+        this.filterAds()
     }
 
-    public filterAds() {
-        //TODO Implement
+    private filterAds() {
+        const ads: Advertisement[] = []
+
+        this.showNotSeenAds && ads.push(...this.advertisements.filter(ad => !ad.wasSeen))
+
+        this.showSeenAds && ads.push(...this.advertisements.filter(ad => ad.wasSeen))
+
+        this.showNewAds && ads.push(...this.advertisements.filter(ad => ad.isNew))
+
+        this.showFollowedAds && ads.push(...this.advertisements.filter(ad => ad.isFollowed))
+
+        const adsMap = new Map<string, Advertisement>()
+        ads.forEach(ad => adsMap.set(ad.link, ad))
+
+        this.setVisibleAdvertisements([...adsMap.values()])
+    }
+
+    resetView() {
+        this.setShowFollowedAds(true)
+        this.setShowSeenAds(true)
+        this.setShowNotSeenAds(true)
+        this.setShowNewAds(true)
     }
 
     public async loadAdvertisementsAsync(filterId: string) {
@@ -72,7 +96,7 @@ export default class AdvertisementStore {
             const fileGetResponse = await fetch(advertisementsFileUrl)
 
             if(fileGetResponse.status !== 200){
-                 return []
+                 return false
             }
 
             const advertisements: Advertisement[] = await fileGetResponse.json()
