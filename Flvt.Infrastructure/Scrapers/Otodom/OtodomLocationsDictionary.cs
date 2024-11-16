@@ -1,5 +1,6 @@
 ﻿using Flvt.Domain.Extensions;
 using Flvt.Domain.Filters;
+using Flvt.Infrastructure.Scrapers.Shared;
 
 namespace Flvt.Infrastructure.Scrapers.Otodom;
 
@@ -29,6 +30,6 @@ internal static class OtodomLocationsDictionary
         { "torun", "kujawsko--pomorskie/torun" },
     };
 
-    public static string? OtodomLocation(this Filter filter) => 
-        Locations.GetValueOrDefault(filter.Location.City.ToLower().ReplacePolishCharacters());
+    public static string? OtodomLocation(this ScrapingFilter filter) => 
+        Locations.GetValueOrDefault(filter.City.ToLower().ReplacePolishCharacters());
 }

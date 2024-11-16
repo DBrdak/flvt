@@ -10,4 +10,6 @@ public interface ISubscriberRepository
     Task<Result<Subscriber>> UpdateAsync(Subscriber subscriber);
 
     Task<Result<IEnumerable<Subscriber>>> GetManyByEmailAsync(IEnumerable<string> emails);
+
+    Task<Result> RemoveAsync(string subscriberEmail);
 }

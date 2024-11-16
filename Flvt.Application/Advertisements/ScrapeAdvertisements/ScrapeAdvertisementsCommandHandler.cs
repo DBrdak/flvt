@@ -11,53 +11,49 @@ internal sealed class ScrapeAdvertisementsCommandHandler : ICommandHandler<Scrap
 {
     private readonly IScrapingOrchestrator _scrapingOrchestrator;
     private readonly IScrapedAdvertisementRepository _scrapedAdvertisementRepository;
-    private readonly IProcessedAdvertisementRepository _processedAdvertisementRepository;
     private readonly IAdvertisementPhotosRepository _advertisementPhotosRepository;
+    private readonly IQueuePublisher _queuePublisher;
 
     public ScrapeAdvertisementsCommandHandler(
         IScrapingOrchestrator scrapingOrchestrator,
         IScrapedAdvertisementRepository scrapedAdvertisementRepository,
-        IProcessedAdvertisementRepository processedAdvertisementRepository,
-        IAdvertisementPhotosRepository advertisementPhotosRepository)
+        IAdvertisementPhotosRepository advertisementPhotosRepository,
+        IQueuePublisher queuePublisher)
     {
         _scrapingOrchestrator = scrapingOrchestrator;
         _scrapedAdvertisementRepository = scrapedAdvertisementRepository;
-        _processedAdvertisementRepository = processedAdvertisementRepository;
         _advertisementPhotosRepository = advertisementPhotosRepository;
+        _queuePublisher = queuePublisher;
     }
 
     public async Task<Result> Handle(ScrapeAdvertisementsCommand request, CancellationToken cancellationToken)
     {
-        var filters = GlobalFilterFactory.CreateFiltersForAllLocations();
-        var scrapeTasks = filters.Select(_scrapingOrchestrator.ScrapeAsync).ToList();
-        
-        var listsOfScrapedAdvertisements = await Task.WhenAll(scrapeTasks);
+        var alreadyScrapedAdvertisementsLinksGetResult = await _scrapedAdvertisementRepository.GetManyByLinkAsync(request.Links);
 
-        var scrapedAdvertisements = listsOfScrapedAdvertisements
-            .SelectMany(x => x)
+        if (alreadyScrapedAdvertisementsLinksGetResult.IsFailure)
+        {
+            return alreadyScrapedAdvertisementsLinksGetResult.Error;
+        }
+
+        var alreadyScrapedAdvertisementsLinks = alreadyScrapedAdvertisementsLinksGetResult.Value;
+
+        var alreadyScrapedLinks = alreadyScrapedAdvertisementsLinks.Select(ad => ad.Link).ToList();
+
+        var linksToScrape = request.Links.Except(alreadyScrapedLinks).ToList();
+
+        var scrapeResult = (await _scrapingOrchestrator.ScrapeAdvertisementsAsync(linksToScrape)).ToList();
+
+        var scrapedAdvertisements = scrapeResult
+            .Select(x => x)
             .SelectMany(x => x.ScrapedAdvertisements)
             .ToList();
 
-        var scrapedPhotos = listsOfScrapedAdvertisements
-            .SelectMany(x => x)
+        var scrapedPhotos = scrapeResult
+            .Select(x => x)
             .SelectMany(x => x.Photos)
             .ToList();
 
-        var alreadyProcessedAdvertisementsGetResult = await _processedAdvertisementRepository.GetManyByLinkAsync(
-                scrapedAdvertisements.Select(ad => ad.Link));
-
-        if (alreadyProcessedAdvertisementsGetResult.IsFailure)
-        {
-            return await SaveScrapedAdvertisementsAsync(scrapedAdvertisements, scrapedPhotos);
-        }
-
-        var alreadyProcessedAdvertisements = alreadyProcessedAdvertisementsGetResult.Value;
-
-        var scrapedAdvertisementsToInsert = scrapedAdvertisements
-            .Where(sAd => alreadyProcessedAdvertisements.All(pAd => pAd.Link != sAd.Link))
-            .ToList();
-
-        return await SaveScrapedAdvertisementsAsync(scrapedAdvertisementsToInsert, scrapedPhotos);
+        return await SaveScrapedAdvertisementsAsync(scrapedAdvertisements, scrapedPhotos);
     }
 
     private async Task<Result> SaveScrapedAdvertisementsAsync(
@@ -65,5 +61,6 @@ internal sealed class ScrapeAdvertisementsCommandHandler : ICommandHandler<Scrap
         List<AdvertisementPhotos> scrapedPhotos) =>
         Result.Aggregate(await Task.WhenAll(
             _scrapedAdvertisementRepository.AddRangeAsync(scrapedAdvertisementsToInsert),
-            _advertisementPhotosRepository.AddRangeAsync(scrapedPhotos)));
+            _advertisementPhotosRepository.AddRangeAsync(scrapedPhotos),
+            _queuePublisher.PublishScrapedAdsAsync()));
 }

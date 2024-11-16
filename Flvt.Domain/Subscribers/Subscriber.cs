@@ -12,7 +12,6 @@ public sealed class Subscriber
     public VerificationCode? VerificationCode { get; private set; }
     public LoggingGuard Guard { get; init; }
     public SubscribtionTier Tier { get; init; }
-    public Country Country { get; init; }
     private readonly List<string> _filtersIds;
     public IReadOnlyList<string> Filters => _filtersIds;
 
@@ -24,7 +23,6 @@ public sealed class Subscriber
         VerificationCode? verificationCode,
         LoggingGuard guard,
         SubscribtionTier tier,
-        Country country,
         List<string> filtersIds)
     {
         Email = email;
@@ -33,7 +31,6 @@ public sealed class Subscriber
         VerificationCode = verificationCode;
         Guard = guard;
         Tier = tier;
-        Country = country;
         _filtersIds = filtersIds;
     }
 
@@ -84,20 +81,13 @@ public sealed class Subscriber
             filter;
     }
 
-    public static Result<Subscriber> Register(string email, string countryCode, string passwordPlainText)
+    public static Result<Subscriber> Register(string email, string passwordPlainText)
     {
         var emailResult = Email.Create(email);
 
         if (emailResult.IsFailure)
         {
             return emailResult.Error;
-        }
-
-        var countryResult = Country.Create(countryCode);
-
-        if (countryResult.IsFailure)
-        {
-            return countryResult.Error;
         }
 
         var passwordCreateResult = Subscribers.Password.Create(passwordPlainText);
@@ -116,7 +106,6 @@ public sealed class Subscriber
             null,
             LoggingGuard.Create(),
             SubscribtionTier.Basic,
-            countryResult.Value,
             []);
 
         subscriber.GenerateVerificationCode();

@@ -18,7 +18,7 @@ internal class AuthorizerFunctions : BaseFunction
     }
 
     [LambdaFunction(ResourceName = "FlvtAuthorizer")]
-    public APIGatewayCustomAuthorizerV2SimpleResponse FunctionHandler(
+    public APIGatewayCustomAuthorizerV2SimpleResponse Authorizer(
         APIGatewayCustomAuthorizerV2Request request,
         ILambdaContext context)
     {
@@ -26,11 +26,30 @@ internal class AuthorizerFunctions : BaseFunction
             .FirstOrDefault(kvp => kvp.Key.ToLower() == "authorization").Value?
             .Replace("Bearer ", string.Empty);
 
-        var isAuthorized = _jwtService.ValidateJwt(token, out var principalId);
+        var isAuthorized = _jwtService.ValidateJwt(token, true, out var principalId);
 
         return new APIGatewayCustomAuthorizerV2SimpleResponse
         {
             IsAuthorized = isAuthorized
         };
     }
+
+    [LambdaFunction(ResourceName = "FlvtAuthorizerOffEmail")]
+    public APIGatewayCustomAuthorizerV2SimpleResponse AuthorizerOffEmail(
+        APIGatewayCustomAuthorizerV2Request request,
+        ILambdaContext context)
+    {
+        var token = request.Headers
+            .FirstOrDefault(kvp => kvp.Key.ToLower() == "authorization").Value?
+            .Replace("Bearer ", string.Empty);
+
+        var isAuthorized = _jwtService.ValidateJwt(token, false, out var principalId);
+
+        return new APIGatewayCustomAuthorizerV2SimpleResponse
+        {
+            IsAuthorized = isAuthorized
+        };
+    }
+
+
 }

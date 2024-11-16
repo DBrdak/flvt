@@ -26,7 +26,7 @@ public static class ResponseBuilder
     private static APIGatewayHttpApiV2ProxyResponse Respond(Result result, int statusCode, Dictionary<string, string>? headers = null) =>
         new()
         {
-            StatusCode = statusCode,
+            StatusCode = result.Error == Error.Exception ? 500 : statusCode,
             Headers = headers ?? new Dictionary<string, string>(),
             Body = JsonConvert.SerializeObject(result, serializerSettings)
         };
@@ -34,7 +34,7 @@ public static class ResponseBuilder
     private static APIGatewayHttpApiV2ProxyResponse Respond<T>(Result<T> result, int statusCode, Dictionary<string, string>? headers = null) =>
         new()
         {
-            StatusCode = statusCode,
+            StatusCode = result.Error == Error.Exception ? 500 : statusCode,
             Headers = headers ?? new Dictionary<string, string>(),
             Body = JsonConvert.SerializeObject(result, serializerSettings)
         };

@@ -8,7 +8,9 @@ using Flvt.Application.Subscribers.RequestNewPassword;
 using Flvt.Application.Subscribers.ResendEmail;
 using Flvt.Application.Subscribers.SetNewPassword;
 using Flvt.Application.Subscribers.VerifyEmail;
+using Flvt.Domain.Primitives.Responses;
 using MediatR;
+using Serilog;
 
 namespace Flvt.API.Functions.API.Auth;
 
@@ -24,7 +26,9 @@ internal sealed class AuthFunctions : BaseFunction
         [FromBody] RegisterCommand command,
         APIGatewayHttpApiV2ProxyRequest request)
     {
-        var result = await Sender.Send(command);
+        Log.Logger.Information("Registering subscriber with email {email}", command.Email);
+
+        var result = await Sender.Send(command) ?? Error.Exception;
 
         return result.ReturnAPIResponse(200, 400);
     }
@@ -35,9 +39,9 @@ internal sealed class AuthFunctions : BaseFunction
         [FromBody] LoginCommand command,
         APIGatewayHttpApiV2ProxyRequest request)
     {
-        var result = await Sender.Send(command);
+        var result = await Sender.Send(command) ?? Error.Exception;
 
-        return result.ReturnAPIResponse(200, 401);
+        return result.ReturnAPIResponse(200, 400);
     }
 
     [LambdaFunction(ResourceName = nameof(VerifyEmail))]
@@ -46,7 +50,7 @@ internal sealed class AuthFunctions : BaseFunction
         [FromBody] VerifyEmailCommand command,
         APIGatewayHttpApiV2ProxyRequest request)
     {
-        var result = await Sender.Send(command);
+        var result = await Sender.Send(command) ?? Error.Exception;
 
         return result.ReturnAPIResponse(200, 400);
     }
@@ -60,7 +64,7 @@ internal sealed class AuthFunctions : BaseFunction
     {
         var command = new ResendEmailCommand(email, purpose);
 
-        var result = await Sender.Send(command);
+        var result = await Sender.Send(command) ?? Error.Exception;
 
         return result.ReturnAPIResponse(200, 400);
     }
@@ -73,7 +77,7 @@ internal sealed class AuthFunctions : BaseFunction
     {
         var command = new RequestNewPasswordCommand(email);
 
-        var result = await Sender.Send(command);
+        var result = await Sender.Send(command) ?? Error.Exception;
 
         return result.ReturnAPIResponse(200, 400);
     }
@@ -84,7 +88,7 @@ internal sealed class AuthFunctions : BaseFunction
         [FromBody] SetNewPasswordCommand command,
         APIGatewayHttpApiV2ProxyRequest requestContext)
     {
-        var result = await Sender.Send(command);
+        var result = await Sender.Send(command) ?? Error.Exception;
 
         return result.ReturnAPIResponse(200, 400);
     }

@@ -17,7 +17,6 @@ internal sealed class SubscriberDataModel : IDataModel<Subscriber>
     public int LoggingGuardLoginAttempts { get; init; }
     public long? LoggingGuardLockedUntil { get; init; }
     public string Tier { get; init; }
-    public string CountryCode { get; init; }
     public IEnumerable<string> Filters { get; init; }
 
     public SubscriberDataModel(Subscriber original)
@@ -30,7 +29,6 @@ internal sealed class SubscriberDataModel : IDataModel<Subscriber>
         LoggingGuardLoginAttempts = original.Guard.LoginAttempts;
         LoggingGuardLockedUntil = original.Guard.LockedUntil;
         Tier = original.Tier.Value;
-        CountryCode = original.Country.Code;
         Filters = original.Filters;
     }
     public SubscriberDataModel(Document doc)
@@ -43,7 +41,6 @@ internal sealed class SubscriberDataModel : IDataModel<Subscriber>
         LoggingGuardLoginAttempts = doc.GetProperty(nameof(LoggingGuardLoginAttempts)).AsInt();
         LoggingGuardLockedUntil = doc.GetNullableProperty(nameof(LoggingGuardLockedUntil))?.AsNullableLong();
         Tier = doc.GetProperty(nameof(Tier));
-        CountryCode = doc.GetProperty(nameof(CountryCode));
         Filters = doc.GetProperty(nameof(Filters)).AsArrayOfString();
     }
 
@@ -56,7 +53,6 @@ internal sealed class SubscriberDataModel : IDataModel<Subscriber>
     public Subscriber ToDomainModel()
     {
         var email = Domain.Subscribers.Email.Create(Email).Value;
-        var country = Country.Create(CountryCode).Value;
         var tier = SubscribtionTier.Create(Tier).Value;
 
         var password = Activator.CreateInstance(
@@ -103,7 +99,6 @@ internal sealed class SubscriberDataModel : IDataModel<Subscriber>
                        verificationCode,
                        guard,
                        tier,
-                       country,
                        Filters.ToList()
                    ],
                    null) as Subscriber ??

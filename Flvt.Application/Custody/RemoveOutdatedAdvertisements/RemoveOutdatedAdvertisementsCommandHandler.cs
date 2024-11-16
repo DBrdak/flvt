@@ -9,58 +9,48 @@ namespace Flvt.Application.Custody.RemoveOutdatedAdvertisements;
 internal sealed class RemoveOutdatedAdvertisementsCommandHandler : ICommandHandler<RemoveOutdatedAdvertisementsCommand>
 {
     private readonly IProcessedAdvertisementRepository _processedAdvertisementRepository;
-    private readonly IScrapedAdvertisementRepository _scrapedAdvertisementRepository;
     private readonly ICustodian _custodian;
+    private const int checkLimit = 512;
 
     public RemoveOutdatedAdvertisementsCommandHandler(
         IProcessedAdvertisementRepository processedAdvertisementRepository,
-        ICustodian custodian,
-        IScrapedAdvertisementRepository scrapedAdvertisementRepository)
+        ICustodian custodian)
     {
         _processedAdvertisementRepository = processedAdvertisementRepository;
         _custodian = custodian;
-        _scrapedAdvertisementRepository = scrapedAdvertisementRepository;
     }
 
     public async Task<Result> Handle(RemoveOutdatedAdvertisementsCommand request, CancellationToken cancellationToken)
     {
-        var processedAdvertisementsGetResult = _processedAdvertisementRepository.GetAllAsync();
-        var scrapedAdvertisementsGetResult = _scrapedAdvertisementRepository.GetAllAsync();
+        var adsLinksGetResult =
+            await _processedAdvertisementRepository.GetAdvertisementsLinksForDateCheckAsync(checkLimit);
 
-        await Task.WhenAll(processedAdvertisementsGetResult, scrapedAdvertisementsGetResult);
-
-        if (processedAdvertisementsGetResult.Result.IsFailure)
+        if (adsLinksGetResult.IsFailure)
         {
-            return processedAdvertisementsGetResult.Result.Error;
+            return adsLinksGetResult.Error;
         }
 
-        if (scrapedAdvertisementsGetResult.Result.IsFailure)
+        var adsLinks = adsLinksGetResult.Value.ToList();
+
+        var outdatedAdsLinks = (await _custodian.FindOutdatedAdvertisementsAsync(adsLinks)).ToList();
+
+        var removeTask = _processedAdvertisementRepository.RemoveRangeAsync(outdatedAdsLinks);
+
+        var upToDateAdsLinks = adsLinks.Except(outdatedAdsLinks);
+
+        var upToDateAdsGetResult = await _processedAdvertisementRepository.GetManyByLinkAsync(upToDateAdsLinks);
+
+        if (upToDateAdsGetResult.IsFailure)
         {
-            return scrapedAdvertisementsGetResult.Result.Error;
+            return upToDateAdsGetResult.Error;
         }
 
-        var processedAdvertisements = processedAdvertisementsGetResult.Result.Value;
-        var scrapedAdvertisements = scrapedAdvertisementsGetResult.Result.Value.ToList();
+        var upToDateAds = upToDateAdsGetResult.Value.ToList();
 
-        var advertisementsLinks = processedAdvertisements
-            .Select(ad => ad.Link)
-            .ToList();
-        advertisementsLinks.AddRange(scrapedAdvertisements
-            .Select(ad => ad.Link));
+        upToDateAds.ForEach(ad => ad.CheckedForOutdate());
 
-        var outdatedAdvertisements = (await _custodian.FindOutdatedAdvertisementsAsync(advertisementsLinks)).ToList();
+        var updateTask = _processedAdvertisementRepository.UpdateRangeAsync(upToDateAds);
 
-        outdatedAdvertisements.AddRange(
-            scrapedAdvertisements
-                .Where(ad => string.IsNullOrWhiteSpace(ad.AdContent))
-                .Select(ad => ad.Link));
-
-        IEnumerable<Task<Result>> removeTasks =
-        [
-            _processedAdvertisementRepository.RemoveRangeAsync(outdatedAdvertisements),
-            _scrapedAdvertisementRepository.RemoveRangeAsync(outdatedAdvertisements)
-        ];
-
-        return Result.Aggregate(await Task.WhenAll(removeTasks));
+        return Result.Aggregate(await Task.WhenAll(removeTask, updateTask));
     }
 }

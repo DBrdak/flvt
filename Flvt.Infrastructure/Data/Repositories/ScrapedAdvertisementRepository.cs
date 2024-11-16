@@ -2,6 +2,9 @@
 using Flvt.Domain.Primitives.Responses;
 using Flvt.Domain.ScrapedAdvertisements;
 using Flvt.Infrastructure.Data.DataModels;
+using Flvt.Infrastructure.Data.DataModels.Photos;
+using Flvt.Infrastructure.Data.DataModels.ScrapedAdvertisements;
+using Flvt.Infrastructure.Data.Extensions;
 
 namespace Flvt.Infrastructure.Data.Repositories;
 
@@ -46,5 +49,18 @@ internal sealed class ScrapedAdvertisementRepository : Repository<ScrapedAdverti
             new DynamoDBNull());
 
         return await GetWhereAsync(scanFilter);
+    }
+
+    public async Task<Result<IEnumerable<string>>> GetAllLinksAsync()
+    {
+        var getResult = await GetAllAsync(null, [nameof(ScrapedAdvertisementDataModel.Link)]);
+
+        return getResult.IsSuccess
+            ?
+            Result.Success(
+                getResult.Value.Select(
+                    doc => doc.GetProperty(nameof(ScrapedAdvertisementDataModel.Link))
+                        .AsString()))
+            : Result.Failure<IEnumerable<string>>(getResult.Error);
     }
 }

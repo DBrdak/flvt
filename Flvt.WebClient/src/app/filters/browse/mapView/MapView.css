@@ -1,0 +1,22 @@
+.ad-attribute {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 35px;
+    flex-direction: row;
+}
+
+@keyframes bounce {
+    0%, 100% {
+        scale: 1.2;
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+.bounce {
+    animation: bounce 1s infinite;
+}

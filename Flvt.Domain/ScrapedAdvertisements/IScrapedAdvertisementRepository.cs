@@ -18,4 +18,6 @@ public interface IScrapedAdvertisementRepository
     Task<Result> RemoveRangeAsync(IEnumerable<string> scrapedAdvertisementsIds);
 
     Task<Result<IEnumerable<ScrapedAdvertisement>>> GetAdvertisementsInProcessAsync();
+
+    Task<Result<IEnumerable<string>>> GetAllLinksAsync();
 }

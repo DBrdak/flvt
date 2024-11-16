@@ -1,4 +1,6 @@
-﻿using Flvt.Domain.Primitives.Responses;
+﻿using Flvt.Domain.Extensions;
+using Flvt.Domain.Filters.Erros;
+using Flvt.Domain.Primitives.Responses;
 using Flvt.Domain.Subscribers;
 
 namespace Flvt.Domain.Filters;
@@ -213,5 +215,16 @@ public sealed record Filter
 
     public void MarkAsSeen(string advertisement) => _seenAdvertisements.Add(advertisement);
 
-    public void Follow(string advertisement) => _followedAdvertisements.Add(advertisement);
+    public void Follow(string advertisement)
+    {
+        switch (_followedAdvertisements.Any(ad => ad == advertisement))
+        {
+            case true:
+                _followedAdvertisements.Remove(advertisement);
+                break;
+            case false:
+                _followedAdvertisements.Add(advertisement);
+                break;
+        }
+    }
 }

@@ -18,34 +18,12 @@ internal sealed class OtodomParser : AdvertisementParser
 
     protected override string GetBaseQueryRelativeUrl() => "pl/wyniki/wynajem/mieszkanie";
 
-    public override string ParseQueryUrl(Filter filter)
+    public override string ParseQueryUrl(ScrapingFilter filter)
     {
         var location = filter.OtodomLocation()?.ToLower().ReplacePolishCharacters();
-        var createdInLast24H = filter.OnlyLast24H ? "daysSinceCreated=1" : string.Empty;
+        var createdInLast24H = filter.OnlyNew ? "daysSinceCreated=1" : string.Empty;
 
-        var minPrice = filter.MinPrice is null ? string.Empty : $"priceMin={filter.MinPrice}";
-        var maxPrice = filter.MaxPrice is null ? string.Empty : $"priceMax={filter.MaxPrice}";
-
-        var minArea = filter.MinArea is null ? string.Empty : $"areaMin={filter.MinArea}";
-        var maxArea = filter.MaxArea is null ? string.Empty : $"areaMax={filter.MaxArea}";
-
-        if (filter.MinRooms is null && filter.MaxRooms is null)
-        {
-            return
-                $"{GetBaseUrl()}/{GetBaseQueryRelativeUrl()}/{location}/?{minPrice}&{maxPrice}&{minArea}&{maxArea}&{createdInLast24H}";
-        }
-
-        List<string> roomsValues = [];
-        var sixRoomsValue = "SIX_OR_MORE";
-
-        for (var i = filter.MinRooms?.Value ?? 1; i <= 6 && i <= (filter.MaxRooms?.Value ?? 6); i++)
-        {
-            roomsValues.Add(i == 6 ? sixRoomsValue : i.ToStandarizedString());
-        }
-
-        var rooms = $"roomsNumber=[{string.Join(',', roomsValues)}]";
-
-        return $"{GetBaseUrl()}/{GetBaseQueryRelativeUrl()}/{location}/?{minPrice}&{maxPrice}&{minArea}&{maxArea}&{rooms}&{createdInLast24H}";
+        return $"{GetBaseUrl()}/{GetBaseQueryRelativeUrl()}/{location}/?{createdInLast24H}";
     }
 
     public override string ParsePagedQueryUrl(string baseQueryUrl, int page) => $"{baseQueryUrl}&page={page}";

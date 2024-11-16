@@ -7,5 +7,5 @@ public interface IJwtService
 {
     Result<string> GenerateJwt(Subscriber user);
 
-    public bool ValidateJwt(string? token, out string principalId);
+    public bool ValidateJwt(string? token, bool shouldValidateEmail, out string principalId);
 }

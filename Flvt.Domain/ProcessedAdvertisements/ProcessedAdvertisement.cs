@@ -10,62 +10,61 @@ public sealed class ProcessedAdvertisement
     public Address Address { get; init; }
     public Coordinates? Geolocation { get; init; }
     public string Description { get; init; }
-    public string ContactType { get; init; }
+    public bool IsPrivate { get; set; }
     public Money Price { get; init; }
-    public Money? Deposit { get; init; }
-    public Money? Fee { get; init; }
-    public RoomsCount Rooms { get; init; }
-    public Floor Floor { get; init; }
+    public decimal? Deposit { get; init; }
+    public decimal? Fee { get; init; }
+    public int RoomsCount { get; init; }
     public Area Area { get; init; }
-    public string[] Facilities { get; init; }
     public DateTime? AddedAt { get; init; }
     public DateTime? UpdatedAt { get; init; }
     public string? AvailableFrom { get; init; }
     public bool? Pets { get; init; }
     public bool IsFlagged { get; private set; }
+    public long NextOutdateCheck { get; private set; }
 
     public ProcessedAdvertisement(
         string link,
         Address address,
         Coordinates? geolocation,
         string description,
-        string contactType,
+        bool isPrivate,
         Money price,
-        Money? deposit,
-        Money? fee,
-        RoomsCount rooms,
-        Floor floor,
+        decimal? deposit,
+        decimal? fee,
+        int roomsCount,
         Area area,
-        string[] facilities,
         DateTime? addedAt,
         DateTime? updatedAt,
         string? availableFrom,
         bool? pets,
+        long nextOutdateCheck,
         bool isFlagged = false)
     {
         Link = link;
         Address = address;
         Geolocation = geolocation;
         Description = description;
-        ContactType = contactType;
+        IsPrivate = isPrivate;
         Price = price;
-        Fee = fee;
         Deposit = deposit;
-        Rooms = rooms;
-        Floor = floor;
+        Fee = fee;
+        RoomsCount = roomsCount;
         Area = area;
-        Facilities = facilities;
         AddedAt = addedAt;
         UpdatedAt = updatedAt;
         AvailableFrom = availableFrom;
         Pets = pets;
+        NextOutdateCheck = nextOutdateCheck;
         IsFlagged = isFlagged;
         Dedupe =
-            $"{Address?.City}-{Address?.District}-{Address?.Street}-{ContactType}-{Rooms.Value}-{Area.Amount}-{Floor.Specific}-{Floor.Total}-{Price.Amount}"
+            $"{Address?.City}-{Address?.District}-{Address?.Street}-{IsPrivate}-{RoomsCount}-{Area.Amount}-{Price.Amount}"
                 .ToLower();
     }
 
     public void Flag() => IsFlagged = true;
+
+    public void CheckedForOutdate() => NextOutdateCheck = DateTimeOffset.UtcNow.AddDays(2).ToUnixTimeSeconds();
 
     public void ValidateFields()
     {
@@ -77,11 +76,6 @@ public sealed class ProcessedAdvertisement
         if (string.IsNullOrWhiteSpace(Description))
         {
             throw new ArgumentException("Description is empty.");
-        }
-
-        if (string.IsNullOrWhiteSpace(ContactType))
-        {
-            throw new ArgumentException("ContactType is empty.");
         }
 
         if (Price is null)
@@ -99,34 +93,9 @@ public sealed class ProcessedAdvertisement
             throw new ArgumentException("Price currency is null.");
         }
 
-        if (Deposit is not null && Deposit.Amount < 0)
-        {
-            throw new ArgumentException("Deposit is not a positive number.");
-        }
-
-        if (Deposit is not null && string.IsNullOrWhiteSpace(Deposit.Currency?.Code))
-        {
-            throw new ArgumentException("Deposit currency is null.");
-        }
-
-        if (Fee is not null && Fee.Amount < 0)
-        {
-            throw new ArgumentException("Fee is not a positive number.");
-        }
-
-        if (Fee is not null && string.IsNullOrWhiteSpace(Fee.Currency?.Code))
-        {
-            throw new ArgumentException("Fee currency is null.");
-        }
-
-        if (Rooms.Value <= 0)
+        if (RoomsCount <= 0)
         {
             throw new ArgumentException("Rooms is not a positive number.");
-        }
-
-        if (string.IsNullOrWhiteSpace(Rooms.Unit))
-        {
-            throw new ArgumentException("Rooms unit is empty.");
         }
 
         if (Area.Amount <= 0)
@@ -137,16 +106,6 @@ public sealed class ProcessedAdvertisement
         if (string.IsNullOrWhiteSpace(Area.Unit))
         {
             throw new ArgumentException("Area unit is empty.");
-        }
-
-        if (Floor.Specific < 0)
-        {
-            throw new ArgumentException("Floor is not a positive number.");
-        }
-
-        if (Floor.Total < 0)
-        {
-            throw new ArgumentException("Floor is not a positive number.");
         }
     }
 }

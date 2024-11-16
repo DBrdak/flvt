@@ -22,7 +22,7 @@ internal class Custodian : ICustodian
     public async Task<IEnumerable<string>> FindOutdatedAdvertisementsAsync(
         IEnumerable<string> processedAdvertisementsLinks)
     {
-        var linksChunks = processedAdvertisementsLinks.Chunk(AWSLimits.FileDescriptorLimit / 2);
+        var linksChunks = processedAdvertisementsLinks.Chunk(AWSLimits.FileDescriptorLimit - 1);
         List<string> outdatedAdvertisements = [];
 
         foreach (var chunk in linksChunks)

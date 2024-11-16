@@ -12,19 +12,18 @@ public sealed record ProcessedAdvertisementModel
     public Address Address { get; init; }
     public Coordinates? Geolocation { get; init; }
     public string Description { get; init; }
-    public string ContactType { get; init; }
+    public bool IsPrivate { get; init; }
     public Money Price { get; init; }
     public Money? Deposit { get; init; }
-    public RoomsCount Rooms { get; init; }
-    public Floor Floor { get; init; }
+    public Money? Fee { get; init; }
+    public int RoomsCount { get; init; }
     public Area Area { get; init; }
-    public string[] Facilities { get; init; }
     public DateTime? AddedAt { get; init; }
     public DateTime? UpdatedAt { get; init; }
     public string? AvailableFrom { get; init; }
     public bool? Pets { get; init; }
     public IEnumerable<string> Photos { get; init; }
-    public bool IsFlagged { get; private set; }
+    public bool IsFlagged { get; init; }
     public bool WasSeen { get; init; }
     public bool IsNew { get; init; }
     public bool IsFollowed { get; init; }
@@ -34,13 +33,12 @@ public sealed record ProcessedAdvertisementModel
         Address address,
         Coordinates? geolocation,
         string description,
-        string contactType,
+        bool isPrivate,
         Money price,
         Money? deposit,
-        RoomsCount rooms,
-        Floor floor,
+        Money? fee,
+        int roomsCount,
         Area area,
-        string[] facilities,
         DateTime? addedAt,
         DateTime? updatedAt,
         string? availableFrom,
@@ -55,13 +53,12 @@ public sealed record ProcessedAdvertisementModel
         Address = address;
         Geolocation = geolocation;
         Description = description;
-        ContactType = contactType;
+        IsPrivate = isPrivate;
         Price = price;
         Deposit = deposit;
-        Rooms = rooms;
-        Floor = floor;
+        Fee = fee;
+        RoomsCount = roomsCount;
         Area = area;
-        Facilities = facilities;
         AddedAt = addedAt;
         UpdatedAt = updatedAt;
         AvailableFrom = availableFrom;
@@ -84,13 +81,16 @@ public sealed record ProcessedAdvertisementModel
             processedAdvertisement.Address,
             processedAdvertisement.Geolocation,
             processedAdvertisement.Description,
-            processedAdvertisement.ContactType,
+            processedAdvertisement.IsPrivate,
             processedAdvertisement.Price,
-            processedAdvertisement.Deposit,
-            processedAdvertisement.Rooms,
-            processedAdvertisement.Floor,
+            processedAdvertisement.Deposit is var deposit && deposit is not null ?
+                new Money(deposit!.Value, processedAdvertisement.Price.Currency) : 
+                null,
+            processedAdvertisement.Fee is var fee && fee is not null ?
+                new Money(fee!.Value, processedAdvertisement.Price.Currency) :
+                null,
+            processedAdvertisement.RoomsCount,
             processedAdvertisement.Area,
-            processedAdvertisement.Facilities,
             processedAdvertisement.AddedAt,
             processedAdvertisement.UpdatedAt,
             processedAdvertisement.AvailableFrom,

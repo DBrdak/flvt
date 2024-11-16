@@ -1,3 +1,4 @@
+using Flvt.Application.Abstractions;
 using Flvt.Application.Messaging;
 using Flvt.Application.Subscribers.Models;
 using Flvt.Domain.Filters;
@@ -11,11 +12,13 @@ internal sealed class GetSubscriberQueryHandler : IQueryHandler<GetSubscriberQue
 {
     private readonly ISubscriberRepository _subscriberRepository;
     private readonly IFilterRepository _filterRepository;
+    private readonly IJwtService _jwtService;
 
-    public GetSubscriberQueryHandler(ISubscriberRepository subscriberRepository, IFilterRepository filterRepository)
+    public GetSubscriberQueryHandler(ISubscriberRepository subscriberRepository, IFilterRepository filterRepository, IJwtService jwtService)
     {
         _subscriberRepository = subscriberRepository;
         _filterRepository = filterRepository;
+        _jwtService = jwtService;
     }
 
     public async Task<Result<SubscriberModel>> Handle(GetSubscriberQuery request, CancellationToken cancellationToken)
@@ -37,9 +40,6 @@ internal sealed class GetSubscriberQueryHandler : IQueryHandler<GetSubscriberQue
         }
 
         var filters = filtersGetResult.Value.ToList();
-
-        Log.Logger.Information("Filters IDs: {filtersIds}", subscriber.Filters);
-        Log.Logger.Information("Filters: {filters}", filters);
 
         var filterModels = filters.Select(FilterModel.FromDomainModel);
 

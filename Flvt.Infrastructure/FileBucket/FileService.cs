@@ -5,6 +5,7 @@ using Flvt.Application.Advertisements.Models;
 using Flvt.Domain.Filters;
 using Flvt.Domain.Primitives.Responses;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace Flvt.Infrastructure.FileBucket;
 
@@ -21,7 +22,16 @@ internal sealed class FileService : IFileService
         Filter filter,
         IEnumerable<ProcessedAdvertisementModel> advertisements)
     {
-        var advertisementsJson = JsonConvert.SerializeObject(advertisements);
+        var advertisementsJson = JsonConvert.SerializeObject(
+            advertisements,
+            Formatting.None,
+            new JsonSerializerSettings
+            {
+                ContractResolver = new CamelCasePropertyNamesContractResolver
+                {
+                    NamingStrategy = new CamelCaseNamingStrategy()
+                }
+            });
 
         var filePath = $"ads/{filter.Id}.json";
 

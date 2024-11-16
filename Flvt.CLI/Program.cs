@@ -13,7 +13,11 @@ using System.Text;
 using Amazon;
 using Flvt.Domain;
 using Amazon.Runtime;
+using Flvt.Application.Advertisements.Flag;
 using Flvt.Application.Custody.RemoveOutdatedAdvertisements;
+using Flvt.Application.Subscribers.AddBasicFilter;
+using Flvt.Application.Subscribers.Register;
+using HtmlAgilityPack;
 
 namespace Flvt.CLI;
 
@@ -45,19 +49,25 @@ public class Service : IService
     private readonly IScrapedAdvertisementRepository _scrapedAdvertisementRepository;
     private readonly IAdvertisementPhotosRepository _advertisementPhotosRepository;
     private readonly IScrapingOrchestrator _scrapingOrchestrator;
+    private readonly IEmailService _emailService;
+    private readonly IQueuePublisher _queuePublisher;
 
     public Service(
         ISender sender,
         IProcessedAdvertisementRepository repository,
         IScrapedAdvertisementRepository scrapedAdvertisementRepository,
         IAdvertisementPhotosRepository advertisementPhotosRepository,
-        IScrapingOrchestrator scrapingOrchestrator)
+        IScrapingOrchestrator scrapingOrchestrator,
+        IEmailService emailService,
+        IQueuePublisher queuePublisher)
     {
         _sender = sender;
         _repository = repository;
         _scrapedAdvertisementRepository = scrapedAdvertisementRepository;
         _advertisementPhotosRepository = advertisementPhotosRepository;
         _scrapingOrchestrator = scrapingOrchestrator;
+        _emailService = emailService;
+        _queuePublisher = queuePublisher;
     }
 
     public async Task Run()
@@ -81,9 +91,10 @@ public class Service : IService
         //var cmd = new CheckProcessingStatusCommand();
         //var cmd = new EndProcessingCommand();
         //var cmd = new ProcessAdvertisementsCommand();
-        var cmd = new RemoveOutdatedAdvertisementsCommand();
+        //var cmd = new RemoveOutdatedAdvertisementsCommand();
+        //var cmd = new RegisterCommand(); // TODO REMOVE
 
-        var response = await _sender.Send(cmd);
+        //var response = await _sender.Send(cmd);
 
         //var adsR = await _repository.GetAllAsync();
         //var ads = adsR.Value;
@@ -102,7 +113,26 @@ public class Service : IService
 
         //Console.WriteLine(stopwatch.ElapsedMilliseconds);
         //Console.WriteLine();
-     }
+
+        //var ads = (await _repository.GetAllAsync()).Value.ToList();
+
+        //var link = ads[0].Link;
+        //var cmd = new FlagCommand(link);
+
+        //await _repository.UpdateRangeAsync(ads);
+        //Console.WriteLine((await _sender.Send(cmd)).IsSuccess);
+
+        //TODO THIS WORKS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        var web = new HtmlWeb();
+
+        var a = await web.LoadFromWebAsync(
+            "https://www.morizon.pl/oferta/wynajem-mieszkanie-warszawa-praga-polnoc-siedlecka-50m2-mzn2044602866");
+        
+
+        var nodes = a.DocumentNode.SelectNodes("//script[@type='application/ld+json']").FirstOrDefault(node => node.InnerText.Contains("Offer"));
+
+        Console.WriteLine(nodes.InnerText);
+    }
 
     public async Task UploadJsonToS3Async(IEnumerable<ProcessedAdvertisement> ads, string bucketName, string key)
     {

@@ -3,9 +3,6 @@ using Flvt.Infrastructure.Scrapers.Shared;
 
 namespace Flvt.Infrastructure.Scrapers.Olx;
 
-internal class OlxScraper : AdvertisementScraper
+internal class OlxScraper
 {
-    public OlxScraper(Filter filter) : base(filter, new OlxParser())
-    {
-    }
 }

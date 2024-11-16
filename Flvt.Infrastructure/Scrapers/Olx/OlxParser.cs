@@ -23,29 +23,11 @@ internal sealed class OlxParser : AdvertisementParser
 
     protected override string GetBaseQueryRelativeUrl() => "nieruchomosci/mieszkania/wynajem";
 
-    public override string ParseQueryUrl(Filter filter)
+    public override string ParseQueryUrl(ScrapingFilter filter)
     {
-        var location = filter.Location.City.ToLower().ReplacePolishCharacters();
+        var location = filter.City.ToLower().ReplacePolishCharacters();
 
-        var minPrice = filter.MinPrice is null ? string.Empty : $"search[filter_float_price:from]={filter.MinPrice}";
-        var maxPrice = filter.MaxPrice is null ? string.Empty : $"search[filter_float_price:to]={filter.MaxPrice}";
-
-        var minArea = filter.MinArea is null ? string.Empty : $"search[filter_float_m:from]={filter.MinArea}";
-        var maxArea = filter.MaxArea is null ? string.Empty : $"search[filter_float_m:to]={filter.MaxArea}";
-
-        if (filter.MinRooms is null && filter.MaxRooms is null)
-        {
-            return $"{GetBaseUrl()}/{GetBaseQueryRelativeUrl()}/{location}/?{minPrice}{maxPrice}{minArea}{maxArea}";
-        }
-
-        List<string> rooms = [];
-
-        for (var i = filter.MinRooms?.Value ?? 1; i <= 4 && i <= (filter.MaxRooms?.Value ?? 4); i++)
-        {
-            rooms.Add($"search[filter_enum_rooms][{i}]={i.ToStandarizedString()}");
-        }
-
-        return $"{GetBaseUrl()}/{GetBaseQueryRelativeUrl()}/{location}/?{minPrice}&{maxPrice}&{minArea}&{maxArea}&{rooms}";
+        return $"{GetBaseUrl()}/{GetBaseQueryRelativeUrl()}/{location}/";
     }
 
     public override string ParsePagedQueryUrl(string baseQueryUrl, int page) => $"{baseQueryUrl}&page={page}";

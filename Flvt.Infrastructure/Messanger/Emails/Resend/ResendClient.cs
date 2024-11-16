@@ -27,23 +27,20 @@ internal sealed class ResendClient
 
         var responseContent = await response.Content.ReadAsStringAsync();
 
-        var jsonData = JsonConvert.SerializeObject(email);
-
-        var result = Result.FromBool(
-            response.IsSuccessStatusCode,
-            CreateResendResponseError([email.Recipient], responseContent, jsonData));
-
-        if (result.IsFailure)
+        if (response.IsSuccessStatusCode)
         {
-            Log.Logger.Error(
-                "Problem while sending an email to {recipient}. Response: {errorMessage}.",
-                email.Recipient,
-                responseContent);
+            return Result.Success();
         }
 
-        return result;
+        Log.Logger.Error(
+            "Problem while sending an email to {recipient}. Response: {errorMessage}.",
+            email.Recipient,
+            responseContent);
+
+        return CreateResendResponseError();
+
     }
 
-    private static Error CreateResendResponseError(string[] recipient, object errorMessage, string data) => new(
-        $"Problem while sending an email to {JsonConvert.SerializeObject(recipient)}");
+    private static Error CreateResendResponseError() => new(
+        $"An error occured when we were trying to send an email to you. Please try again later");
 }

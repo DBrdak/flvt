@@ -6,6 +6,7 @@ using Flvt.API.Utils;
 using Flvt.Application.Subscribers.AddBasicFilter;
 using Flvt.Application.Subscribers.GetSubscriber;
 using Flvt.Application.Subscribers.RemoveFilter;
+using Flvt.Domain.Primitives.Responses;
 using Flvt.Infrastructure.Authentication.Models;
 using MediatR;
 
@@ -25,7 +26,7 @@ public sealed class SubscribersFunctions : BaseFunction
 
         var query = new GetSubscriberQuery(subscriberEmail);
 
-        var result = await Sender.Send(query);
+        var result = await Sender.Send(query) ?? Error.Exception;
 
         return result.ReturnAPIResponse(200, 404);
     }
@@ -49,7 +50,7 @@ public sealed class SubscribersFunctions : BaseFunction
             request.MinArea,
             request.MaxArea);
 
-        var result = await Sender.Send(query);
+        var result = await Sender.Send(query) ?? Error.Exception;
 
         return result.ReturnAPIResponse(200, 400);
     }
@@ -64,7 +65,7 @@ public sealed class SubscribersFunctions : BaseFunction
 
         var query = new RemoveFilterCommand(subscriberEmail, filterId);
 
-        var result = await Sender.Send(query);
+        var result = await Sender.Send(query) ?? Error.Exception;
 
         return result.ReturnAPIResponse(200, 400);
     }
