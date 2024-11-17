@@ -33,6 +33,7 @@ internal sealed class FileService : IFileService
                 }
             });
 
+
         var filePath = $"ads/{filter.Id}.json";
 
         var response = await _s3Bucket.WriteFileAsync(
