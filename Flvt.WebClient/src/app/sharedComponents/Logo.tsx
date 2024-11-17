@@ -15,7 +15,7 @@ export function Logo({size}: Props) {
 
     return (
         <img
-            src="/public/logo.svg"
+            src="/logo.svg"
             alt="Flvt Logo"
             style={{ width: width, height: 'auto' }}
         />

@@ -44,7 +44,6 @@
     text-decoration: none;
     text-align: center;
     text-transform: uppercase;
-    background: hsl(210, 100%, 16%);
     cursor: pointer;
     letter-spacing: 1px;
     transition: all .35s;

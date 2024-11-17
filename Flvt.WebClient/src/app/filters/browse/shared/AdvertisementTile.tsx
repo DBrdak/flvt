@@ -10,11 +10,11 @@ import {
     Tooltip,
     Typography
 } from "@mui/material";
-import ImageSlider from "../shared/ImageSilder.tsx";
+import ImageSlider from "./ImageSilder.tsx";
 import {keyframes} from "@emotion/react";
 import {Theme} from "@mui/material/styles";
 import {Business, Favorite, Flag, GridView, Person, Pets} from "@mui/icons-material";
-import './MapView.css'
+import '../mapView/MapView.css'
 import {colorSchemes} from "../../../theme/themePrimitives.ts";
 import {observer} from "mobx-react-lite";
 import {useStore} from "../../../../stores/store.ts";
@@ -40,7 +40,7 @@ interface Props {
     seeAdvertisement: (ad: Advertisement) => void
 }
 
-function AdvertisementTile({ad, isFocused, enableHover, flagAdvertisement, followAdvertisement, seeAdvertisement}: Props) {
+function AdvertisementTile({ad, isFocused, enableHover, closeButton, flagAdvertisement, followAdvertisement, seeAdvertisement}: Props) {
     const {advertisementStore} = useStore()
 
     const focusedStyle = (theme: Theme) => ({
@@ -188,7 +188,7 @@ function AdvertisementTile({ad, isFocused, enableHover, flagAdvertisement, follo
                         onClick={() => flagAdvertisement(ad)}
                         disabled={ad.isFlagged}
                     >
-                        <Flag />
+                        <Flag color={ad.isFlagged ? 'warning': 'inherit'} sx={{color: ad.isFlagged ? '' : 'white'}} />
                     </Button>
                 </Box>
                 <Button
@@ -200,15 +200,18 @@ function AdvertisementTile({ad, isFocused, enableHover, flagAdvertisement, follo
                 >
                     Open
                 </Button>
-                <Button
-                    fullWidth
-                    onClick={() => {
-                        advertisementStore.setViewedAdvertisement(null)
-                        advertisementStore.setPreViewedAdvertisement(null)
-                    }}
-                >
-                    Close
-                </Button>
+                {
+                    closeButton &&
+                        <Button
+                            fullWidth
+                            onClick={() => {
+                                advertisementStore.setViewedAdvertisement(null)
+                                advertisementStore.setPreViewedAdvertisement(null)
+                            }}
+                        >
+                            Close
+                        </Button>
+                }
             </CardActions>
         </Card>
     )

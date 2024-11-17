@@ -54,7 +54,7 @@ function BrowsePage() {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    top: 0, left: 0, right: 0, p: 2
+                    top: 0, left: 0, right: 0, p: 4
                 }}>
                     <ViewSelector currentView={currentView} setCurrentView={setCurrentView} />
                 </Box>

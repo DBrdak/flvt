@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { Grid, Container, Box, CircularProgress } from '@mui/material'
 import { observer } from 'mobx-react-lite'
 import { useStore } from '../../../../stores/store.ts'
-import AdvertisementTile from '../mapView/AdvertisementTile.tsx'
+import AdvertisementTile from '../shared/AdvertisementTile.tsx'
 import { useParams } from 'react-router-dom'
 
 function AdvertisementsList() {
