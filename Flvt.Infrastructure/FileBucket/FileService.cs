@@ -50,8 +50,9 @@ internal sealed class FileService : IFileService
 
     public async Task<Result<string>> GetAdvertisementsUrlAsync(Filter filter)
     {
-        if (string.IsNullOrWhiteSpace(filter.AdvertisementsFilePath) ||
-            !Regex.IsMatch(filter.AdvertisementsFilePath, FileBucketConstants.S3FilePathPattern))
+        if ((string.IsNullOrWhiteSpace(filter.AdvertisementsFilePath) ||
+            !Regex.IsMatch(filter.AdvertisementsFilePath, FileBucketConstants.S3FilePathPattern)) &&
+            filter.AdvertisementsFilePath is not null && !filter.AdvertisementsFilePath.Contains("preview"))
         {
             return FileServiceErrors.InvalidFilePath;
         }

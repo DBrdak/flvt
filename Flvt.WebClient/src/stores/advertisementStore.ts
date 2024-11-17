@@ -92,7 +92,9 @@ export default class AdvertisementStore {
         this.setLoading('init')
 
         try {
-            const advertisementsFileUrl = await agent.advertisements.getByFilter(filterId)
+            const advertisementsFileUrl = filterId === 'preview' ?
+                await agent.advertisements.getPreview() :
+                await agent.advertisements.getByFilter(filterId)
             const fileGetResponse = await fetch(advertisementsFileUrl)
 
             if(fileGetResponse.status !== 200){
@@ -121,7 +123,7 @@ export default class AdvertisementStore {
             AdvertisementFunctions.follow(advertisement)
 
             Promise.all([
-                await agent.advertisements.follow(advertisement.link, filterId),
+                filterId !== 'preview' && await agent.advertisements.follow(advertisement.link, filterId),
                 await this.dbContext!.updateAdvertisementAsync(filterId, advertisement)
             ])
 
@@ -142,7 +144,7 @@ export default class AdvertisementStore {
             advertisement.isNew = false
 
             Promise.all([
-                await agent.advertisements.see(advertisement.link, filterId),
+                filterId !== 'preview' && await agent.advertisements.see(advertisement.link, filterId),
                 await this.dbContext!.updateAdvertisementAsync(filterId, advertisement)
             ])
 
@@ -162,7 +164,7 @@ export default class AdvertisementStore {
             advertisement.isFlagged = true
 
             Promise.all([
-                agent.advertisements.flag(advertisement.link),
+                filterId !== 'preview' && agent.advertisements.flag(advertisement.link),
                 this.dbContext!.updateAdvertisementAsync(filterId, advertisement)
             ])
 

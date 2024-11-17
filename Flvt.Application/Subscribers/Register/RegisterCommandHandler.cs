@@ -3,8 +3,6 @@ using Flvt.Application.Messaging;
 using Flvt.Application.Subscribers.Models;
 using Flvt.Domain.Primitives.Responses;
 using Flvt.Domain.Subscribers;
-using Newtonsoft.Json;
-using Serilog;
 
 namespace Flvt.Application.Subscribers.Register;
 

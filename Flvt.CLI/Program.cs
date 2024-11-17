@@ -13,10 +13,6 @@ using System.Text;
 using Amazon;
 using Flvt.Domain;
 using Amazon.Runtime;
-using Flvt.Application.Advertisements.Flag;
-using Flvt.Application.Custody.RemoveOutdatedAdvertisements;
-using Flvt.Application.Subscribers.AddBasicFilter;
-using Flvt.Application.Subscribers.Register;
 using HtmlAgilityPack;
 
 namespace Flvt.CLI;

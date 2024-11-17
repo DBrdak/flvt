@@ -2,7 +2,6 @@ using Flvt.Application.Abstractions;
 using Flvt.Application.Messaging;
 using Flvt.Domain.Filters;
 using Flvt.Domain.Primitives.Responses;
-using Serilog;
 
 namespace Flvt.Application.Advertisements.ScrapeAdvertisementsLinks;
 

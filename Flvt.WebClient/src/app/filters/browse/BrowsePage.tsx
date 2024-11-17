@@ -1,7 +1,6 @@
 import {observer} from "mobx-react-lite";
 import {useStore} from "../../../stores/store.ts";
 import {useEffect, useState} from "react";
-import {Advertisement} from "../../../models/advertisement.ts";
 import AdvertisementsMap from "./mapView/AdvertisementsMap.tsx";
 import LoadingPage from "../../sharedComponents/LoadingPage.tsx";
 import {useNavigate, useParams} from "react-router-dom";
@@ -43,7 +42,7 @@ function BrowsePage() {
     return (
         advertisementStore.loading === 'init' || !filterId || advertisementStore.advertisements.length === 0 ?
             <LoadingPage  variant={'logo'} /> :
-            <Box sx={{width: '100vw', height: '100vh'}}>
+            <Box sx={{width: '100vw', height: '100vh', overflowX: 'hidden'}}>
                 {
                     currentView == 'map' ?
                         <AdvertisementsMap /> :

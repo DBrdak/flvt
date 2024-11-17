@@ -6,6 +6,11 @@ import {availableCities} from "../../utils/constants/bussinessRules.ts";
 import {useNavigate} from "react-router-dom";
 import StartButton from "./StartButton.tsx";
 import {Logo} from "../sharedComponents/Logo.tsx";
+import IconButton from "@mui/material/IconButton";
+import {QuestionMark} from "@mui/icons-material";
+import {useStore} from "../../stores/store.ts";
+import {observer} from "mobx-react-lite";
+import Faq from "./Faq.tsx";
 
 
 const WelcomePage: React.FC = () => {
@@ -14,6 +19,7 @@ const WelcomePage: React.FC = () => {
     const [displayedText, setDisplayedText] = useState('')
     const [isTyping, setIsTyping] = useState(true)
     const navigate = useNavigate()
+    const {modalStore} = useStore()
 
     useEffect(() => {
         if (isTyping) {
@@ -49,8 +55,23 @@ const WelcomePage: React.FC = () => {
             <Box className={'start-btn-container'}>
                 <StartButton onClick={() => navigate('/login')} />
             </Box>
+            <Box sx={{
+                position: 'absolute',
+                bottom: 0, right: 0,
+                padding: 3
+            }}>
+                <IconButton sx={{
+                        borderRadius: '50px',
+                        width: '60px',
+                        height: '60px'
+                    }}
+                    onClick={() => modalStore.openModal(<Faq />)}
+                >
+                    <QuestionMark fontSize={'large'} />
+                </IconButton>
+            </Box>
         </Box>
     )
 }
 
-export default WelcomePage
+export default observer(WelcomePage)

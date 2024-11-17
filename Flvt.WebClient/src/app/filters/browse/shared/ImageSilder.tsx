@@ -53,7 +53,7 @@ const ImageSlider: React.FC<ImageSliderProps> = ({ photosLinks }) => {
                 position: 'relative',
                 width: '100%',
                 overflow: 'hidden',
-                borderRadius: 2,
+                borderRadius: 1,
                 boxShadow: 3,
                 display: 'flex',
                 alignItems: 'center',

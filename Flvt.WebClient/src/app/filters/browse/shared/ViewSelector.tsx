@@ -1,8 +1,9 @@
 import {Button, ButtonGroup} from "@mui/material";
-import {GridView, Map, Settings} from "@mui/icons-material";
+import {GridView, Home, Map, Settings} from "@mui/icons-material";
 import {useStore} from "../../../../stores/store.ts";
 import {observer} from "mobx-react-lite";
 import FilterDialog from "./SettingsDialog.tsx";
+import {useNavigate} from "react-router-dom";
 
 interface Props {
     currentView: 'list' | 'map'
@@ -11,6 +12,7 @@ interface Props {
 
 function ViewSelector({currentView, setCurrentView}: Props) {
     const {modalStore} = useStore()
+    const navigate = useNavigate()
 
     const styles = (viewName: string): {variant: 'outlined' | 'contained', color: 'secondary' | 'primary'} => (
         {
@@ -30,6 +32,12 @@ function ViewSelector({currentView, setCurrentView}: Props) {
                 onClick={() => setCurrentView('map')}
             >
                 <Map />
+            </Button>
+            <Button
+                variant={'contained'}
+                onClick={() => navigate('/filters')}
+            >
+                <Home />
             </Button>
             <Button
                 variant={'contained'}

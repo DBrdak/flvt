@@ -20,7 +20,7 @@ architecture = "x86_64"
 handler = "Flvt.API::Flvt.API.Functions.API.Advertisements.AdvertisementsFunctions_GetByFilter_Generated::GetByFilter"
 manifest_hash = ""
 packagetype = "Zip"
-functions = ["AdvertisementsGetByFilter", "GetSubscriber"]
+functions = ["AdvertisementsGetByFilter", "GetSubscriber", "AdvertisementsPreview"]
 
 [function_build_definitions.fa63b568-c566-4b16-8f20-b104d85f3765.metadata]
 Tool = "Amazon.Lambda.Annotations"
@@ -28,6 +28,10 @@ SyncedEvents = ["RootGet"]
 
 [function_build_definitions.fa63b568-c566-4b16-8f20-b104d85f3765.metadata.SyncedEventProperties]
 RootGet = ["Path", "Method"]
+
+
+
+
 
 
 
@@ -237,6 +241,10 @@ RootPost = ["Path", "Method"]
 
 
 
+
+
+
+
 [function_build_definitions.e6102ed8-535b-46de-b3be-cdcfd94316ec]
 codeuri = "C:\\Users\\Brdak\\source\\repos\\flvt\\Flvt.API"
 runtime = "dotnet8"
@@ -349,6 +357,10 @@ RootPut = ["Path", "Method"]
 
 
 
+
+
+
+
 [function_build_definitions.5d8cc8d9-08c3-4a72-a402-19cdcec65d15]
 codeuri = "C:\\Users\\Brdak\\source\\repos\\flvt\\Flvt.API"
 runtime = "dotnet8"
@@ -364,6 +376,10 @@ SyncedEvents = ["RootDelete"]
 
 [function_build_definitions.5d8cc8d9-08c3-4a72-a402-19cdcec65d15.metadata.SyncedEventProperties]
 RootDelete = ["Path", "Method"]
+
+
+
+
 
 
 

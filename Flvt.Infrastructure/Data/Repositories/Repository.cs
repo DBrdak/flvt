@@ -1,8 +1,6 @@
-﻿using Amazon.DynamoDBv2;
-using Amazon.DynamoDBv2.DocumentModel;
+﻿using Amazon.DynamoDBv2.DocumentModel;
 using Flvt.Domain.Primitives.Responses;
 using Flvt.Infrastructure.Data.DataModels;
-using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 
 namespace Flvt.Infrastructure.Data.Repositories;

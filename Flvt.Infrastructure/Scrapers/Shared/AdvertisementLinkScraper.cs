@@ -1,9 +1,6 @@
-﻿using Flvt.Domain.Photos;
-using Flvt.Domain.ScrapedAdvertisements;
-using Flvt.Infrastructure.Monitoring;
+﻿using Flvt.Infrastructure.Monitoring;
 using Flvt.Infrastructure.Utlis.Extensions;
 using HtmlAgilityPack;
-using Newtonsoft.Json;
 using Serilog;
 
 namespace Flvt.Infrastructure.Scrapers.Shared;

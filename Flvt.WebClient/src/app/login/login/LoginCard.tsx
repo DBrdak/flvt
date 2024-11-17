@@ -15,6 +15,7 @@ import * as Yup from 'yup'
 import TextInput from "../../sharedComponents/TextInput.tsx";
 import {emailAddressPattern, passwordPattern} from "../../../utils/constants/bussinessRules.ts";
 import PrivacyPolicyDialog from "../register/PrivacyPolicyDialog.tsx";
+import PreviewButton from "../PreviewButton.tsx";
 
 const Card = styled(MuiCard)(({ theme }) => ({
     display: 'flex',
@@ -125,6 +126,9 @@ function LoginCard() {
                                 }}>
                             Sign up
                         </Button>
+                        <Box>
+                            <PreviewButton onClick={() => navigate('/filters/preview/browse')} />
+                        </Box>
                     </Form>
                 )}
             </Formik>

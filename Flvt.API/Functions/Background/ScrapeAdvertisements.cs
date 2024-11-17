@@ -2,7 +2,6 @@
 using Amazon.Lambda.SQSEvents;
 using Flvt.Application.Advertisements.ScrapeAdvertisements;
 using Flvt.Application.Advertisements.ScrapeAdvertisementsLinks;
-using Flvt.Application.Subscribers.NotifyFilterLaunch;
 using MediatR;
 using Newtonsoft.Json;
 using Serilog;

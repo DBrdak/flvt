@@ -1,5 +1,4 @@
 ﻿using Flvt.Domain.Filters;
-using Flvt.Domain.Primitives.Advertisements;
 using Flvt.Domain.Primitives.Responses;
 
 namespace Flvt.Domain.Subscribers;

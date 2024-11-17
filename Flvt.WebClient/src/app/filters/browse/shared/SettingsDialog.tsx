@@ -3,10 +3,10 @@ import {useStore} from "../../../../stores/store.ts";
 import {Button, Checkbox, FormControlLabel, FormGroup, Stack, Typography} from "@mui/material";
 
 function SettingsDialog() {
-    const {modalStore, advertisementStore} = useStore()
+    const {advertisementStore} = useStore()
 
     return (
-        <Stack direction="column" sx={{display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 2}}>
+        <Stack direction="column" sx={{display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 3, p: 2}}>
             <Stack direction={'column'} sx={{ flexGrow: 1, textAlign: 'center' }}>
                 <Typography variant="h6" component="div">
                     Settings
@@ -71,4 +71,4 @@ function SettingsDialog() {
     )
 }
 
-export default observer(SettingsDialog)
+export default observer(SettingsDialog);

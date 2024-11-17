@@ -1,5 +1,4 @@
 ﻿using Flvt.Domain.Extensions;
-using Flvt.Domain.Filters;
 using Flvt.Infrastructure.Scrapers.Shared;
 
 namespace Flvt.Infrastructure.Scrapers.Otodom;

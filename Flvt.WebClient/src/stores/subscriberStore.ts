@@ -35,14 +35,14 @@ export default class SubscriberStore {
     private setCurrentSubscriber(subscriber: Subscriber | null) {
         this.currentSubscriber = subscriber
 
-        if (subscriber?.token !== null) {
+        if (subscriber !== null && subscriber?.token !== null) {
             this.setToken(subscriber!.token)
         }
     }
 
     private setToken = (token: string | null) => {
-        if(token) {
-            localStorage.setItem('jwt', token!)
+        if(token !== null) {
+            localStorage.setItem('jwt', token)
         } else {
             localStorage.removeItem('jwt')
         }

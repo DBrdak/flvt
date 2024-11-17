@@ -5,13 +5,11 @@ import { Coordinates } from "../../../../models/coordinates.ts";
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { useStore } from "../../../../stores/store.ts";
-import { Box } from "@mui/material";
+import {Box, useMediaQuery} from "@mui/material";
 import {LeafletMouseEvent} from "leaflet";
 import {createIcon} from "./AdvertisementMarker.tsx";
 import AdvertisementTile from "./AdvertisementTile.tsx";
 import {useParams} from "react-router-dom";
-import {Simulate} from "react-dom/test-utils";
-import mouseOver = Simulate.mouseOver;
 
 function calculateCenter(advertisements: Advertisement[]): Coordinates {
     const markers = advertisements.filter(ad => ad.geolocation);
@@ -31,8 +29,11 @@ function calculateCenter(advertisements: Advertisement[]): Coordinates {
 function AdvertisementsMap() {
     const { advertisementStore } = useStore();
     const filterId = useParams<{filterId: string}>().filterId
+    console.log(filterId)
     const [center, setCenter] = useState<Coordinates>(calculateCenter(advertisementStore.advertisements));
     const markers = advertisementStore.visibleAdvertisements.map(ad => ad.geolocation ? ad : { ...ad, geolocation: center });
+    //@ts-ignore
+    const isMobile = useMediaQuery(theme => theme.breakpoints.down('sm'))
 
     useEffect(() => {
         setCenter(calculateCenter(advertisementStore.advertisements));
@@ -114,7 +115,7 @@ function AdvertisementsMap() {
 
             </MapContainer>
             {
-                advertisementStore.viewedAdvertisement &&
+                advertisementStore.viewedAdvertisement && !isMobile &&
                     <Box sx={{
                         position: 'absolute',
                         display: 'flex',
@@ -141,7 +142,7 @@ function AdvertisementsMap() {
                     </Box>
             }
             {
-                advertisementStore.preViewedAdvertisement &&
+                advertisementStore.preViewedAdvertisement && !isMobile &&
                 advertisementStore.preViewedAdvertisement.link !== advertisementStore.viewedAdvertisement?.link &&
                     <Box sx={{
                         position: 'absolute',
@@ -168,6 +169,27 @@ function AdvertisementsMap() {
                                 followAdvertisement={ad => advertisementStore.followAdvertisementAsync(ad, filterId!)}
                                 seeAdvertisement={ad => advertisementStore.seeAdvertisementAsync(ad, filterId!)}
                             />
+                    </Box>
+            }
+            {
+                advertisementStore.viewedAdvertisement && isMobile &&
+                    <Box sx={{
+                        position: 'absolute',
+                        top: 0, bottom: 0, left: 0, right: 0,
+                        zIndex: 1002,
+                        overflowX: 'hidden',
+                        borderRadius: '20px',
+                        padding: 2
+                    }}>
+                        <AdvertisementTile
+                            key={advertisementStore.viewedAdvertisement .link}
+                            closeButton
+                            isFocused={true}
+                            ad={advertisementStore.viewedAdvertisement}
+                            flagAdvertisement={ad => advertisementStore.flagAdvertisementAsync(ad, filterId!)}
+                            followAdvertisement={ad => advertisementStore.followAdvertisementAsync(ad, filterId!)}
+                            seeAdvertisement={ad => advertisementStore.seeAdvertisementAsync(ad, filterId!)}
+                        />
                     </Box>
             }
         </Box>

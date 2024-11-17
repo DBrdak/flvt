@@ -54,6 +54,8 @@ internal sealed class FiltersService
         }
         var photos = photosGetResult.Value.ToList();
 
+        filter.NewAdvertisementsFound(advertisementLinks);
+
         var advertisementsToFile = ProcessedAdvertisementModel.FromFilter(filter, advertisements, photos);
 
         var advertisementsFileWriteResult = await _fileService.WriteAdvertisementsToFileAsync(filter, advertisementsToFile);
@@ -69,7 +71,7 @@ internal sealed class FiltersService
 
         var advertisementsFilePath = advertisementsFileWriteResult.Value;
 
-        filter.NewAdvertisementsFound(advertisementLinks, advertisementsFilePath);
+        filter.NewAdvertisementsSavedToFile(advertisementsFilePath);
 
         return filter;
     }

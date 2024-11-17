@@ -1,6 +1,4 @@
-﻿using Flvt.Domain.Extensions;
-using Flvt.Domain.Filters.Erros;
-using Flvt.Domain.Primitives.Responses;
+﻿using Flvt.Domain.Primitives.Responses;
 using Flvt.Domain.Subscribers;
 
 namespace Flvt.Domain.Filters;

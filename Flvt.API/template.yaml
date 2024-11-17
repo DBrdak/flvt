@@ -640,3 +640,31 @@ Resources:
             Path: /v1/subscribers/filters/{filterId}
             Method: DELETE
             ApiId: !Ref FlvtApi
+  AdvertisementsPreview:
+    Type: AWS::Serverless::Function
+    Metadata:
+      Tool: Amazon.Lambda.Annotations
+      SyncedEvents:
+        - RootGet
+      SyncedEventProperties:
+        RootGet:
+          - Path
+          - Method
+    Properties:
+      FunctionName: AdvertisementsPreview
+      Runtime: dotnet8
+      CodeUri: .
+      MemorySize: 3008
+      Timeout: 60
+      Role: arn:aws:iam::975049887576:role/FullAccess
+      PackageType: Zip
+      Handler: Flvt.API::Flvt.API.Functions.API.Advertisements.AdvertisementsFunctions_Preview_Generated::Preview
+      Events:
+        RootGet:
+          Type: HttpApi
+          Properties:
+            Path: /v1/advertisements/preview
+            Method: GET
+            ApiId: !Ref FlvtApi
+            Auth:
+              Authorizer: NONE

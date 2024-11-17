@@ -5,6 +5,7 @@ using Flvt.API.Utils;
 using Flvt.Application.Advertisements.Flag;
 using Flvt.Application.Advertisements.Follow;
 using Flvt.Application.Advertisements.GetAdvertisementsByFilter;
+using Flvt.Application.Advertisements.GetPreviewAdvertisements;
 using Flvt.Application.Advertisements.MarkAsSeen;
 using Flvt.Domain.Primitives.Responses;
 using Flvt.Infrastructure.Authentication.Models;
@@ -71,5 +72,16 @@ public sealed class AdvertisementsFunctions : BaseFunction
         var result = await Sender.Send(command) ?? Error.Exception;
 
         return result.ReturnAPIResponse(200, 400);
+    }
+
+    [LambdaFunction(ResourceName = $"Advertisements{nameof(Preview)}")]
+    [HttpApi(LambdaHttpMethod.Get, "/v1/advertisements/preview")]
+    public async Task<APIGatewayHttpApiV2ProxyResponse> Preview()
+    {
+        var command = new GetPreviewAdvertisementsQuery();
+
+        var result = await Sender.Send(command) ?? Error.Exception;
+
+        return result.ReturnAPIResponse(200, 404);
     }
 }

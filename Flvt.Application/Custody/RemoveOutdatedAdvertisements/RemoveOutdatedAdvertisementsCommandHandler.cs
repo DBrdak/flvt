@@ -2,7 +2,6 @@ using Flvt.Application.Abstractions;
 using Flvt.Application.Messaging;
 using Flvt.Domain.Primitives.Responses;
 using Flvt.Domain.ProcessedAdvertisements;
-using Flvt.Domain.ScrapedAdvertisements;
 
 namespace Flvt.Application.Custody.RemoveOutdatedAdvertisements;
 

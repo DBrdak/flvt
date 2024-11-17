@@ -2,7 +2,6 @@
 using Flvt.Domain.Primitives.Responses;
 using Flvt.Domain.ScrapedAdvertisements;
 using Flvt.Infrastructure.Data.DataModels;
-using Flvt.Infrastructure.Data.DataModels.Photos;
 using Flvt.Infrastructure.Data.DataModels.ScrapedAdvertisements;
 using Flvt.Infrastructure.Data.Extensions;
 
