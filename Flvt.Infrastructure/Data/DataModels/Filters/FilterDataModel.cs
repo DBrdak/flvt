@@ -4,8 +4,6 @@ using Flvt.Domain.Filters;
 using Flvt.Domain.Subscribers;
 using Flvt.Infrastructure.Data.DataModels.Exceptions;
 using Flvt.Infrastructure.Data.Extensions;
-using Newtonsoft.Json;
-using Serilog;
 using Filter = Flvt.Domain.Filters.Filter;
 
 namespace Flvt.Infrastructure.Data.DataModels.Filters;

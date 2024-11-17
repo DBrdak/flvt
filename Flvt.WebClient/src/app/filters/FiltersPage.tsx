@@ -1,12 +1,14 @@
 import {observer} from "mobx-react-lite";
 import {useStore} from "../../stores/store.ts";
 import useSubscriber from "../../utils/hooks/useSubscriber.tsx";
-import {Box, Typography, Skeleton} from "@mui/material";
+import {Box, Typography, Skeleton, Button} from "@mui/material";
 import {styled} from "@mui/material/styles";
 import MuiCard from "@mui/material/Card";
 import {Filter} from "../../models/filter.ts";
 import FilterCard from "./FilterCard.tsx";
 import ConfirmModal from "../sharedComponents/ConfirmModal.tsx";
+import {useNavigate} from "react-router-dom";
+import NewFilterModal from "./NewBasicFilterModal.tsx";
 
 const Card = styled(MuiCard)(({ theme }) => ({
     alignSelf: 'center',
@@ -32,6 +34,11 @@ const Card = styled(MuiCard)(({ theme }) => ({
 function FiltersPage() {
     const {subscriberStore, modalStore} = useStore()
     const subscriber = useSubscriber()
+    const navigate = useNavigate()
+
+    const reachedBasicLimit =
+        subscriber?.tier.toLowerCase() === 'basic' &&
+        subscriber.filters.length >= 1
 
     const handleRemove = (filter: Filter) => {
         const removeFilter = async () => {
@@ -64,7 +71,6 @@ function FiltersPage() {
                     flexDirection: 'column',
                     justifyContent: 'center',
                     alignItems: 'center',
-                    overflow: 'hidden',
                     backgroundImage:
                         'radial-gradient(ellipse at 50% 50%, hsl(210, 100%, 97%), hsl(0, 0%, 100%))',
                     backgroundRepeat: 'no-repeat',
@@ -84,11 +90,32 @@ function FiltersPage() {
                     </Card>
                     :
                     <Card variant="outlined">
-                        {subscriber?.filters.map(filter => (
+                        {subscriberStore.currentSubscriber?.filters.map(filter => (
                             <FilterCard key={filter.id} filter={filter} onRemove={handleRemove}/>
                         ))}
+                        <Button
+                            fullWidth
+                            variant={'contained'}
+                            color={'secondary'}
+                            onClick={() => modalStore.openModal(<NewFilterModal />)}
+                            disabled={reachedBasicLimit}
+                        >
+                            Add basic filter
+                        </Button>
+                        {
+                            reachedBasicLimit &&
+                                <Typography sx={{width: '100%', textAlign: 'center'}} variant={'body2'} color={'text.secondary'}>
+                                    You've reached a limit for your current {subscriber?.tier} tier, if you would like to add more filters, please upgrade your plan
+                                </Typography>
+                        }
                     </Card>
             }
+            <Button sx={{width: '300px', marginY: 2}} variant={'contained'} color={'error'} onClick={() => {
+                subscriberStore.logOut()
+                navigate('/')
+            }}>
+                Log out
+            </Button>
         </Box>
     )
 }

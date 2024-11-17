@@ -33,6 +33,7 @@ const fadeIn = keyframes`
 interface Props {
     ad: Advertisement
     isFocused: boolean
+    closeButton?: boolean
     enableHover?: boolean
     flagAdvertisement: (ad: Advertisement) => void
     followAdvertisement: (ad: Advertisement) => void
@@ -42,40 +43,39 @@ interface Props {
 function AdvertisementTile({ad, isFocused, enableHover, flagAdvertisement, followAdvertisement, seeAdvertisement}: Props) {
     const {advertisementStore} = useStore()
 
-    const tileStyles = isFocused ? [
-            (theme: Theme) => ({
-                userSelect: 'none',
-                width: '100%',
-                padding: 2.5,
-                boxShadow: 3,
-                borderRadius: '10px',
-                animation: `${fadeIn} 0.4s ease`,
-                backgroundImage:
-                    'radial-gradient(ellipse at 100% 100%, hsl(210, 100%, 97%), hsl(0, 0%, 100%))',
-                backgroundRepeat: 'no-repeat',
-                ...theme.applyStyles('dark', {
-                    backgroundImage:
-                        'radial-gradient(at 50% 50%, hsla(210, 100%, 16%, 0.5), hsl(220, 30%, 5%))',
-                })
-            })
-        ] :
-        {
+    const focusedStyle = (theme: Theme) => ({
+        userSelect: 'none',
+        width: '100%',
+        padding: 2.5,
+        boxShadow: 3,
+        borderRadius: '10px',
+        animation: `${fadeIn} 0.4s ease`,
+        backgroundImage:
+            'radial-gradient(ellipse at 100% 100%, hsl(210, 100%, 97%), hsl(0, 0%, 100%))',
+        backgroundRepeat: 'no-repeat',
+        ...theme.applyStyles('dark', {
+            backgroundImage:
+                'radial-gradient(at 50% 50%, hsla(210, 100%, 16%, 0.5), hsl(220, 30%, 5%))',
+        })
+    })
+
+    const notFocusedStyle = (theme: Theme) => ({
             userSelect: 'none',
             width: '100%',
             padding: 2.5,
-            boxShadow: 3,
+            boxShadow: theme.spacing(3),
             borderRadius: '10px',
             animation: `${fadeIn} 0.4s ease`,
             '&:hover': {
                 backgroundImage:
                     'radial-gradient(at 50% 50%, hsla(210, 100%, 16%, 0.5), hsl(220, 30%, 5%))',
             }
-        }
-    /* @ts-ignore*/
+        })
+
     return (
         <Card
             variant={'outlined'}
-            sx={tileStyles}
+            sx={isFocused ? {...focusedStyle} : {...notFocusedStyle}}
             onMouseOver={() => enableHover && advertisementStore.setPreViewedAdvertisement(ad)}
             onMouseLeave={() => enableHover && advertisementStore.setPreViewedAdvertisement(null)}
         >
@@ -198,7 +198,16 @@ function AdvertisementTile({ad, isFocused, enableHover, flagAdvertisement, follo
                     target="_blank"
                     onClick={() => seeAdvertisement(ad)}
                 >
-                    Check
+                    Open
+                </Button>
+                <Button
+                    fullWidth
+                    onClick={() => {
+                        advertisementStore.setViewedAdvertisement(null)
+                        advertisementStore.setPreViewedAdvertisement(null)
+                    }}
+                >
+                    Close
                 </Button>
             </CardActions>
         </Card>

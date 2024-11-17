@@ -4,7 +4,6 @@ using Flvt.Application.Subscribers.Models;
 using Flvt.Domain.Filters;
 using Flvt.Domain.Primitives.Responses;
 using Flvt.Domain.Subscribers;
-using Serilog;
 
 namespace Flvt.Application.Subscribers.GetSubscriber;
 

@@ -1,5 +1,4 @@
-﻿using System.Text.RegularExpressions;
-using Flvt.Domain.Filters.Erros;
+﻿using Flvt.Domain.Filters.Erros;
 using Flvt.Domain.Primitives.Responses;
 
 namespace Flvt.Domain.Filters;

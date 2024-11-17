@@ -3,10 +3,10 @@ import {useStore} from "../../../../stores/store.ts";
 import {Button, Checkbox, FormControlLabel, FormGroup, Stack, Typography} from "@mui/material";
 
 function SettingsDialog() {
-    const {modalStore, advertisementStore} = useStore()
+    const {advertisementStore} = useStore()
 
     return (
-        <Stack direction="column" sx={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+        <Stack direction="column" sx={{display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 3, p: 2}}>
             <Stack direction={'column'} sx={{ flexGrow: 1, textAlign: 'center' }}>
                 <Typography variant="h6" component="div">
                     Settings
@@ -20,11 +20,13 @@ function SettingsDialog() {
                     <FormControlLabel
                         control={
                             <Checkbox
+                                size={'large'}
                                 checked={advertisementStore.showNewAds}
                                 onClick={() => advertisementStore.setShowNewAds()}
                             />
                         }
                         label="New advertisements"
+                        sx={{userSelect: 'none'}}
                     />
                     <FormControlLabel
                         control={
@@ -34,6 +36,7 @@ function SettingsDialog() {
                             />
                         }
                         label="Not seen advertisements"
+                        sx={{userSelect: 'none'}}
                     />
                     <FormControlLabel
                         control={
@@ -43,6 +46,7 @@ function SettingsDialog() {
                             />
                         }
                         label="Seen advertisements"
+                        sx={{userSelect: 'none'}}
                     />
                     <FormControlLabel
                         control={
@@ -52,15 +56,19 @@ function SettingsDialog() {
                             />
                         }
                         label="Followed advertisements"
+                        sx={{userSelect: 'none'}}
                     />
                 </FormGroup>
             </Stack>
 
-            <Button onClick={() => advertisementStore.filterAds()}>
-                Refresh
+            <Button
+                variant={'outlined'}
+                onClick={() => advertisementStore.resetView()}
+            >
+                Reset
             </Button>
         </Stack>
     )
 }
 
-export default observer(SettingsDialog)
+export default observer(SettingsDialog);

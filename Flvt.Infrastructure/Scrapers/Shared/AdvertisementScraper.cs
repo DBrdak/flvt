@@ -1,5 +1,4 @@
-﻿using Flvt.Domain.Filters;
-using Flvt.Domain.Photos;
+﻿using Flvt.Domain.Photos;
 using Flvt.Domain.ScrapedAdvertisements;
 using Flvt.Infrastructure.Monitoring;
 using Flvt.Infrastructure.Utlis.Extensions;

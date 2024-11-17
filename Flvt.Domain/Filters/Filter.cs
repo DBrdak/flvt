@@ -1,6 +1,4 @@
-﻿using Flvt.Domain.Extensions;
-using Flvt.Domain.Filters.Erros;
-using Flvt.Domain.Primitives.Responses;
+﻿using Flvt.Domain.Primitives.Responses;
 using Flvt.Domain.Subscribers;
 
 namespace Flvt.Domain.Filters;
@@ -193,7 +191,7 @@ public sealed record Filter
             subscriber.Email.Value);
     }
 
-    public void NewAdvertisementsFound(List<string> advertisements, string advertisementsFilePath)
+    public void NewAdvertisementsFound(List<string> advertisements)
     {
         _recentlyFoundAdvertisements = advertisements
             .Where(ad => _foundAdvertisements.All(foundAd => foundAd != ad))
@@ -208,7 +206,10 @@ public sealed record Filter
         _followedAdvertisements = _followedAdvertisements
             .Where(followedAd => _foundAdvertisements.Contains(followedAd))
             .ToList();
+    }
 
+    public void NewAdvertisementsSavedToFile(string advertisementsFilePath)
+    {
         Frequency.Used();
         AdvertisementsFilePath = advertisementsFilePath;
     }

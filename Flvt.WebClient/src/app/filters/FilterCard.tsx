@@ -46,7 +46,7 @@ function FilterCard({ filter, onRemove }: Props) {
                 </Typography>
 
                 <Typography variant="body2" color="text.secondary">
-                    Area: {filter.minArea ?? 'N/A'} - {filter.maxArea ?? 'N/A'} sq ft
+                    Area: {filter.minArea ?? 'N/A'} - {filter.maxArea ?? 'N/A'}
                 </Typography>
 
                 <Typography variant="body2" color="text.secondary">
@@ -58,7 +58,7 @@ function FilterCard({ filter, onRemove }: Props) {
                 </Typography>
 
                 <Typography variant="body2" color="text.secondary">
-                    Next Filter At: {format(filter.nextUse, 'Pp')}
+                    Next Filtering At: {format(filter.nextUse, 'Pp')}
                 </Typography>
 
                 <Divider sx={{ marginY: 1 }} />

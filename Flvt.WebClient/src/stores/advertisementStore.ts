@@ -46,33 +46,59 @@ export default class AdvertisementStore {
 
     public setShowFollowedAds(state?: boolean) {
         this.showFollowedAds = state || !this.showFollowedAds
+        this.filterAds()
     }
 
     public setShowSeenAds(state?: boolean) {
         this.showSeenAds = state || !this.showSeenAds
+        this.filterAds()
     }
 
     public setShowNotSeenAds(state?: boolean) {
         this.showNotSeenAds = state || !this.showNotSeenAds
+        this.filterAds()
     }
 
     public setShowNewAds(state?: boolean) {
         this.showNewAds = state || !this.showNewAds
+        this.filterAds()
     }
 
-    public filterAds() {
-        //TODO Implement
+    private filterAds() {
+        const ads: Advertisement[] = []
+
+        this.showNotSeenAds && ads.push(...this.advertisements.filter(ad => !ad.wasSeen))
+
+        this.showSeenAds && ads.push(...this.advertisements.filter(ad => ad.wasSeen))
+
+        this.showNewAds && ads.push(...this.advertisements.filter(ad => ad.isNew))
+
+        this.showFollowedAds && ads.push(...this.advertisements.filter(ad => ad.isFollowed))
+
+        const adsMap = new Map<string, Advertisement>()
+        ads.forEach(ad => adsMap.set(ad.link, ad))
+
+        this.setVisibleAdvertisements([...adsMap.values()])
+    }
+
+    resetView() {
+        this.setShowFollowedAds(true)
+        this.setShowSeenAds(true)
+        this.setShowNotSeenAds(true)
+        this.setShowNewAds(true)
     }
 
     public async loadAdvertisementsAsync(filterId: string) {
         this.setLoading('init')
 
         try {
-            const advertisementsFileUrl = await agent.advertisements.getByFilter(filterId)
+            const advertisementsFileUrl = filterId === 'preview' ?
+                await agent.advertisements.getPreview() :
+                await agent.advertisements.getByFilter(filterId)
             const fileGetResponse = await fetch(advertisementsFileUrl)
 
             if(fileGetResponse.status !== 200){
-                 return []
+                 return false
             }
 
             const advertisements: Advertisement[] = await fileGetResponse.json()
@@ -97,7 +123,7 @@ export default class AdvertisementStore {
             AdvertisementFunctions.follow(advertisement)
 
             Promise.all([
-                await agent.advertisements.follow(advertisement.link, filterId),
+                filterId !== 'preview' && await agent.advertisements.follow(advertisement.link, filterId),
                 await this.dbContext!.updateAdvertisementAsync(filterId, advertisement)
             ])
 
@@ -118,7 +144,7 @@ export default class AdvertisementStore {
             advertisement.isNew = false
 
             Promise.all([
-                await agent.advertisements.see(advertisement.link, filterId),
+                filterId !== 'preview' && await agent.advertisements.see(advertisement.link, filterId),
                 await this.dbContext!.updateAdvertisementAsync(filterId, advertisement)
             ])
 
@@ -138,7 +164,7 @@ export default class AdvertisementStore {
             advertisement.isFlagged = true
 
             Promise.all([
-                agent.advertisements.flag(advertisement.link),
+                filterId !== 'preview' && agent.advertisements.flag(advertisement.link),
                 this.dbContext!.updateAdvertisementAsync(filterId, advertisement)
             ])
 

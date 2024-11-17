@@ -1,5 +1,4 @@
 ﻿using Amazon.DynamoDBv2.DocumentModel;
-using Flvt.Domain.Primitives.Advertisements;
 using Flvt.Domain.Subscribers;
 using Flvt.Infrastructure.Data.DataModels.Exceptions;
 using System.Reflection;

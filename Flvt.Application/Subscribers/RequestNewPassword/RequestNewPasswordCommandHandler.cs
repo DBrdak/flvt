@@ -2,7 +2,6 @@ using Flvt.Application.Abstractions;
 using Flvt.Application.Messaging;
 using Flvt.Domain.Primitives.Responses;
 using Flvt.Domain.Subscribers;
-using Serilog;
 
 namespace Flvt.Application.Subscribers.RequestNewPassword;
 

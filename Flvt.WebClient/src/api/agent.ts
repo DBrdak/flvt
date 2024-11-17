@@ -95,6 +95,8 @@ const auth = {
 const advertisements = {
     getByFilter: (filterId: string) =>
         requests.get<string>(`/v1/advertisements?filterId=${filterId}`).then(resultValue),
+    getPreview: () =>
+        requests.get<string>(`/v1/advertisements/preview`).then(resultValue),
     follow: (advertisementId: string, filterId: string) =>
         requests.put(`/v1/advertisements/follow?advertisementLink=${advertisementId}&filterId=${filterId}`),
     flag: (advertisementId: string) =>

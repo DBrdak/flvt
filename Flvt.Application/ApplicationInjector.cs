@@ -1,9 +1,6 @@
 ﻿using Flvt.Application.Behaviors;
 using Flvt.Application.Subscribers.Services;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Serilog;
-using Serilog.Events;
 
 namespace Flvt.Application;
 
