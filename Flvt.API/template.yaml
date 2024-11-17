@@ -8,7 +8,7 @@ Resources:
       CorsConfiguration:
         AllowOrigins:
           - "http://localhost:5173"
-          - "http://localhost:3000"
+          - "https://flvt.dbrdak.com"
         AllowHeaders:
           - content-type
           - authorization

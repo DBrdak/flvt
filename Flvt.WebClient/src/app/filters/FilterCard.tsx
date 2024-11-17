@@ -38,15 +38,15 @@ function FilterCard({ filter, onRemove }: Props) {
                 </Typography>
 
                 <Typography variant="body2" color="text.secondary">
-                    Price Range: {filter.minPrice ?? 'N/A'} - {filter.maxPrice ?? 'N/A'}
+                    Price Range: {filter.minPrice ?? 0} - {filter.maxPrice ?? '∞'}
                 </Typography>
 
                 <Typography variant="body2" color="text.secondary">
-                    Rooms: {filter.minRooms ?? 'N/A'} - {filter.maxRooms ?? 'N/A'}
+                    Rooms: {filter.minRooms ?? 1} - {filter.maxRooms ?? '∞'}
                 </Typography>
 
                 <Typography variant="body2" color="text.secondary">
-                    Area: {filter.minArea ?? 'N/A'} - {filter.maxArea ?? 'N/A'}
+                    Area: {filter.minArea ?? 0} - {filter.maxArea ?? '∞'}
                 </Typography>
 
                 <Typography variant="body2" color="text.secondary">

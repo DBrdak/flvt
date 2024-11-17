@@ -16,7 +16,7 @@ function ViewSelector({currentView, setCurrentView}: Props) {
 
     const styles = (viewName: string): {variant: 'outlined' | 'contained', color: 'secondary' | 'primary'} => (
         {
-            variant: viewName === currentView ? 'contained' : 'outlined',
+            variant: viewName === currentView ? 'contained' : 'contained',
             color: viewName === currentView ? 'secondary' : 'primary',
         }
     );

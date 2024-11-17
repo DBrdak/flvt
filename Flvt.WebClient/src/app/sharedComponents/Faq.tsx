@@ -4,7 +4,7 @@ import { observer } from 'mobx-react-lite'
 
 function Faq() {
     return (
-        <Box sx={{ padding: 4, maxWidth: '800px', margin: '0 auto' }}>
+        <Box sx={{ padding: 4, maxWidth: '800px', maxHeight: '90vh', margin: '0', overflowY: 'auto' }}>
             <Typography variant="h4" gutterBottom textAlign="center">
                 About Flvt
             </Typography>
