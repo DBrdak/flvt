@@ -1,12 +1,13 @@
 ﻿using Flvt.Domain.Photos;
 using Flvt.Domain.ScrapedAdvertisements;
 using Flvt.Infrastructure.Monitoring;
+using Flvt.Infrastructure.Scrapers.Shared.Parsers;
 using Flvt.Infrastructure.Utlis.Extensions;
 using HtmlAgilityPack;
 using Newtonsoft.Json;
 using Serilog;
 
-namespace Flvt.Infrastructure.Scrapers.Shared;
+namespace Flvt.Infrastructure.Scrapers.Shared.Scrapers;
 
 internal abstract class AdvertisementScraper
 {
@@ -45,7 +46,7 @@ internal abstract class AdvertisementScraper
         SuccessfullyScrapedAds = _advertisements.Count;
         await _monitor.DisposeAsync();
 
-        return new (_advertisements, _photos);
+        return new(_advertisements, _photos);
     }
 
     private async Task ScrapeAdvertisementsAsync(IEnumerable<string> links)

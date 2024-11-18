@@ -1,0 +1,23 @@
+﻿using Flvt.Infrastructure.Scrapers.Shared.Helpers;
+using Flvt.Infrastructure.Scrapers.Shared.Scrapers;
+
+namespace Flvt.Infrastructure.Scrapers.Domiporta;
+
+internal sealed class DomiportaLinkScraper : AdvertisementLinkScraper
+{
+    private readonly DomiportaLatestAdvertisementHelper _latestAdvertisementHelper;
+
+    public DomiportaLinkScraper(ScrapingFilter filter, DomiportaLatestAdvertisementHelper latestAdvertisementHelper) 
+        : base(filter, new DomiportaParser())
+    {
+        _latestAdvertisementHelper = latestAdvertisementHelper;
+    }
+
+    protected override List<string> ValidateLinks(List<string> links) =>
+        links
+            .Where(link => GetIdFromLink(link) > _latestAdvertisementHelper.LastScrapedId)
+            .ToList();
+
+    private long GetIdFromLink(string link) => 
+        long.Parse(link.Split("/").Last());
+}

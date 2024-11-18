@@ -1,6 +1,7 @@
 ﻿using Flvt.Domain.Extensions;
 using Flvt.Domain.ScrapedAdvertisements;
-using Flvt.Infrastructure.Scrapers.Shared;
+using Flvt.Infrastructure.Scrapers.Shared.Helpers;
+using Flvt.Infrastructure.Scrapers.Shared.Parsers;
 using HtmlAgilityPack;
 
 namespace Flvt.Infrastructure.Scrapers.Otodom;

@@ -8,7 +8,9 @@ using Flvt.Infrastructure.Data.DataModels.Filters;
 using Flvt.Infrastructure.Data.DataModels.Photos;
 using Flvt.Infrastructure.Data.DataModels.ProcessedAdvertisements;
 using Flvt.Infrastructure.Data.DataModels.ScrapedAdvertisements;
+using Flvt.Infrastructure.Data.DataModels.ScraperHelpers;
 using Flvt.Infrastructure.Data.DataModels.Subscribers;
+using Flvt.Infrastructure.Scrapers.Shared.Helpers;
 
 namespace Flvt.Infrastructure.Data.DataModels;
 
@@ -34,6 +36,8 @@ internal sealed class DataModelService<TEntity>
                 .FromDomainModel(filter) as IDataModel<TEntity>,
             AdvertisementPhotos photos => AdvertisementPhotosDataModel
                 .FromDomainModel(photos) as IDataModel<TEntity>,
+            ScraperHelper scraperHelper => ScraperHelperDataModel
+                .FromDomainModel(scraperHelper) as IDataModel<TEntity>,
             _ => throw _convertDomainModelToDataModelException
         } ??
         throw _convertDomainModelToDataModelException;
@@ -53,6 +57,8 @@ internal sealed class DataModelService<TEntity>
                 BatchDataModel.FromDocument(doc) as IDataModel<TEntity>,
             { Name: nameof(AdvertisementPhotos) } =>
                 AdvertisementPhotosDataModel.FromDocument(doc) as IDataModel<TEntity>,
+            { Name: nameof(ScraperHelper) } =>
+                ScraperHelperDataModel.FromDocument(doc) as IDataModel<TEntity>,
             _ => throw _convertDocumentToDataModelException
         } ??
         throw _convertDocumentToDataModelException;

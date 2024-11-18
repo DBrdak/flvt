@@ -1,5 +1,5 @@
 ﻿using System.Diagnostics;
-using Flvt.Infrastructure.Scrapers.Shared;
+using Flvt.Infrastructure.Scrapers.Shared.Scrapers;
 using Serilog;
 
 namespace Flvt.Infrastructure.Monitoring;

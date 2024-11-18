@@ -1,6 +1,6 @@
 ﻿using Flvt.Infrastructure.Scrapers.Olx;
 using Flvt.Infrastructure.Scrapers.Otodom;
-using Flvt.Infrastructure.Scrapers.Shared;
+using Flvt.Infrastructure.Scrapers.Shared.Parsers;
 
 namespace Flvt.Infrastructure.Scrapers.Factories;
 

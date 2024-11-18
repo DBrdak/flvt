@@ -1,4 +1,4 @@
-﻿using Flvt.Infrastructure.Scrapers.Shared;
+﻿using Flvt.Infrastructure.Scrapers.Shared.Parsers;
 using HtmlAgilityPack;
 using Serilog;
 
