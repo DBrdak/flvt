@@ -57,6 +57,8 @@ internal sealed class ScrapingOrchestrator : IScrapingOrchestrator
         var otodomScrapeResult = otodomTask.Result;
         var domiportaScrapeResult = domiportaTask.Result;
 
+        await UpdateHelpers();
+
         return [..otodomScrapeResult, ..domiportaScrapeResult];
     }
 
@@ -83,5 +85,10 @@ internal sealed class ScrapingOrchestrator : IScrapingOrchestrator
         _domiportaLatestAdvertisementHelper = new (domiportaLatestAdvertisementHelper);
 
         return true;
-    } 
+    }
+
+    private async Task UpdateHelpers() =>
+        await _scraperHelperRepository.AddRangeAsync([
+            _domiportaLatestAdvertisementHelper!.ToScraperHelper()
+        ]);
 }

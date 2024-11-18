@@ -5,5 +5,5 @@ namespace Flvt.Infrastructure.Scrapers.Shared.Helpers.Repositories;
 internal interface IScraperHelperRepository
 {
     Task<Result<ScraperHelper>> GetDomiportaLatestAdvertisementHelperAsync();
-    Task<Result<ScraperHelper>> AddAsync(ScraperHelper helper);
+    Task<Result> AddRangeAsync(IEnumerable<ScraperHelper> helpers);
 }

@@ -13,10 +13,20 @@ internal sealed class DomiportaLinkScraper : AdvertisementLinkScraper
         _latestAdvertisementHelper = latestAdvertisementHelper;
     }
 
-    protected override List<string> ValidateLinks(List<string> links) =>
-        links
+    protected override List<string> ValidateLinks(List<string> links)
+    {
+        var validLinks = links
             .Where(link => GetIdFromLink(link) > _latestAdvertisementHelper.LastScrapedId)
             .ToList();
+
+        var latestId = validLinks
+            .Select(GetIdFromLink)
+            .Max();
+
+        _latestAdvertisementHelper.UpdateLastScrapedId(latestId);
+
+        return validLinks;
+    }
 
     private long GetIdFromLink(string link) => 
         long.Parse(link.Split("/").Last());

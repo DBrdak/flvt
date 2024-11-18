@@ -26,9 +26,6 @@ internal sealed class DomiportaParser : AdvertisementParser
     private string GetDescriptionSelector() =>
         "//div[@class='description__panel']";
 
-    private string GetIdSelector() =>
-        "//input[@name='itemId']";
-
     protected override string GetBaseUrl() => "https://www.domiporta.pl";
 
     protected override string GetBaseQueryRelativeUrl() => "mieszkanie/wynajme";
@@ -77,13 +74,7 @@ internal sealed class DomiportaParser : AdvertisementParser
             .SelectSingleNode(GetDescriptionSelector())?
             .InnerText ?? string.Empty;
 
-        var plainId = Document.DocumentNode
-            .SelectSingleNode(GetIdSelector())?
-            .GetAttributeValue("value", string.Empty);
-
-        var id = long.TryParse(plainId, out var parsedId) ? parsedId : 0;
-
-        return new DomiportaAdContent(id, features, description);
+        return new DomiportaAdContent(features, description);
     }
 
     public override IEnumerable<string> ParsePhotos() =>
