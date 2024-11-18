@@ -8,6 +8,7 @@ using Flvt.Domain.ScrapedAdvertisements;
 using Flvt.Domain.Subscribers;
 using Flvt.Infrastructure.AWS.Contants;
 using Flvt.Infrastructure.Data.DataModels.Batches;
+using Flvt.Infrastructure.Scrapers.Shared.Helpers;
 
 namespace Flvt.Infrastructure.Data;
 
@@ -33,6 +34,8 @@ internal sealed class DataContext
         table : throw _connectionException;
     private Table AdvertisementsPhotos => Table.TryLoadTable(_client, nameof(AdvertisementsPhotos), out var table) ?
         table : throw _connectionException;
+    private Table ScraperHelpers => Table.TryLoadTable(_client, nameof(ScraperHelpers), out var table) ?
+        table : throw _connectionException;
 
     public Table Set<TEntity>() =>
         typeof(TEntity) switch
@@ -42,7 +45,8 @@ internal sealed class DataContext
             { Name: nameof(Subscriber) } => Subscribers,
             { Name: nameof(BatchDataModel) } => Batches,
             { Name: nameof(Filter) } => Filters,
-            {Name: nameof(AdvertisementPhotos)} => AdvertisementsPhotos,
+            { Name: nameof(AdvertisementPhotos) } => AdvertisementsPhotos,
+            { Name: nameof(ScraperHelper) } => ScraperHelpers,
             var type => throw InvalidTableException(type.Name)
         };
 }

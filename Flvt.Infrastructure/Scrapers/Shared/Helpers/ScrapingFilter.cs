@@ -1,3 +1,3 @@
-﻿namespace Flvt.Infrastructure.Scrapers.Shared;
+﻿namespace Flvt.Infrastructure.Scrapers.Shared.Helpers;
 
 internal sealed record ScrapingFilter(string City, bool OnlyNew = true);

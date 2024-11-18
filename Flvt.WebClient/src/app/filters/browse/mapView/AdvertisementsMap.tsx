@@ -165,7 +165,6 @@ function AdvertisementsMap() {
                                 isFocused={isFocused(advertisementStore.preViewedAdvertisement )}
                                 ad={advertisementStore.preViewedAdvertisement}
                                 enableHover
-                                closeButton
                                 flagAdvertisement={ad => advertisementStore.flagAdvertisementAsync(ad, filterId!)}
                                 followAdvertisement={ad => advertisementStore.followAdvertisementAsync(ad, filterId!)}
                                 seeAdvertisement={ad => advertisementStore.seeAdvertisementAsync(ad, filterId!)}
@@ -185,6 +184,7 @@ function AdvertisementsMap() {
                         <AdvertisementTile
                             key={advertisementStore.viewedAdvertisement .link}
                             isFocused={true}
+                            closeButton
                             ad={advertisementStore.viewedAdvertisement}
                             flagAdvertisement={ad => advertisementStore.flagAdvertisementAsync(ad, filterId!)}
                             followAdvertisement={ad => advertisementStore.followAdvertisementAsync(ad, filterId!)}

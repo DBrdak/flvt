@@ -1,9 +1,11 @@
 ﻿using Flvt.Infrastructure.Monitoring;
+using Flvt.Infrastructure.Scrapers.Shared.Helpers;
+using Flvt.Infrastructure.Scrapers.Shared.Parsers;
 using Flvt.Infrastructure.Utlis.Extensions;
 using HtmlAgilityPack;
 using Serilog;
 
-namespace Flvt.Infrastructure.Scrapers.Shared;
+namespace Flvt.Infrastructure.Scrapers.Shared.Scrapers;
 
 internal abstract class AdvertisementLinkScraper
 {
@@ -60,7 +62,11 @@ internal abstract class AdvertisementLinkScraper
 
                 var links = await ScrapeAdvertisementLinksFromPage(pageUrl);
 
-                isValidPage = links.Select(_advertisementsLinks.Add).ToList().Any(x => x);
+                var validLinks = ValidateLinks(links);
+
+                isValidPage =
+                    validLinks.Select(_advertisementsLinks.Add).ToList().Any(x => x)
+                    || validLinks.Count != links.Count;
 
                 page++;
             }
@@ -73,12 +79,16 @@ internal abstract class AdvertisementLinkScraper
         while (isValidPage);
     }
 
-    private async Task<IEnumerable<string>> ScrapeAdvertisementLinksFromPage(string pageUrl)
+    private async Task<List<string>> ScrapeAdvertisementLinksFromPage(string pageUrl)
     {
         var htmlDoc = await _web.SafelyLoadFromUrlAsync(pageUrl, _advertisementParser);
 
         _advertisementParser.SetHtmlDocument(htmlDoc);
 
-        return _advertisementParser.ParseAdvertisementsLinks();
+        var links = _advertisementParser.ParseAdvertisementsLinks();
+
+        return links;
     }
+
+    protected virtual List<string> ValidateLinks(List<string> links) => links;
 }
