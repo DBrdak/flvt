@@ -1,5 +1,6 @@
 ﻿using System.Security.AccessControl;
 using Flvt.Domain.Extensions;
+using Flvt.Domain.Primitives.Advertisements;
 using Flvt.Domain.ScrapedAdvertisements;
 using Flvt.Infrastructure.Scrapers.Shared.Helpers;
 using Flvt.Infrastructure.Scrapers.Shared.Parsers;
@@ -25,6 +26,9 @@ internal sealed class DomiportaParser : AdvertisementParser
 
     private string GetDescriptionSelector() =>
         "//div[@class='description__panel']";
+
+    private string GetCoordinatesSelector(string type) =>
+        $"//meta[@itemprop='{type}']";
 
     protected override string GetBaseUrl() => "https://www.domiporta.pl";
 
@@ -64,11 +68,23 @@ internal sealed class DomiportaParser : AdvertisementParser
             .Select(node => node.InnerText)
             .ToList();
 
+        var longitude = Document.DocumentNode
+            .SelectSingleNode(GetCoordinatesSelector("longitude"))?
+            .GetAttributeValue("content", string.Empty)
+            .Replace(',', '.') ?? string.Empty;
+        var latitude = Document.DocumentNode
+            .SelectSingleNode(GetCoordinatesSelector("longitude"))?
+            .GetAttributeValue("content", string.Empty)
+            .Replace(',', '.') ?? string.Empty;
+        var coordinates = new Coordinates(longitude, latitude);
+
         var features = featuresNames is null || featuresValues is null
             ? new Dictionary<string, string>() 
             : featuresNames
                 .Zip(featuresValues, (name, value) => new KeyValuePair<string, string>(name, value))
                 .ToDictionary(pair => pair.Key, pair => pair.Value);
+
+        features.Add("coordinates", coordinates.ToString());
 
         var description = Document.DocumentNode
             .SelectSingleNode(GetDescriptionSelector())?
