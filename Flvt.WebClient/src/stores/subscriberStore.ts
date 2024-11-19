@@ -4,7 +4,6 @@ import {makeAutoObservable} from "mobx";
 import {RegisterBody} from "../api/requestModels/register.ts";
 import {LoginBody} from "../api/requestModels/login.ts";
 import {VerifyEmailBody} from "../api/requestModels/verifyEmail.ts";
-import {SetNewPasswordBody} from "../api/requestModels/setNewPassword.ts";
 import {AddBasicFilterBody} from "../api/requestModels/addBasicFilter.ts";
 import {Filter} from "../models/filter.ts";
 import AdvertisementsDbContext from "../data/advertisementsDbContext.ts";
@@ -124,6 +123,7 @@ export default class SubscriberStore {
             const request: VerifyEmailBody = {email: this.currentSubscriber!.email, verificationCode: verificationCode}
             const subscriber = await agent.auth.verifyEmail(request)
             this.setCurrentSubscriber(subscriber)
+            return true
         } catch (e) {
             return false
         } finally {
@@ -144,11 +144,11 @@ export default class SubscriberStore {
         }
     }
 
-    public async setNewPasswordAsync(request: SetNewPasswordBody){
+    public async setNewPasswordAsync(password: string, email: string, verificationCode: string) {
         this.setLoading('setNewPassword')
 
         try {
-            const subscriber = await agent.auth.setNewPassword(request)
+            const subscriber = await agent.auth.setNewPassword({newPassword: password, subscriberEmail: email, verificationCode: verificationCode})
             this.setCurrentSubscriber(subscriber)
             return true
         } catch (e) {

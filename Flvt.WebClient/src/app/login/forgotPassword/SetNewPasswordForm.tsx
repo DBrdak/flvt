@@ -6,24 +6,24 @@ import {Form, Formik} from "formik";
 import FormLabel from "@mui/material/FormLabel";
 import TextInput from "../../sharedComponents/TextInput.tsx";
 import * as Yup from "yup";
-import {SetNewPasswordBody} from "../../../api/requestModels/setNewPassword.ts";
 import {passwordPattern, verificationCodePattern} from "../../../utils/constants/bussinessRules.ts";
 
 interface Props {
-    onSubmit: (values: SetNewPasswordBody) => void
+    onSubmit: (values: {password: string, verificationCode: string}) => void,
 }
 
-function SetNewPasswordForm({ onSubmit }: Props) {
+function SetNewPasswordForm({onSubmit}: Props) {
     const {modalStore} = useStore()
 
-    const setInitialValues: SetNewPasswordBody = {password: '', verificationCode: ''}
+    const setInitialValues = {password: '', verificationCode: ''}
     const setValidationSchema = Yup.object({
         verificationCode: Yup.string().required('Verification code is required').matches(verificationCodePattern, 'Invalid verification code'),
         password: Yup.string().required('New password is required').matches(passwordPattern, 'Password is too weak')
     })
 
     return (
-        <Formik sx={{width: '100%'}} initialValues={setInitialValues} onSubmit={onSubmit} validationSchema={setValidationSchema} >
+        <Formik sx={{width: '100%'}} initialValues={setInitialValues} onSubmit={onSubmit}
+                validationSchema={setValidationSchema}>
             {({errors}) => (
                 <Form autoComplete={'off'} style={{
                     width: '100%',
@@ -55,7 +55,7 @@ function SetNewPasswordForm({ onSubmit }: Props) {
                             errorMessage={errors.verificationCode}
                         />
                     </Box>
-                    <Box sx={{ padding: '1em', display: 'flex', justifyContent: 'space-around' }}>
+                    <Box sx={{padding: '1em', display: 'flex', justifyContent: 'space-around'}}>
                         <Button onClick={modalStore.closeModal} style={{marginRight: '0.5em'}}>
                             Cancel
                         </Button>
