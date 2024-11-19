@@ -47,8 +47,13 @@ function VerificationPage() {
         const digit = value.replace(/\D/g, '')
         if (!digit) return
 
-        const newCode = [...verificationCode]
-        newCode[index] = digit
+        const newCode = [...verificationCode].filter(c => c !== '')
+        newCode.push(value)
+
+        for (let i = newCode.length; i < 6; i++) {
+            newCode[i] = ''
+        }
+
         setVerificationCode(newCode)
 
         if (index < 5 && digit) {
