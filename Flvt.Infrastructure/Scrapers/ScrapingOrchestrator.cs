@@ -91,4 +91,39 @@ internal sealed class ScrapingOrchestrator : IScrapingOrchestrator
         await _scraperHelperRepository.AddRangeAsync([
             _domiportaLatestAdvertisementHelper!.ToScraperHelper()
         ]);
+
+    public async Task<IEnumerable<string>> ScrapeLinks()
+    {
+        var helpersSetUp = await SetupHelpers();
+
+        if (!helpersSetUp)
+        {
+            return [];
+        }
+
+        var domiportaScraper = new DomiportaLinkScraper(new("piaseczno", false), _domiportaLatestAdvertisementHelper!);
+
+        var domiportaTask = domiportaScraper.ScrapeAsync();
+
+        await Task.WhenAll(domiportaTask);
+
+        var domiportaScrapeResult = domiportaTask.Result;
+
+        await UpdateHelpers();
+
+        return [.. domiportaScrapeResult];
+    }
+
+    public async Task<AdvertisementsScrapeResult> ScrapeAdvertisements(IEnumerable<string> links)
+    {
+        var domiportaScraper = new DomiportaAdvertisementScraper();
+
+        var domiportaTask = domiportaScraper.ScrapeAsync(links);
+
+        await Task.WhenAll(domiportaTask);
+
+        var domiportaScrapeResult = domiportaTask.Result;
+
+        return domiportaScrapeResult;
+    }
 }

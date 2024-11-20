@@ -19,11 +19,7 @@ internal sealed class DomiportaLinkScraper : AdvertisementLinkScraper
             .Where(link => GetIdFromLink(link) > _latestAdvertisementHelper.LastScrapedId)
             .ToList();
 
-        var latestId = validLinks
-            .Select(GetIdFromLink)
-            .Max();
-
-        _latestAdvertisementHelper.UpdateLastScrapedId(latestId);
+        _latestAdvertisementHelper.CurrentlyScrapedIds.AddRange(validLinks.Select(GetIdFromLink));
 
         return validLinks;
     }

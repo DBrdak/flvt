@@ -118,16 +118,21 @@ public class Service : IService
         //await _repository.UpdateRangeAsync(ads);
         //Console.WriteLine((await _sender.Send(cmd)).IsSuccess);
 
+        var a = await _scrapingOrchestrator.ScrapeLinks();
+        Console.WriteLine(a);
+        var b = await _scrapingOrchestrator.ScrapeAdvertisements(a);
+        Console.WriteLine(b);
+
         //TODO THIS WORKS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        var web = new HtmlWeb();
+        //var web = new HtmlWeb();
 
-        var a = await web.LoadFromWebAsync(
-            "https://www.morizon.pl/oferta/wynajem-mieszkanie-warszawa-praga-polnoc-siedlecka-50m2-mzn2044602866");
-        
+        //var a = await web.LoadFromWebAsync(
+        //    "https://www.morizon.pl/oferta/wynajem-mieszkanie-warszawa-praga-polnoc-siedlecka-50m2-mzn2044602866");
 
-        var nodes = a.DocumentNode.SelectNodes("//script[@type='application/ld+json']").FirstOrDefault(node => node.InnerText.Contains("Offer"));
 
-        Console.WriteLine(nodes.InnerText);
+        //var nodes = a.DocumentNode.SelectNodes("//script[@type='application/ld+json']").FirstOrDefault(node => node.InnerText.Contains("Offer"));
+
+        //Console.WriteLine(nodes.InnerText);
     }
 
     public async Task UploadJsonToS3Async(IEnumerable<ProcessedAdvertisement> ads, string bucketName, string key)
