@@ -1,4 +1,5 @@
 export interface SetNewPasswordBody {
+    subscriberEmail: string
     verificationCode: string
-    password: string
+    newPassword: string
 }

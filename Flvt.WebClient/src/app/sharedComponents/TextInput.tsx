@@ -55,22 +55,18 @@ const TextInput: React.FC<Props> = ({
             if (dots > 1) {
                 value = value.slice(0, value.lastIndexOf('.'))
             }
-        }
 
-        if (value !== '0') {
-            value = value.replace(/^0+/, '');
-        }
+            if (value !== '0') {
+                value = value.replace(/^0+/, '');
+            }
 
-        if (value.length > 0 && type === 'text') {
-            value = value.charAt(0).toUpperCase() + value.slice(1);
-        }
+            if (maxValue && parseFloat(value) > maxValue) {
+                value = maxValue.toString();
+            }
 
-        if (maxValue && parseFloat(value) > maxValue) {
-            value = maxValue.toString();
-        }
-
-        if (minValue && parseFloat(value) < minValue) {
-            value = minValue.toString();
+            if (minValue && parseFloat(value) < minValue) {
+                value = minValue.toString();
+            }
         }
 
         if (maxLength && value.length > maxLength) {

@@ -142,6 +142,11 @@ internal abstract class Repository<TEntity>
 
     public async Task<Result<TEntity>> GetByIdAsync(string id)
     {
+        if (string.IsNullOrWhiteSpace(id))
+        {
+            return Error.NotFound<TEntity>();
+        }
+
         var doc = await Table.GetItemAsync(new Primitive(id));
 
         if (doc is null)
@@ -157,9 +162,11 @@ internal abstract class Repository<TEntity>
 
     public async Task<Result<IEnumerable<TEntity>>> GetManyByIdAsync(IEnumerable<string> ids)
     {
+        var identifiers = ids.Where(id => !string.IsNullOrWhiteSpace(id)).ToList();
+
         var batch = Table.CreateBatchGet();
-        
-        ids.ToList().ForEach(id => batch.AddKey(new Primitive(id)));
+
+        identifiers.ToList().ForEach(id => batch.AddKey(new Primitive(id)));
 
         await batch.ExecuteAsync();
 
@@ -171,18 +178,25 @@ internal abstract class Repository<TEntity>
         return Result.Create(entities);
     }
 
-    public async Task<Result> RemoveAsync(string entityId)
+    public async Task<Result> RemoveAsync(string id)
     {
-        await Table.DeleteItemAsync(new Primitive(entityId));
+        if (string.IsNullOrWhiteSpace(id))
+        {
+            return Error.NotFound<TEntity>();
+        }
+
+        await Table.DeleteItemAsync(new Primitive(id));
 
         return Result.Success();
     }
 
     public async Task<Result> RemoveRangeAsync(IEnumerable<string> entitiesId)
     {
+        var identifiers = entitiesId.Where(id => !string.IsNullOrWhiteSpace(id)).ToList();
+
         var batch = Table.CreateBatchWrite();
 
-        entitiesId.ToList().ForEach(id => batch.AddKeyToDelete(new Primitive(id)));
+        identifiers.ToList().ForEach(id => batch.AddKeyToDelete(new Primitive(id)));
 
         await batch.ExecuteAsync();
 
