@@ -35,6 +35,12 @@ function VerificationPage() {
     const inputsRef = useRef<HTMLInputElement[]>([])
 
     useEffect(() => {
+        if(subscriberStore.currentSubscriber?.isEmailVerified) {
+            navigate('/filters')
+        }
+    }, [subscriberStore.currentSubscriber])
+
+    useEffect(() => {
         if (resendCountdown > 0) {
             const timer = setTimeout(() => setResendCountdown(resendCountdown - 1), 1000)
             return () => clearTimeout(timer)
@@ -160,6 +166,12 @@ function VerificationPage() {
                             disabled={!isResendAvailable}
                         >
                             {isResendAvailable ? 'Resend code' : `Resend available in ${resendCountdown}s`}
+                        </Button>
+                        <Button
+                            variant="contained"
+                            onClick={() => navigate('/login')}
+                        >
+                            Back
                         </Button>
                     </Box>
                 </Card>
