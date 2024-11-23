@@ -4,6 +4,8 @@ using Newtonsoft.Json;
 
 namespace Flvt.Infrastructure.Scrapers.Otodom;
 
+internal record OtodomAltAdContent(string Json) : ScrapedAdContent;
+
 internal sealed record OtodomAdAdContent(
     string AdvertiserType,
     string CreatedAt,
@@ -21,9 +23,9 @@ internal sealed record OtodomAdAdContent(
     public static OtodomAdAdContent FromJson(string json)
     {
         dynamic dirtyContent = JsonConvert.DeserializeObject(json);
-        var cleanJson = JsonConvert.SerializeObject(dirtyContent.props.pageProps.ad);
+        var cleanJson = JsonConvert.SerializeObject(dirtyContent?.props.pageProps.ad);
 
-        return JsonConvert.DeserializeObject<OtodomAdAdContent>(cleanJson);
+        return JsonConvert.DeserializeObject<OtodomAdAdContent>(cleanJson) ?? new OtodomAltAdContent(cleanJson);
     }
 }
 

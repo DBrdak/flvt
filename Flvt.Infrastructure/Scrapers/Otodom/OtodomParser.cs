@@ -47,6 +47,8 @@ internal sealed class OtodomParser : AdvertisementParser
 
         _content = OtodomAdAdContent.FromJson(nodeJson);
 
+
+
         return _content;
     }
 
