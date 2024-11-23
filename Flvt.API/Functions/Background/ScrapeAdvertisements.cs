@@ -6,6 +6,7 @@ using MediatR;
 using Newtonsoft.Json;
 using Serilog;
 using System.Runtime.Serialization;
+using Amazon.Lambda.Core;
 
 namespace Flvt.API.Functions.Background;
 
@@ -45,9 +46,18 @@ public sealed class ScrapeAdvertisements : BaseFunction
     }
 
     [LambdaFunction(ResourceName = nameof(ScrapeLinks))]
-    public async Task ScrapeLinks()
+    public async Task ScrapeLinks(object input)
     {
-        var command = new ScrapeAdvertisementsLinksCommand();
+        var service = JsonConvert.DeserializeObject<Dictionary<string, string>>(JsonConvert.SerializeObject(input));
+        var serviceName = service?.GetValueOrDefault("Service");
+
+        if (string.IsNullOrWhiteSpace(serviceName))
+        {
+            Log.Logger.Error("Service name is not provided");
+            return;
+        }
+
+        var command = new ScrapeAdvertisementsLinksCommand(serviceName);
 
         _ = await Sender.Send(command);
     }

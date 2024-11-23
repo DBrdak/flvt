@@ -171,129 +171,6 @@ Resources:
           Properties:
             Name: UpdateUnprocessedScrapedAdsSchedule
             Schedule: 'cron(0 3 * * ? *)'
-  AdvertisementsGetByFilter:
-    Type: AWS::Serverless::Function
-    Metadata:
-      Tool: Amazon.Lambda.Annotations
-      SyncedEvents:
-        - RootGet
-      SyncedEventProperties:
-        RootGet:
-          - Path
-          - Method
-    Properties:
-      FunctionName: AdvertisementsGetByFilter
-      Runtime: dotnet8
-      CodeUri: .
-      MemorySize: 3008
-      Timeout: 60
-      Role: arn:aws:iam::975049887576:role/FullAccess
-      PackageType: Zip
-      Handler: Flvt.API::Flvt.API.Functions.API.Advertisements.AdvertisementsFunctions_GetByFilter_Generated::GetByFilter
-      Events:
-        RootGet:
-          Type: HttpApi
-          Properties:
-            Path: /v1/advertisements
-            Method: GET
-            ApiId: !Ref FlvtApi
-  FlvtAuthorizer:
-    Type: AWS::Serverless::Function
-    Metadata:
-      Tool: Amazon.Lambda.Annotations
-    Properties:
-      FunctionName: FlvtAuthorizer
-      Runtime: dotnet8
-      CodeUri: .
-      MemorySize: 3008
-      Timeout: 60
-      Role: arn:aws:iam::975049887576:role/FullAccess
-      PackageType: Zip
-      Handler: Flvt.API::Flvt.API.Functions.API.Auth.AuthorizerFunctions_Authorizer_Generated::Authorizer
-  Register:
-    Type: AWS::Serverless::Function
-    Metadata:
-      Tool: Amazon.Lambda.Annotations
-      SyncedEvents:
-        - RootPost
-      SyncedEventProperties:
-        RootPost:
-          - Path
-          - Method
-    Properties:
-      FunctionName: Register
-      Runtime: dotnet8
-      CodeUri: .
-      MemorySize: 3008
-      Timeout: 60
-      Role: arn:aws:iam::975049887576:role/FullAccess
-      PackageType: Zip
-      Handler: Flvt.API::Flvt.API.Functions.API.Auth.AuthFunctions_Register_Generated::Register
-      Events:
-        RootPost:
-          Type: HttpApi
-          Properties:
-            Path: /v1/auth/register
-            Method: POST
-            ApiId: !Ref FlvtApi
-            Auth:
-              Authorizer: NONE
-  Login:
-    Type: AWS::Serverless::Function
-    Metadata:
-      Tool: Amazon.Lambda.Annotations
-      SyncedEvents:
-        - RootPost
-      SyncedEventProperties:
-        RootPost:
-          - Path
-          - Method
-    Properties:
-      FunctionName: Login
-      Runtime: dotnet8
-      CodeUri: .
-      MemorySize: 3008
-      Timeout: 60
-      Role: arn:aws:iam::975049887576:role/FullAccess
-      PackageType: Zip
-      Handler: Flvt.API::Flvt.API.Functions.API.Auth.AuthFunctions_Login_Generated::Login
-      Events:
-        RootPost:
-          Type: HttpApi
-          Properties:
-            Path: /v1/auth/login
-            Method: POST
-            ApiId: !Ref FlvtApi
-            Auth:
-              Authorizer: NONE
-  VerifyEmail:
-    Type: AWS::Serverless::Function
-    Metadata:
-      Tool: Amazon.Lambda.Annotations
-      SyncedEvents:
-        - RootPost
-      SyncedEventProperties:
-        RootPost:
-          - Path
-          - Method
-    Properties:
-      FunctionName: VerifyEmail
-      Runtime: dotnet8
-      CodeUri: .
-      MemorySize: 3008
-      Timeout: 60
-      Role: arn:aws:iam::975049887576:role/FullAccess
-      PackageType: Zip
-      Handler: Flvt.API::Flvt.API.Functions.API.Auth.AuthFunctions_VerifyEmail_Generated::VerifyEmail
-      Events:
-        RootPost:
-          Type: HttpApi
-          Properties:
-            Path: /v1/auth/verify
-            Method: POST
-            ApiId: !Ref FlvtApi
-            Auth:
-              Authorizer: FlvtAuthorizerOffEmail
   CustodyFunctionsRemoveUnusedPhotos:
     Type: AWS::Serverless::Function
     Metadata:
@@ -350,181 +227,6 @@ Resources:
           Type: SQS
           Properties:
             Queue: !GetAtt LaunchedFiltersQueue.Arn
-  AdvertisementsMarkAsSeen:
-    Type: AWS::Serverless::Function
-    Metadata:
-      Tool: Amazon.Lambda.Annotations
-      SyncedEvents:
-        - RootPut
-      SyncedEventProperties:
-        RootPut:
-          - Path
-          - Method
-    Properties:
-      FunctionName: AdvertisementsMarkAsSeen
-      Runtime: dotnet8
-      CodeUri: .
-      MemorySize: 3008
-      Timeout: 60
-      Role: arn:aws:iam::975049887576:role/FullAccess
-      PackageType: Zip
-      Handler: Flvt.API::Flvt.API.Functions.API.Advertisements.AdvertisementsFunctions_MarkAsSeen_Generated::MarkAsSeen
-      Events:
-        RootPut:
-          Type: HttpApi
-          Properties:
-            Path: /v1/advertisements/see
-            Method: PUT
-            ApiId: !Ref FlvtApi
-  AdvertisementsFlag:
-    Type: AWS::Serverless::Function
-    Metadata:
-      Tool: Amazon.Lambda.Annotations
-      SyncedEvents:
-        - RootPut
-      SyncedEventProperties:
-        RootPut:
-          - Path
-          - Method
-    Properties:
-      FunctionName: AdvertisementsFlag
-      Runtime: dotnet8
-      CodeUri: .
-      MemorySize: 3008
-      Timeout: 60
-      Role: arn:aws:iam::975049887576:role/FullAccess
-      PackageType: Zip
-      Handler: Flvt.API::Flvt.API.Functions.API.Advertisements.AdvertisementsFunctions_Flag_Generated::Flag
-      Events:
-        RootPut:
-          Type: HttpApi
-          Properties:
-            Path: /v1/advertisements/flag
-            Method: PUT
-            ApiId: !Ref FlvtApi
-  AdvertisementsFollow:
-    Type: AWS::Serverless::Function
-    Metadata:
-      Tool: Amazon.Lambda.Annotations
-      SyncedEvents:
-        - RootPut
-      SyncedEventProperties:
-        RootPut:
-          - Path
-          - Method
-    Properties:
-      FunctionName: AdvertisementsFollow
-      Runtime: dotnet8
-      CodeUri: .
-      MemorySize: 3008
-      Timeout: 60
-      Role: arn:aws:iam::975049887576:role/FullAccess
-      PackageType: Zip
-      Handler: Flvt.API::Flvt.API.Functions.API.Advertisements.AdvertisementsFunctions_Follow_Generated::Follow
-      Events:
-        RootPut:
-          Type: HttpApi
-          Properties:
-            Path: /v1/advertisements/follow
-            Method: PUT
-            ApiId: !Ref FlvtApi
-  RequestNewPassword:
-    Type: AWS::Serverless::Function
-    Metadata:
-      Tool: Amazon.Lambda.Annotations
-      SyncedEvents:
-        - RootPut
-      SyncedEventProperties:
-        RootPut:
-          - Path
-          - Method
-    Properties:
-      FunctionName: RequestNewPassword
-      Runtime: dotnet8
-      CodeUri: .
-      MemorySize: 3008
-      Timeout: 60
-      Role: arn:aws:iam::975049887576:role/FullAccess
-      PackageType: Zip
-      Handler: Flvt.API::Flvt.API.Functions.API.Auth.AuthFunctions_RequestNewPassword_Generated::RequestNewPassword
-      Events:
-        RootPut:
-          Type: HttpApi
-          Properties:
-            Path: /v1/auth/new-password/request
-            Method: PUT
-            ApiId: !Ref FlvtApi
-            Auth:
-              Authorizer: NONE
-  SetNewPassword:
-    Type: AWS::Serverless::Function
-    Metadata:
-      Tool: Amazon.Lambda.Annotations
-      SyncedEvents:
-        - RootPost
-      SyncedEventProperties:
-        RootPost:
-          - Path
-          - Method
-    Properties:
-      FunctionName: SetNewPassword
-      Runtime: dotnet8
-      CodeUri: .
-      MemorySize: 3008
-      Timeout: 60
-      Role: arn:aws:iam::975049887576:role/FullAccess
-      PackageType: Zip
-      Handler: Flvt.API::Flvt.API.Functions.API.Auth.AuthFunctions_SetNewPassword_Generated::SetNewPassword
-      Events:
-        RootPost:
-          Type: HttpApi
-          Properties:
-            Path: /v1/auth/new-password/set
-            Method: POST
-            ApiId: !Ref FlvtApi
-            Auth:
-              Authorizer: NONE
-  ResendEmail:
-    Type: AWS::Serverless::Function
-    Metadata:
-      Tool: Amazon.Lambda.Annotations
-      SyncedEvents:
-        - RootPut
-      SyncedEventProperties:
-        RootPut:
-          - Path
-          - Method
-    Properties:
-      FunctionName: ResendEmail
-      Runtime: dotnet8
-      CodeUri: .
-      MemorySize: 3008
-      Timeout: 900
-      Role: arn:aws:iam::975049887576:role/FullAccess
-      PackageType: Zip
-      Handler: Flvt.API::Flvt.API.Functions.API.Auth.AuthFunctions_ResendEmail_Generated::ResendEmail
-      Events:
-        RootPut:
-          Type: HttpApi
-          Properties:
-            Path: /v1/auth/resend
-            Method: PUT
-            ApiId: !Ref FlvtApi
-            Auth:
-              Authorizer: NONE
-  FlvtAuthorizerOffEmail:
-    Type: AWS::Serverless::Function
-    Metadata:
-      Tool: Amazon.Lambda.Annotations
-    Properties:
-      FunctionName: FlvtAuthorizerOffEmail
-      Runtime: dotnet8
-      CodeUri: .
-      MemorySize: 3008
-      Timeout: 60
-      Role: arn:aws:iam::975049887576:role/FullAccess
-      PackageType: Zip
-      Handler: Flvt.API::Flvt.API.Functions.API.Auth.AuthorizerFunctions_AuthorizerOffEmail_Generated::AuthorizerOffEmail
   ScrapeAds:
     Type: AWS::Serverless::Function
     Metadata:
@@ -548,20 +250,14 @@ Resources:
     Metadata:
       Tool: Amazon.Lambda.Annotations
     Properties:
-      FunctionName: ScrapeLinks
       Runtime: dotnet8
       CodeUri: .
-      MemorySize: 3008
-      Timeout: 900
-      Role: arn:aws:iam::975049887576:role/FullAccess
+      MemorySize: 512
+      Timeout: 30
+      Policies:
+        - AWSLambdaBasicExecutionRole
       PackageType: Zip
       Handler: Flvt.API::Flvt.API.Functions.Background.ScrapeAdvertisements_ScrapeLinks_Generated::ScrapeLinks
-      Events:
-        ScheduleRule:
-          Type: Schedule
-          Properties:
-            Name: ScrapeLinksSchedule
-            Schedule: 'cron(0 0/6 * * ? *)'
   GetSubscriber:
     Type: AWS::Serverless::Function
     Metadata:
@@ -573,12 +269,12 @@ Resources:
           - Path
           - Method
     Properties:
-      FunctionName: GetSubscriber
       Runtime: dotnet8
       CodeUri: .
-      MemorySize: 3008
-      Timeout: 60
-      Role: arn:aws:iam::975049887576:role/FullAccess
+      MemorySize: 512
+      Timeout: 30
+      Policies:
+        - AWSLambdaBasicExecutionRole
       PackageType: Zip
       Handler: Flvt.API::Flvt.API.Functions.API.Subscribers.SubscribersFunctions_GetSubscriber_Generated::GetSubscriber
       Events:
@@ -587,7 +283,6 @@ Resources:
           Properties:
             Path: /v1/subscribers
             Method: GET
-            ApiId: !Ref FlvtApi
   AddBasicFilter:
     Type: AWS::Serverless::Function
     Metadata:
@@ -599,12 +294,12 @@ Resources:
           - Path
           - Method
     Properties:
-      FunctionName: AddBasicFilter
       Runtime: dotnet8
       CodeUri: .
-      MemorySize: 3008
-      Timeout: 60
-      Role: arn:aws:iam::975049887576:role/FullAccess
+      MemorySize: 512
+      Timeout: 30
+      Policies:
+        - AWSLambdaBasicExecutionRole
       PackageType: Zip
       Handler: Flvt.API::Flvt.API.Functions.API.Subscribers.SubscribersFunctions_AddBasicFilter_Generated::AddBasicFilter
       Events:
@@ -613,7 +308,6 @@ Resources:
           Properties:
             Path: /v1/subscribers/filters/basic
             Method: POST
-            ApiId: !Ref FlvtApi
   RemoveFilter:
     Type: AWS::Serverless::Function
     Metadata:
@@ -625,12 +319,12 @@ Resources:
           - Path
           - Method
     Properties:
-      FunctionName: RemoveFilter
       Runtime: dotnet8
       CodeUri: .
-      MemorySize: 3008
-      Timeout: 60
-      Role: arn:aws:iam::975049887576:role/FullAccess
+      MemorySize: 512
+      Timeout: 30
+      Policies:
+        - AWSLambdaBasicExecutionRole
       PackageType: Zip
       Handler: Flvt.API::Flvt.API.Functions.API.Subscribers.SubscribersFunctions_RemoveFilter_Generated::RemoveFilter
       Events:
@@ -639,7 +333,132 @@ Resources:
           Properties:
             Path: /v1/subscribers/filters/{filterId}
             Method: DELETE
-            ApiId: !Ref FlvtApi
+  FlvtAuthorizer:
+    Type: AWS::Serverless::Function
+    Metadata:
+      Tool: Amazon.Lambda.Annotations
+    Properties:
+      Runtime: dotnet8
+      CodeUri: .
+      MemorySize: 512
+      Timeout: 30
+      Policies:
+        - AWSLambdaBasicExecutionRole
+      PackageType: Zip
+      Handler: Flvt.API::Flvt.API.Functions.API.Auth.AuthorizerFunctions_Authorizer_Generated::Authorizer
+  FlvtAuthorizerOffEmail:
+    Type: AWS::Serverless::Function
+    Metadata:
+      Tool: Amazon.Lambda.Annotations
+    Properties:
+      Runtime: dotnet8
+      CodeUri: .
+      MemorySize: 512
+      Timeout: 30
+      Policies:
+        - AWSLambdaBasicExecutionRole
+      PackageType: Zip
+      Handler: Flvt.API::Flvt.API.Functions.API.Auth.AuthorizerFunctions_AuthorizerOffEmail_Generated::AuthorizerOffEmail
+  AdvertisementsGetByFilter:
+    Type: AWS::Serverless::Function
+    Metadata:
+      Tool: Amazon.Lambda.Annotations
+      SyncedEvents:
+        - RootGet
+      SyncedEventProperties:
+        RootGet:
+          - Path
+          - Method
+    Properties:
+      Runtime: dotnet8
+      CodeUri: .
+      MemorySize: 512
+      Timeout: 30
+      Policies:
+        - AWSLambdaBasicExecutionRole
+      PackageType: Zip
+      Handler: Flvt.API::Flvt.API.Functions.API.Advertisements.AdvertisementsFunctions_GetByFilter_Generated::GetByFilter
+      Events:
+        RootGet:
+          Type: HttpApi
+          Properties:
+            Path: /v1/advertisements
+            Method: GET
+  AdvertisementsMarkAsSeen:
+    Type: AWS::Serverless::Function
+    Metadata:
+      Tool: Amazon.Lambda.Annotations
+      SyncedEvents:
+        - RootPut
+      SyncedEventProperties:
+        RootPut:
+          - Path
+          - Method
+    Properties:
+      Runtime: dotnet8
+      CodeUri: .
+      MemorySize: 512
+      Timeout: 30
+      Policies:
+        - AWSLambdaBasicExecutionRole
+      PackageType: Zip
+      Handler: Flvt.API::Flvt.API.Functions.API.Advertisements.AdvertisementsFunctions_MarkAsSeen_Generated::MarkAsSeen
+      Events:
+        RootPut:
+          Type: HttpApi
+          Properties:
+            Path: /v1/advertisements/see
+            Method: PUT
+  AdvertisementsFollow:
+    Type: AWS::Serverless::Function
+    Metadata:
+      Tool: Amazon.Lambda.Annotations
+      SyncedEvents:
+        - RootPut
+      SyncedEventProperties:
+        RootPut:
+          - Path
+          - Method
+    Properties:
+      Runtime: dotnet8
+      CodeUri: .
+      MemorySize: 512
+      Timeout: 30
+      Policies:
+        - AWSLambdaBasicExecutionRole
+      PackageType: Zip
+      Handler: Flvt.API::Flvt.API.Functions.API.Advertisements.AdvertisementsFunctions_Follow_Generated::Follow
+      Events:
+        RootPut:
+          Type: HttpApi
+          Properties:
+            Path: /v1/advertisements/follow
+            Method: PUT
+  AdvertisementsFlag:
+    Type: AWS::Serverless::Function
+    Metadata:
+      Tool: Amazon.Lambda.Annotations
+      SyncedEvents:
+        - RootPut
+      SyncedEventProperties:
+        RootPut:
+          - Path
+          - Method
+    Properties:
+      Runtime: dotnet8
+      CodeUri: .
+      MemorySize: 512
+      Timeout: 30
+      Policies:
+        - AWSLambdaBasicExecutionRole
+      PackageType: Zip
+      Handler: Flvt.API::Flvt.API.Functions.API.Advertisements.AdvertisementsFunctions_Flag_Generated::Flag
+      Events:
+        RootPut:
+          Type: HttpApi
+          Properties:
+            Path: /v1/advertisements/flag
+            Method: PUT
   AdvertisementsPreview:
     Type: AWS::Serverless::Function
     Metadata:
@@ -651,12 +470,12 @@ Resources:
           - Path
           - Method
     Properties:
-      FunctionName: AdvertisementsPreview
       Runtime: dotnet8
       CodeUri: .
-      MemorySize: 3008
-      Timeout: 60
-      Role: arn:aws:iam::975049887576:role/FullAccess
+      MemorySize: 512
+      Timeout: 30
+      Policies:
+        - AWSLambdaBasicExecutionRole
       PackageType: Zip
       Handler: Flvt.API::Flvt.API.Functions.API.Advertisements.AdvertisementsFunctions_Preview_Generated::Preview
       Events:
@@ -665,6 +484,557 @@ Resources:
           Properties:
             Path: /v1/advertisements/preview
             Method: GET
-            ApiId: !Ref FlvtApi
-            Auth:
-              Authorizer: NONE
+  Register:
+    Type: AWS::Serverless::Function
+    Metadata:
+      Tool: Amazon.Lambda.Annotations
+      SyncedEvents:
+        - RootPost
+      SyncedEventProperties:
+        RootPost:
+          - Path
+          - Method
+    Properties:
+      Runtime: dotnet8
+      CodeUri: .
+      MemorySize: 512
+      Timeout: 30
+      Policies:
+        - AWSLambdaBasicExecutionRole
+      PackageType: Zip
+      Handler: Flvt.API::Flvt.API.Functions.API.Auth.AuthFunctions_Register_Generated::Register
+      Events:
+        RootPost:
+          Type: HttpApi
+          Properties:
+            Path: /v1/auth/register
+            Method: POST
+  Login:
+    Type: AWS::Serverless::Function
+    Metadata:
+      Tool: Amazon.Lambda.Annotations
+      SyncedEvents:
+        - RootPost
+      SyncedEventProperties:
+        RootPost:
+          - Path
+          - Method
+    Properties:
+      Runtime: dotnet8
+      CodeUri: .
+      MemorySize: 512
+      Timeout: 30
+      Policies:
+        - AWSLambdaBasicExecutionRole
+      PackageType: Zip
+      Handler: Flvt.API::Flvt.API.Functions.API.Auth.AuthFunctions_Login_Generated::Login
+      Events:
+        RootPost:
+          Type: HttpApi
+          Properties:
+            Path: /v1/auth/login
+            Method: POST
+  VerifyEmail:
+    Type: AWS::Serverless::Function
+    Metadata:
+      Tool: Amazon.Lambda.Annotations
+      SyncedEvents:
+        - RootPost
+      SyncedEventProperties:
+        RootPost:
+          - Path
+          - Method
+    Properties:
+      Runtime: dotnet8
+      CodeUri: .
+      MemorySize: 512
+      Timeout: 30
+      Policies:
+        - AWSLambdaBasicExecutionRole
+      PackageType: Zip
+      Handler: Flvt.API::Flvt.API.Functions.API.Auth.AuthFunctions_VerifyEmail_Generated::VerifyEmail
+      Events:
+        RootPost:
+          Type: HttpApi
+          Properties:
+            Path: /v1/auth/verify
+            Method: POST
+  ResendEmail:
+    Type: AWS::Serverless::Function
+    Metadata:
+      Tool: Amazon.Lambda.Annotations
+      SyncedEvents:
+        - RootPut
+      SyncedEventProperties:
+        RootPut:
+          - Path
+          - Method
+    Properties:
+      Runtime: dotnet8
+      CodeUri: .
+      MemorySize: 512
+      Timeout: 30
+      Policies:
+        - AWSLambdaBasicExecutionRole
+      PackageType: Zip
+      Handler: Flvt.API::Flvt.API.Functions.API.Auth.AuthFunctions_ResendEmail_Generated::ResendEmail
+      Events:
+        RootPut:
+          Type: HttpApi
+          Properties:
+            Path: /v1/auth/resend
+            Method: PUT
+  RequestNewPassword:
+    Type: AWS::Serverless::Function
+    Metadata:
+      Tool: Amazon.Lambda.Annotations
+      SyncedEvents:
+        - RootPut
+      SyncedEventProperties:
+        RootPut:
+          - Path
+          - Method
+    Properties:
+      Runtime: dotnet8
+      CodeUri: .
+      MemorySize: 512
+      Timeout: 30
+      Policies:
+        - AWSLambdaBasicExecutionRole
+      PackageType: Zip
+      Handler: Flvt.API::Flvt.API.Functions.API.Auth.AuthFunctions_RequestNewPassword_Generated::RequestNewPassword
+      Events:
+        RootPut:
+          Type: HttpApi
+          Properties:
+            Path: /v1/auth/new-password/request
+            Method: PUT
+  SetNewPassword:
+    Type: AWS::Serverless::Function
+    Metadata:
+      Tool: Amazon.Lambda.Annotations
+      SyncedEvents:
+        - RootPost
+      SyncedEventProperties:
+        RootPost:
+          - Path
+          - Method
+    Properties:
+      Runtime: dotnet8
+      CodeUri: .
+      MemorySize: 512
+      Timeout: 30
+      Policies:
+        - AWSLambdaBasicExecutionRole
+      PackageType: Zip
+      Handler: Flvt.API::Flvt.API.Functions.API.Auth.AuthFunctions_SetNewPassword_Generated::SetNewPassword
+      Events:
+        RootPost:
+          Type: HttpApi
+          Properties:
+            Path: /v1/auth/new-password/set
+            Method: POST
+ScrapeLinks:
+  Type: AWS::Serverless::Function
+  Metadata:
+    Tool: Amazon.Lambda.Annotations
+  Properties:
+    FunctionName: ScrapeLinks
+    Runtime: dotnet8
+    CodeUri: .
+    MemorySize: 3008
+    Timeout: 900
+    Role: arn:aws:iam::975049887576:role/FullAccess
+    PackageType: Zip
+    Handler: Flvt.API::Flvt.API.Functions.Background.ScrapeAdvertisements_ScrapeLinks_Generated::ScrapeLinks
+    Events:
+      ScrapeLinksOtodomSchedule:
+        Type: Schedule
+        Properties:
+          Name: ScrapeLinksOtodomSchedule
+          Schedule: 'cron(0 0/6 * * ? *)'
+          Input:
+            Service: "Otodom"
+      ScrapeLinksDomiportaSchedule:
+        Type: Schedule
+        Properties:
+          Name: ScrapeLinksDomiportaSchedule
+          Schedule: 'cron(0 0/6 * * ? *)'
+          Input:
+            Service: "Domiporta"
+  GetSubscriber:
+    Type: AWS::Serverless::Function
+    Metadata:
+      Tool: Amazon.Lambda.Annotations
+      SyncedEvents:
+        - RootGet
+      SyncedEventProperties:
+        RootGet:
+          - Path
+          - Method
+    Properties:
+      Runtime: dotnet8
+      CodeUri: .
+      MemorySize: 512
+      Timeout: 30
+      Policies:
+        - AWSLambdaBasicExecutionRole
+      PackageType: Zip
+      Handler: Flvt.API::Flvt.API.Functions.API.Subscribers.SubscribersFunctions_GetSubscriber_Generated::GetSubscriber
+      Events:
+        RootGet:
+          Type: HttpApi
+          Properties:
+            Path: /v1/subscribers
+            Method: GET
+  AddBasicFilter:
+    Type: AWS::Serverless::Function
+    Metadata:
+      Tool: Amazon.Lambda.Annotations
+      SyncedEvents:
+        - RootPost
+      SyncedEventProperties:
+        RootPost:
+          - Path
+          - Method
+    Properties:
+      Runtime: dotnet8
+      CodeUri: .
+      MemorySize: 512
+      Timeout: 30
+      Policies:
+        - AWSLambdaBasicExecutionRole
+      PackageType: Zip
+      Handler: Flvt.API::Flvt.API.Functions.API.Subscribers.SubscribersFunctions_AddBasicFilter_Generated::AddBasicFilter
+      Events:
+        RootPost:
+          Type: HttpApi
+          Properties:
+            Path: /v1/subscribers/filters/basic
+            Method: POST
+  RemoveFilter:
+    Type: AWS::Serverless::Function
+    Metadata:
+      Tool: Amazon.Lambda.Annotations
+      SyncedEvents:
+        - RootDelete
+      SyncedEventProperties:
+        RootDelete:
+          - Path
+          - Method
+    Properties:
+      Runtime: dotnet8
+      CodeUri: .
+      MemorySize: 512
+      Timeout: 30
+      Policies:
+        - AWSLambdaBasicExecutionRole
+      PackageType: Zip
+      Handler: Flvt.API::Flvt.API.Functions.API.Subscribers.SubscribersFunctions_RemoveFilter_Generated::RemoveFilter
+      Events:
+        RootDelete:
+          Type: HttpApi
+          Properties:
+            Path: /v1/subscribers/filters/{filterId}
+            Method: DELETE
+  FlvtAuthorizer:
+    Type: AWS::Serverless::Function
+    Metadata:
+      Tool: Amazon.Lambda.Annotations
+    Properties:
+      Runtime: dotnet8
+      CodeUri: .
+      MemorySize: 512
+      Timeout: 30
+      Policies:
+        - AWSLambdaBasicExecutionRole
+      PackageType: Zip
+      Handler: Flvt.API::Flvt.API.Functions.API.Auth.AuthorizerFunctions_Authorizer_Generated::Authorizer
+  FlvtAuthorizerOffEmail:
+    Type: AWS::Serverless::Function
+    Metadata:
+      Tool: Amazon.Lambda.Annotations
+    Properties:
+      Runtime: dotnet8
+      CodeUri: .
+      MemorySize: 512
+      Timeout: 30
+      Policies:
+        - AWSLambdaBasicExecutionRole
+      PackageType: Zip
+      Handler: Flvt.API::Flvt.API.Functions.API.Auth.AuthorizerFunctions_AuthorizerOffEmail_Generated::AuthorizerOffEmail
+  AdvertisementsGetByFilter:
+    Type: AWS::Serverless::Function
+    Metadata:
+      Tool: Amazon.Lambda.Annotations
+      SyncedEvents:
+        - RootGet
+      SyncedEventProperties:
+        RootGet:
+          - Path
+          - Method
+    Properties:
+      Runtime: dotnet8
+      CodeUri: .
+      MemorySize: 512
+      Timeout: 30
+      Policies:
+        - AWSLambdaBasicExecutionRole
+      PackageType: Zip
+      Handler: Flvt.API::Flvt.API.Functions.API.Advertisements.AdvertisementsFunctions_GetByFilter_Generated::GetByFilter
+      Events:
+        RootGet:
+          Type: HttpApi
+          Properties:
+            Path: /v1/advertisements
+            Method: GET
+  AdvertisementsMarkAsSeen:
+    Type: AWS::Serverless::Function
+    Metadata:
+      Tool: Amazon.Lambda.Annotations
+      SyncedEvents:
+        - RootPut
+      SyncedEventProperties:
+        RootPut:
+          - Path
+          - Method
+    Properties:
+      Runtime: dotnet8
+      CodeUri: .
+      MemorySize: 512
+      Timeout: 30
+      Policies:
+        - AWSLambdaBasicExecutionRole
+      PackageType: Zip
+      Handler: Flvt.API::Flvt.API.Functions.API.Advertisements.AdvertisementsFunctions_MarkAsSeen_Generated::MarkAsSeen
+      Events:
+        RootPut:
+          Type: HttpApi
+          Properties:
+            Path: /v1/advertisements/see
+            Method: PUT
+  AdvertisementsFollow:
+    Type: AWS::Serverless::Function
+    Metadata:
+      Tool: Amazon.Lambda.Annotations
+      SyncedEvents:
+        - RootPut
+      SyncedEventProperties:
+        RootPut:
+          - Path
+          - Method
+    Properties:
+      Runtime: dotnet8
+      CodeUri: .
+      MemorySize: 512
+      Timeout: 30
+      Policies:
+        - AWSLambdaBasicExecutionRole
+      PackageType: Zip
+      Handler: Flvt.API::Flvt.API.Functions.API.Advertisements.AdvertisementsFunctions_Follow_Generated::Follow
+      Events:
+        RootPut:
+          Type: HttpApi
+          Properties:
+            Path: /v1/advertisements/follow
+            Method: PUT
+  AdvertisementsFlag:
+    Type: AWS::Serverless::Function
+    Metadata:
+      Tool: Amazon.Lambda.Annotations
+      SyncedEvents:
+        - RootPut
+      SyncedEventProperties:
+        RootPut:
+          - Path
+          - Method
+    Properties:
+      Runtime: dotnet8
+      CodeUri: .
+      MemorySize: 512
+      Timeout: 30
+      Policies:
+        - AWSLambdaBasicExecutionRole
+      PackageType: Zip
+      Handler: Flvt.API::Flvt.API.Functions.API.Advertisements.AdvertisementsFunctions_Flag_Generated::Flag
+      Events:
+        RootPut:
+          Type: HttpApi
+          Properties:
+            Path: /v1/advertisements/flag
+            Method: PUT
+  AdvertisementsPreview:
+    Type: AWS::Serverless::Function
+    Metadata:
+      Tool: Amazon.Lambda.Annotations
+      SyncedEvents:
+        - RootGet
+      SyncedEventProperties:
+        RootGet:
+          - Path
+          - Method
+    Properties:
+      Runtime: dotnet8
+      CodeUri: .
+      MemorySize: 512
+      Timeout: 30
+      Policies:
+        - AWSLambdaBasicExecutionRole
+      PackageType: Zip
+      Handler: Flvt.API::Flvt.API.Functions.API.Advertisements.AdvertisementsFunctions_Preview_Generated::Preview
+      Events:
+        RootGet:
+          Type: HttpApi
+          Properties:
+            Path: /v1/advertisements/preview
+            Method: GET
+  Register:
+    Type: AWS::Serverless::Function
+    Metadata:
+      Tool: Amazon.Lambda.Annotations
+      SyncedEvents:
+        - RootPost
+      SyncedEventProperties:
+        RootPost:
+          - Path
+          - Method
+    Properties:
+      Runtime: dotnet8
+      CodeUri: .
+      MemorySize: 512
+      Timeout: 30
+      Policies:
+        - AWSLambdaBasicExecutionRole
+      PackageType: Zip
+      Handler: Flvt.API::Flvt.API.Functions.API.Auth.AuthFunctions_Register_Generated::Register
+      Events:
+        RootPost:
+          Type: HttpApi
+          Properties:
+            Path: /v1/auth/register
+            Method: POST
+  Login:
+    Type: AWS::Serverless::Function
+    Metadata:
+      Tool: Amazon.Lambda.Annotations
+      SyncedEvents:
+        - RootPost
+      SyncedEventProperties:
+        RootPost:
+          - Path
+          - Method
+    Properties:
+      Runtime: dotnet8
+      CodeUri: .
+      MemorySize: 512
+      Timeout: 30
+      Policies:
+        - AWSLambdaBasicExecutionRole
+      PackageType: Zip
+      Handler: Flvt.API::Flvt.API.Functions.API.Auth.AuthFunctions_Login_Generated::Login
+      Events:
+        RootPost:
+          Type: HttpApi
+          Properties:
+            Path: /v1/auth/login
+            Method: POST
+  VerifyEmail:
+    Type: AWS::Serverless::Function
+    Metadata:
+      Tool: Amazon.Lambda.Annotations
+      SyncedEvents:
+        - RootPost
+      SyncedEventProperties:
+        RootPost:
+          - Path
+          - Method
+    Properties:
+      Runtime: dotnet8
+      CodeUri: .
+      MemorySize: 512
+      Timeout: 30
+      Policies:
+        - AWSLambdaBasicExecutionRole
+      PackageType: Zip
+      Handler: Flvt.API::Flvt.API.Functions.API.Auth.AuthFunctions_VerifyEmail_Generated::VerifyEmail
+      Events:
+        RootPost:
+          Type: HttpApi
+          Properties:
+            Path: /v1/auth/verify
+            Method: POST
+  ResendEmail:
+    Type: AWS::Serverless::Function
+    Metadata:
+      Tool: Amazon.Lambda.Annotations
+      SyncedEvents:
+        - RootPut
+      SyncedEventProperties:
+        RootPut:
+          - Path
+          - Method
+    Properties:
+      Runtime: dotnet8
+      CodeUri: .
+      MemorySize: 512
+      Timeout: 30
+      Policies:
+        - AWSLambdaBasicExecutionRole
+      PackageType: Zip
+      Handler: Flvt.API::Flvt.API.Functions.API.Auth.AuthFunctions_ResendEmail_Generated::ResendEmail
+      Events:
+        RootPut:
+          Type: HttpApi
+          Properties:
+            Path: /v1/auth/resend
+            Method: PUT
+  RequestNewPassword:
+    Type: AWS::Serverless::Function
+    Metadata:
+      Tool: Amazon.Lambda.Annotations
+      SyncedEvents:
+        - RootPut
+      SyncedEventProperties:
+        RootPut:
+          - Path
+          - Method
+    Properties:
+      Runtime: dotnet8
+      CodeUri: .
+      MemorySize: 512
+      Timeout: 30
+      Policies:
+        - AWSLambdaBasicExecutionRole
+      PackageType: Zip
+      Handler: Flvt.API::Flvt.API.Functions.API.Auth.AuthFunctions_RequestNewPassword_Generated::RequestNewPassword
+      Events:
+        RootPut:
+          Type: HttpApi
+          Properties:
+            Path: /v1/auth/new-password/request
+            Method: PUT
+  SetNewPassword:
+    Type: AWS::Serverless::Function
+    Metadata:
+      Tool: Amazon.Lambda.Annotations
+      SyncedEvents:
+        - RootPost
+      SyncedEventProperties:
+        RootPost:
+          - Path
+          - Method
+    Properties:
+      Runtime: dotnet8
+      CodeUri: .
+      MemorySize: 512
+      Timeout: 30
+      Policies:
+        - AWSLambdaBasicExecutionRole
+      PackageType: Zip
+      Handler: Flvt.API::Flvt.API.Functions.API.Auth.AuthFunctions_SetNewPassword_Generated::SetNewPassword
+      Events:
+        RootPost:
+          Type: HttpApi
+          Properties:
+            Path: /v1/auth/new-password/set
+            Method: POST

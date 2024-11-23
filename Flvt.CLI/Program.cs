@@ -44,7 +44,6 @@ public class Service : IService
     private readonly IProcessedAdvertisementRepository _repository;
     private readonly IScrapedAdvertisementRepository _scrapedAdvertisementRepository;
     private readonly IAdvertisementPhotosRepository _advertisementPhotosRepository;
-    private readonly IScrapingOrchestrator _scrapingOrchestrator;
     private readonly IEmailService _emailService;
     private readonly IQueuePublisher _queuePublisher;
 
@@ -53,7 +52,6 @@ public class Service : IService
         IProcessedAdvertisementRepository repository,
         IScrapedAdvertisementRepository scrapedAdvertisementRepository,
         IAdvertisementPhotosRepository advertisementPhotosRepository,
-        IScrapingOrchestrator scrapingOrchestrator,
         IEmailService emailService,
         IQueuePublisher queuePublisher)
     {
@@ -61,7 +59,6 @@ public class Service : IService
         _repository = repository;
         _scrapedAdvertisementRepository = scrapedAdvertisementRepository;
         _advertisementPhotosRepository = advertisementPhotosRepository;
-        _scrapingOrchestrator = scrapingOrchestrator;
         _emailService = emailService;
         _queuePublisher = queuePublisher;
     }
@@ -118,11 +115,6 @@ public class Service : IService
         //await _repository.UpdateRangeAsync(ads);
         //Console.WriteLine((await _sender.Send(cmd)).IsSuccess);
 
-        var a = await _scrapingOrchestrator.ScrapeLinks();
-        Console.WriteLine(a);
-        var b = await _scrapingOrchestrator.ScrapeAdvertisements(a);
-        Console.WriteLine(b);
-
         //TODO THIS WORKS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         //var web = new HtmlWeb();
 
@@ -133,6 +125,17 @@ public class Service : IService
         //var nodes = a.DocumentNode.SelectNodes("//script[@type='application/ld+json']").FirstOrDefault(node => node.InnerText.Contains("Offer"));
 
         //Console.WriteLine(nodes.InnerText);
+
+        //var a = await _repository.GetAllAsync();
+
+        //var all = a.Value.ToList();
+        //var dist = all.DistinctBy(a => a.Dedupe).ToList();
+
+        //var b = all.Except(dist).ToList();
+
+        //Console.WriteLine(b.Count);
+
+        //await _repository.RemoveRangeAsync(b.Select(a => a.Link));
     }
 
     public async Task UploadJsonToS3Async(IEnumerable<ProcessedAdvertisement> ads, string bucketName, string key)

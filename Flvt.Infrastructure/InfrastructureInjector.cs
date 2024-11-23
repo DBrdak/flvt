@@ -60,8 +60,10 @@ public static class InfrastructureInjector
             .AddScoped<IScraperHelperRepository, ScraperHelperRepository>()
             .AddScoped<BatchRepository>();
 
-    private static IServiceCollection AddScrapers(this IServiceCollection services) => 
-        services.AddScoped<IScrapingOrchestrator, ScrapingOrchestrator>();
+    private static IServiceCollection AddScrapers(this IServiceCollection services) =>
+        services
+            .AddScoped<ILinkScrapingOrchestrator, LinkScrapingOrchestrator>()
+            .AddScoped<IAdvertisementScrapingOrchestrator, AdvertisementScrapingOrchestrator>();
 
     private static IServiceCollection AddProcessors(this IServiceCollection services)
     {
