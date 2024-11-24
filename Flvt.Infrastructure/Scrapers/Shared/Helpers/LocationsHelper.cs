@@ -30,7 +30,7 @@ internal static class LocationsHelper
 
     public static Dictionary<string, string> DomiportaLocations = new()
     {
-        { "warszawa", "mazowieckie/warszawa/" },
+        { "warszawa", "mazowieckie/warszawa" },
         { "piaseczno", "mazowieckie/piaseczno" },
         { "lomianki", "mazowieckie/lomianki" },
         { "wolomin", "mazowieckie/wolomin" },

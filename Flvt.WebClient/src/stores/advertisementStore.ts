@@ -123,7 +123,7 @@ export default class AdvertisementStore {
             AdvertisementFunctions.follow(advertisement)
 
             Promise.all([
-                filterId !== 'preview' && await agent.advertisements.follow(advertisement.link, filterId),
+                filterId !== 'preview' && await agent.advertisements.follow(advertisement.link, filterId, !advertisement.isFollowed),
                 await this.dbContext!.updateAdvertisementAsync(filterId, advertisement)
             ])
 

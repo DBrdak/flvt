@@ -194,7 +194,8 @@ public sealed record Filter
     public void NewAdvertisementsFound(List<string> advertisements)
     {
         _recentlyFoundAdvertisements = advertisements
-            .Where(ad => _foundAdvertisements.All(foundAd => foundAd != ad))
+            .Except(_foundAdvertisements)
+            .Concat(_recentlyFoundAdvertisements.Except(_seenAdvertisements))
             .ToList();
 
         _foundAdvertisements = advertisements;
@@ -216,15 +217,15 @@ public sealed record Filter
 
     public void MarkAsSeen(string advertisement) => _seenAdvertisements.Add(advertisement);
 
-    public void Follow(string advertisement)
+    public void Follow(string advertisement, bool state)
     {
-        switch (_followedAdvertisements.Any(ad => ad == advertisement))
+        switch (state)
         {
             case true:
-                _followedAdvertisements.Remove(advertisement);
+                _followedAdvertisements.Add(advertisement);
                 break;
             case false:
-                _followedAdvertisements.Add(advertisement);
+                _followedAdvertisements.Remove(advertisement);
                 break;
         }
     }
