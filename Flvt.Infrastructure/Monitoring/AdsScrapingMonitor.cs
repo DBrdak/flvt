@@ -35,7 +35,7 @@ internal class AdsScrapingMonitor : IPerformanceMonitor
             Scraped advertisements: {adsCount}
             Time: {time} ms
             """,
-            _adScraper?.GetType().Name.Replace("Scraper", ""),
+            _adScraper?.GetType().Name.Replace("AdvertisementScraper", ""),
             _adScraper?.SuccessfullyScrapedAds,
             elapsed.Milliseconds);
 

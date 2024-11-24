@@ -46,7 +46,11 @@ internal class QueuePublisher : IQueuePublisher
         var queueName = _configuration["queueNames:scrapedLinks"] ??
                         throw new ArgumentNullException("queueNames:scrapedLinks");
 
-        return await PublishMessageAsync(queueName, scrapedLinks);
+        var scrapedLinksChunks = scrapedLinks.Chunk(512);
+
+        var publishTasks = scrapedLinksChunks.Select(chunk => PublishMessageAsync(queueName, chunk));
+
+        return Result.Aggregate(await Task.WhenAll(publishTasks));
     }
 
     public async Task<Result> PublishScrapedAdsAsync()
