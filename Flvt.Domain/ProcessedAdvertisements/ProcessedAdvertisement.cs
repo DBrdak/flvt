@@ -58,7 +58,7 @@ public sealed class ProcessedAdvertisement
         NextOutdateCheck = nextOutdateCheck;
         IsFlagged = isFlagged;
         Dedupe =
-            $"{Address?.City}-{Address?.District}-{Address?.Street}-{IsPrivate}-{RoomsCount}-{Area.Amount}-{Price.Amount}"
+            $"{address?.City}-{address?.District}-{address?.Street}-{isPrivate}-{roomsCount}-{area.Amount}-{price.Amount}-{pets}-{deposit}-{geolocation?.Latitude}-{geolocation?.Longitude}"
                 .ToLower();
     }
 

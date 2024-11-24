@@ -20,6 +20,7 @@ using Flvt.Infrastructure.Processors.AI.GPT;
 using Flvt.Infrastructure.Processors.AI.GPT.Options;
 using Flvt.Infrastructure.Queues;
 using Flvt.Infrastructure.Scrapers;
+using Flvt.Infrastructure.Scrapers.Shared.Helpers.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -56,10 +57,13 @@ public static class InfrastructureInjector
             .AddScoped<IScrapedAdvertisementRepository, ScrapedAdvertisementRepository>()
             .AddScoped<ISubscriberRepository, SubscriberRepository>()
             .AddScoped<IFilterRepository, FilterRepository>()
+            .AddScoped<IScraperHelperRepository, ScraperHelperRepository>()
             .AddScoped<BatchRepository>();
 
-    private static IServiceCollection AddScrapers(this IServiceCollection services) => 
-        services.AddScoped<IScrapingOrchestrator, ScrapingOrchestrator>();
+    private static IServiceCollection AddScrapers(this IServiceCollection services) =>
+        services
+            .AddScoped<ILinkScrapingOrchestrator, LinkScrapingOrchestrator>()
+            .AddScoped<IAdvertisementScrapingOrchestrator, AdvertisementScrapingOrchestrator>();
 
     private static IServiceCollection AddProcessors(this IServiceCollection services)
     {

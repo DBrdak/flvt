@@ -238,7 +238,7 @@ internal class TemplateBuilder
                    <p>Hello,</p>
                    <p>We just found {{count}} new advertisements matching your filter. Click on the below link to browse them!</p>
                    <div class="verification-code">
-                     <a href="https://flvt.eu/filters/{{filterId}}" target="_blank" style="text-decoration: none; color: #44017a;">
+                     <a href="https://flvt.dbrdak.com/filters/{{filterId}}/browse" target="_blank" style="text-decoration: none; color: #44017a;">
                        {{filterName}} on Flvt
                      </a>
                    </div>

@@ -26,4 +26,6 @@ public interface IProcessedAdvertisementRepository
     Task<Result> UpdateRangeAsync(IEnumerable<ProcessedAdvertisement> ads);
 
     Task<Result<IEnumerable<string>>> GetAllLinksAsync();
+
+    Task<Result<IEnumerable<string>>> GetAllDedupesAsync();
 }

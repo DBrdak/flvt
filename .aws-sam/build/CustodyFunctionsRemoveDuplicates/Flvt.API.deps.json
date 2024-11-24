@@ -9,6 +9,7 @@
     ".NETCoreApp,Version=v8.0/linux-x64": {
       "Flvt.API/1.0.0": {
         "dependencies": {
+          "AWSSDK.EventBridge": "3.7.401.55",
           "Amazon.Extensions.Configuration.SystemsManager": "6.2.1",
           "Amazon.Lambda.APIGatewayEvents": "2.7.1",
           "Amazon.Lambda.Annotations": "1.5.2",
@@ -83,7 +84,7 @@
       },
       "AWSSDK.AppConfigData/3.7.301.35": {
         "dependencies": {
-          "AWSSDK.Core": "3.7.400.40"
+          "AWSSDK.Core": "3.7.400.57"
         },
         "runtime": {
           "lib/net8.0/AWSSDK.AppConfigData.dll": {
@@ -94,7 +95,7 @@
       },
       "AWSSDK.CloudWatch/3.7.401.28": {
         "dependencies": {
-          "AWSSDK.Core": "3.7.400.40"
+          "AWSSDK.Core": "3.7.400.57"
         },
         "runtime": {
           "lib/net8.0/AWSSDK.CloudWatch.dll": {
@@ -103,17 +104,17 @@
           }
         }
       },
-      "AWSSDK.Core/3.7.400.40": {
+      "AWSSDK.Core/3.7.400.57": {
         "runtime": {
           "lib/net8.0/AWSSDK.Core.dll": {
             "assemblyVersion": "3.3.0.0",
-            "fileVersion": "3.7.400.40"
+            "fileVersion": "3.7.400.57"
           }
         }
       },
       "AWSSDK.DynamoDBv2/3.7.401.8": {
         "dependencies": {
-          "AWSSDK.Core": "3.7.400.40"
+          "AWSSDK.Core": "3.7.400.57"
         },
         "runtime": {
           "lib/net8.0/AWSSDK.DynamoDBv2.dll": {
@@ -122,9 +123,20 @@
           }
         }
       },
+      "AWSSDK.EventBridge/3.7.401.55": {
+        "dependencies": {
+          "AWSSDK.Core": "3.7.400.57"
+        },
+        "runtime": {
+          "lib/net8.0/AWSSDK.EventBridge.dll": {
+            "assemblyVersion": "3.3.0.0",
+            "fileVersion": "3.7.401.55"
+          }
+        }
+      },
       "AWSSDK.Extensions.NETCore.Setup/3.7.300": {
         "dependencies": {
-          "AWSSDK.Core": "3.7.400.40",
+          "AWSSDK.Core": "3.7.400.57",
           "Microsoft.Extensions.Configuration.Abstractions": "8.0.0",
           "Microsoft.Extensions.DependencyInjection.Abstractions": "8.0.0",
           "Microsoft.Extensions.Logging.Abstractions": "8.0.0"
@@ -138,7 +150,7 @@
       },
       "AWSSDK.S3/3.7.405.4": {
         "dependencies": {
-          "AWSSDK.Core": "3.7.400.40"
+          "AWSSDK.Core": "3.7.400.57"
         },
         "runtime": {
           "lib/net8.0/AWSSDK.S3.dll": {
@@ -149,7 +161,7 @@
       },
       "AWSSDK.SecretsManager/3.7.400.30": {
         "dependencies": {
-          "AWSSDK.Core": "3.7.400.40"
+          "AWSSDK.Core": "3.7.400.57"
         },
         "runtime": {
           "lib/net8.0/AWSSDK.SecretsManager.dll": {
@@ -160,7 +172,7 @@
       },
       "AWSSDK.SimpleSystemsManagement/3.7.303.23": {
         "dependencies": {
-          "AWSSDK.Core": "3.7.400.40"
+          "AWSSDK.Core": "3.7.400.57"
         },
         "runtime": {
           "lib/net8.0/AWSSDK.SimpleSystemsManagement.dll": {
@@ -171,7 +183,7 @@
       },
       "AWSSDK.SQS/3.7.400.34": {
         "dependencies": {
-          "AWSSDK.Core": "3.7.400.40"
+          "AWSSDK.Core": "3.7.400.57"
         },
         "runtime": {
           "lib/net8.0/AWSSDK.SQS.dll": {
@@ -660,12 +672,12 @@
       "path": "awssdk.cloudwatch/3.7.401.28",
       "hashPath": "awssdk.cloudwatch.3.7.401.28.nupkg.sha512"
     },
-    "AWSSDK.Core/3.7.400.40": {
+    "AWSSDK.Core/3.7.400.57": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-Bt3id437I3k363mHCvBdpUwdw9P2zM3te+wCZ2EWv+PIOyz1NbYqTfrn04U3x333wxsOfT9Ln+cUJeUw96HsTw==",
-      "path": "awssdk.core/3.7.400.40",
-      "hashPath": "awssdk.core.3.7.400.40.nupkg.sha512"
+      "sha512": "sha512-iuzim/LgPu+VRJZ8mQluYiEq/cZcxndh+QPHOeH7VTotc6mXOuLt6fXTzBSa5EBw7YgxIEQV5zpWedbYhPQzJg==",
+      "path": "awssdk.core/3.7.400.57",
+      "hashPath": "awssdk.core.3.7.400.57.nupkg.sha512"
     },
     "AWSSDK.DynamoDBv2/3.7.401.8": {
       "type": "package",
@@ -673,6 +685,13 @@
       "sha512": "sha512-13cR46SRFaqv6resyxXNhcSQA8ZI44xQCYCAr0n/IWp5lwwe7XjXpcNNS2//UFNY6gngn5O4ICXMJE0DRii4ZQ==",
       "path": "awssdk.dynamodbv2/3.7.401.8",
       "hashPath": "awssdk.dynamodbv2.3.7.401.8.nupkg.sha512"
+    },
+    "AWSSDK.EventBridge/3.7.401.55": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-0R5WY7KqxBHLF+TSUf7aET9dhMdzZrP8e/eWELDVp+Bniutadqz4MjulVH5zNhlFA+xJbeDg+EpcJLeF8Sbsqw==",
+      "path": "awssdk.eventbridge/3.7.401.55",
+      "hashPath": "awssdk.eventbridge.3.7.401.55.nupkg.sha512"
     },
     "AWSSDK.Extensions.NETCore.Setup/3.7.300": {
       "type": "package",

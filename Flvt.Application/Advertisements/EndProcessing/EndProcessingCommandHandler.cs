@@ -34,7 +34,22 @@ internal sealed class EndProcessingCommandHandler : ICommandHandler<EndProcessin
             return scrapedAdvertisementsGetResult.Error;
         }
 
-        var addResult = await _processedAdvertisementRepository.AddRangeAsync(processedAdvertisements);
+        //TODO Implement
+        //var dedupesGetResult = await _processedAdvertisementRepository.GetAllDedupesAsync();
+
+        //if (dedupesGetResult.IsFailure)
+        //{
+        //    return dedupesGetResult.Error;
+        //}
+
+        //var dedupes = dedupesGetResult.Value;
+
+        //var adsToInsert = processedAdvertisements
+        //    .ExceptBy(dedupes, ad => ad.Dedupe)
+        //    .ToList();
+        var adsToInsert = processedAdvertisements;
+
+        var addResult = await _processedAdvertisementRepository.AddRangeAsync(adsToInsert);
         var updateResult = await _scrapedAdvertisementRepository.RemoveRangeAsync(scrapedAdvertisementsGetResult.Value.Select(ad => ad.Link));
 
         return Result.Aggregate([addResult, updateResult]);

@@ -62,11 +62,16 @@ internal abstract class AdvertisementLinkScraper
 
                 var links = await ScrapeAdvertisementLinksFromPage(pageUrl);
 
+                if (!links.Any())
+                {
+                    return;
+                }
+
                 var validLinks = ValidateLinks(links);
 
                 isValidPage =
                     validLinks.Select(_advertisementsLinks.Add).ToList().Any(x => x)
-                    || validLinks.Count != links.Count;
+                    && validLinks.Count == links.Count;
 
                 page++;
             }

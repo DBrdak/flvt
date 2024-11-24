@@ -113,4 +113,17 @@ internal sealed class ProcessedAdvertisementRepository : Repository<ProcessedAdv
                         .AsString()))
             : Result.Failure<IEnumerable<string>>(getResult.Error);
     }
+
+    public async Task<Result<IEnumerable<string>>> GetAllDedupesAsync()
+    {
+        var getResult = await GetAllAsync(null, [nameof(ProcessedAdvertisementDataModel.Dedupe)]);
+
+        return getResult.IsSuccess
+            ?
+            Result.Success(
+                getResult.Value.Select(
+                    doc => doc.GetProperty(nameof(ProcessedAdvertisementDataModel.Dedupe))
+                        .AsString()))
+            : Result.Failure<IEnumerable<string>>(getResult.Error);
+    }
 }

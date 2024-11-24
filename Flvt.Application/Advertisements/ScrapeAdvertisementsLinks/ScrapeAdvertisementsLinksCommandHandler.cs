@@ -7,11 +7,11 @@ namespace Flvt.Application.Advertisements.ScrapeAdvertisementsLinks;
 
 internal sealed class ScrapeAdvertisementsLinksCommandHandler : ICommandHandler<ScrapeAdvertisementsLinksCommand>
 {
-    private readonly IScrapingOrchestrator _scrapingOrchestrator;
+    private readonly ILinkScrapingOrchestrator _scrapingOrchestrator;
     private readonly IQueuePublisher _queuePublisher;
 
     public ScrapeAdvertisementsLinksCommandHandler(
-        IScrapingOrchestrator scrapingOrchestrator,
+        ILinkScrapingOrchestrator scrapingOrchestrator,
         IQueuePublisher queuePublisher)
     {
         _scrapingOrchestrator = scrapingOrchestrator;
@@ -23,7 +23,7 @@ internal sealed class ScrapeAdvertisementsLinksCommandHandler : ICommandHandler<
         var cities = FilterLocation.SupportedCities;
 
         var linksScrapeTasks = cities
-            .Select(city => _scrapingOrchestrator.ScrapeLinksAsync(city.City))
+            .Select(city => _scrapingOrchestrator.ScrapeAsync(request.Service, city.City))
             .ToList();
 
         await Task.WhenAll(linksScrapeTasks);

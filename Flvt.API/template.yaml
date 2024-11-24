@@ -557,11 +557,18 @@ Resources:
       PackageType: Zip
       Handler: Flvt.API::Flvt.API.Functions.Background.ScrapeAdvertisements_ScrapeLinks_Generated::ScrapeLinks
       Events:
-        ScheduleRule:
+        OtodomScheduleRule:
           Type: Schedule
           Properties:
-            Name: ScrapeLinksSchedule
+            Name: OtodomScrapeLinksSchedule
             Schedule: 'cron(0 0/6 * * ? *)'
+            Input: '{"Service":"Otodom"}'
+        DomiportaScheduleRule:
+          Type: Schedule
+          Properties:
+            Name: DomiportaScrapeLinksSchedule
+            Schedule: 'cron(0 0/6 * * ? *)'
+            Input: '{"Service":"Domiporta"}'
   GetSubscriber:
     Type: AWS::Serverless::Function
     Metadata:

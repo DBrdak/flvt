@@ -5,6 +5,7 @@ namespace Flvt.Infrastructure.Scrapers.Domiporta;
 internal sealed class DomiportaLatestAdvertisementHelper
 {
     public long LastScrapedId { get; private set; }
+    public List<long> CurrentlyScrapedIds { get; private set; } = [];
 
     public DomiportaLatestAdvertisementHelper(ScraperHelper helper)
     {
@@ -16,9 +17,22 @@ internal sealed class DomiportaLatestAdvertisementHelper
         LastScrapedId = lastScrapedId;
     }
 
-    public ScraperHelper ToScraperHelper() =>
-        new (nameof(DomiportaLatestAdvertisementHelper), LastScrapedId.ToString());
+    public ScraperHelper ToScraperHelper()
+    {
+        UpdateLastScrapedId();
 
-    public void UpdateLastScrapedId(long lastScrapedId) =>
-        LastScrapedId = lastScrapedId > LastScrapedId ? lastScrapedId : LastScrapedId;
+        return new ScraperHelper(nameof(DomiportaLatestAdvertisementHelper), LastScrapedId.ToString());
+    }
+
+    private void UpdateLastScrapedId()
+    {
+        if (!CurrentlyScrapedIds.Any())
+        {
+            return;
+        }
+
+        LastScrapedId = CurrentlyScrapedIds.Max() is var maxId && maxId > LastScrapedId ?
+            maxId :
+            LastScrapedId;
+    }
 }

@@ -8,13 +8,13 @@ namespace Flvt.Application.Advertisements.ScrapeAdvertisements;
 
 internal sealed class ScrapeAdvertisementsCommandHandler : ICommandHandler<ScrapeAdvertisementsCommand>
 {
-    private readonly IScrapingOrchestrator _scrapingOrchestrator;
+    private readonly IAdvertisementScrapingOrchestrator _scrapingOrchestrator;
     private readonly IScrapedAdvertisementRepository _scrapedAdvertisementRepository;
     private readonly IAdvertisementPhotosRepository _advertisementPhotosRepository;
     private readonly IQueuePublisher _queuePublisher;
 
     public ScrapeAdvertisementsCommandHandler(
-        IScrapingOrchestrator scrapingOrchestrator,
+        IAdvertisementScrapingOrchestrator scrapingOrchestrator,
         IScrapedAdvertisementRepository scrapedAdvertisementRepository,
         IAdvertisementPhotosRepository advertisementPhotosRepository,
         IQueuePublisher queuePublisher)
@@ -40,7 +40,7 @@ internal sealed class ScrapeAdvertisementsCommandHandler : ICommandHandler<Scrap
 
         var linksToScrape = request.Links.Except(alreadyScrapedLinks).ToList();
 
-        var scrapeResult = (await _scrapingOrchestrator.ScrapeAdvertisementsAsync(linksToScrape)).ToList();
+        var scrapeResult = (await _scrapingOrchestrator.ScrapeAsync(linksToScrape)).ToList();
 
         var scrapedAdvertisements = scrapeResult
             .Select(x => x)

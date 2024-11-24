@@ -1,4 +1,5 @@
 ﻿using System.Security.AccessControl;
+using System.Web;
 using Flvt.Domain.Extensions;
 using Flvt.Domain.Primitives.Advertisements;
 using Flvt.Domain.ScrapedAdvertisements;
@@ -11,6 +12,7 @@ namespace Flvt.Infrastructure.Scrapers.Domiporta;
 internal sealed class DomiportaParser : AdvertisementParser
 {
     protected override string GetAdvertisementNodeSelector() => "//a[@class='sneakpeak__picture_container']";
+    protected string GetAdvertisementsGridNodeSelector() => "//ul[@class='grid']";
 
     protected override string GetContentNodeSelector() => 
         throw new InvalidOperationException("Domiporta doesn't use content selector");
@@ -22,7 +24,7 @@ internal sealed class DomiportaParser : AdvertisementParser
         "//span[@class='features__item_name']";
 
     private string GetFeaturesValuesSelector() =>
-        "//span[@class='features__item_value']";
+        "//span[contains(@class, 'features__item_value')]";
 
     private string GetDescriptionSelector() =>
         "//div[@class='description__panel']";
@@ -49,11 +51,13 @@ internal sealed class DomiportaParser : AdvertisementParser
 
     public override List<string> ParseAdvertisementsLinks()
     {
-        var advertisements = Document.DocumentNode.SelectNodes(GetAdvertisementNodeSelector())?.ToList();
+        var advertisementsContainer = Document.DocumentNode.SelectNodes(GetAdvertisementsGridNodeSelector()).ElementAtOrDefault(0);
+        var advertisements = advertisementsContainer?.SelectNodes(GetAdvertisementNodeSelector())?.ToList();
 
         return advertisements?
             .Select(ad => ad.GetAttributeValue("href", string.Empty))
-            .Where(link => link.StartsWith(GetBaseUrl()))
+            .Where(link => link.StartsWith("/nieruchomosci"))
+            .Select(link => string.Concat(GetBaseUrl(), link))
             .ToList() ?? [];
     }
 
@@ -61,11 +65,11 @@ internal sealed class DomiportaParser : AdvertisementParser
     {
         var featuresNames = Document.DocumentNode
             .SelectNodes(GetFeaturesNamesSelector())?
-            .Select(node => node.InnerText)
+            .Select(node => HttpUtility.HtmlDecode(node.InnerText.Trim()))
             .ToList();
         var featuresValues = Document.DocumentNode
             .SelectNodes(GetFeaturesValuesSelector())?
-            .Select(node => node.InnerText)
+            .Select(node => HttpUtility.HtmlDecode(node.InnerText.Trim()))
             .ToList();
 
         var longitude = Document.DocumentNode
@@ -86,9 +90,11 @@ internal sealed class DomiportaParser : AdvertisementParser
 
         features.Add("coordinates", coordinates.ToString());
 
-        var description = Document.DocumentNode
-            .SelectSingleNode(GetDescriptionSelector())?
-            .InnerText ?? string.Empty;
+        var description = HttpUtility.HtmlDecode(
+            Document.DocumentNode
+                .SelectSingleNode(GetDescriptionSelector())?
+                .InnerText.Trim() ??
+            string.Empty);
 
         return new DomiportaAdContent(features, description);
     }
