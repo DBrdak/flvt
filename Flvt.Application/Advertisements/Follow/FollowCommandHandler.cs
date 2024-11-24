@@ -24,7 +24,7 @@ internal sealed class FollowCommandHandler : ICommandHandler<FollowCommand>
 
         var filter = filterGetResult.Value;
 
-        filter.Follow(request.AdvertisementLink);
+        filter.Follow(request.AdvertisementLink, request.State);
 
         return await _filterRepository.UpdateAsync(filter);
     }

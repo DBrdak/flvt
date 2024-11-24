@@ -41,7 +41,7 @@ internal sealed class DomiportaParser : AdvertisementParser
         var location = filter.DomiportaLocation()?.ToLower().ReplacePolishCharacters();
         var sortByCreationDateQueryParam = "SortingOrder=InsertionDate";
 
-        return $"{GetBaseUrl()}/{GetBaseQueryRelativeUrl()}/{location}/?{sortByCreationDateQueryParam}";
+        return $"{GetBaseUrl()}/{GetBaseQueryRelativeUrl()}/{location}?{sortByCreationDateQueryParam}";
     }
 
     public override string ParsePagedQueryUrl(string baseQueryUrl, int page)

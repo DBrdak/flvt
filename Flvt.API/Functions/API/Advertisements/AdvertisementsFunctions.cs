@@ -53,9 +53,10 @@ public sealed class AdvertisementsFunctions : BaseFunction
     [HttpApi(LambdaHttpMethod.Put, "/v1/advertisements/follow")]
     public async Task<APIGatewayHttpApiV2ProxyResponse> Follow(
         [FromQuery] string advertisementLink,
-        [FromQuery] string filterId)
+        [FromQuery] string filterId,
+        [FromQuery] bool state)
     {
-        var command = new FollowCommand(filterId, advertisementLink);
+        var command = new FollowCommand(filterId, advertisementLink, state);
 
         var result = await Sender.Send(command) ?? Error.Exception;
 

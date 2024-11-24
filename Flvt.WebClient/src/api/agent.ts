@@ -97,8 +97,8 @@ const advertisements = {
         requests.get<string>(`/v1/advertisements?filterId=${filterId}`).then(resultValue),
     getPreview: () =>
         requests.get<string>(`/v1/advertisements/preview`).then(resultValue),
-    follow: (advertisementId: string, filterId: string) =>
-        requests.put(`/v1/advertisements/follow?advertisementLink=${advertisementId}&filterId=${filterId}`),
+    follow: (advertisementId: string, filterId: string, state: boolean) =>
+        requests.put(`/v1/advertisements/follow?advertisementLink=${advertisementId}&filterId=${filterId}&state=${state}`),
     flag: (advertisementId: string) =>
         requests.put(`/v1/advertisements/flag?advertisementLink=${advertisementId}`),
     see: (advertisementId: string, filterId: string) =>

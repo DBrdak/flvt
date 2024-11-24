@@ -57,7 +57,7 @@ public sealed class ScrapeAdvertisements : BaseFunction
             return;
         }
 
-        var command = new ScrapeAdvertisementsLinksCommand("Otodom"); //TODO Temp
+        var command = new ScrapeAdvertisementsLinksCommand(service); //TODO Temp
 
         _ = await Sender.Send(command);
     }
