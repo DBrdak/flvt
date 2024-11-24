@@ -29,33 +29,48 @@ internal sealed class LinkScrapingOrchestrator : ILinkScrapingOrchestrator
 
     private async Task<IEnumerable<string>> ScrapeDomiportaAsync(string city)
     {
-        var latestAdvertisementHelperGetResult = await _scraperHelperRepository.GetDomiportaLatestAdvertisementHelperAsync();
-
-        if (latestAdvertisementHelperGetResult.IsFailure)
+        Func<Task<DomiportaLatestAdvertisementHelper?>> getAdvertisementHelper = async () =>
         {
+            var latestAdvertisementHelperGetResult =
+                await _scraperHelperRepository.GetDomiportaLatestAdvertisementHelperAsync();
+
+            if (latestAdvertisementHelperGetResult.IsSuccess)
+            {
+                return new(latestAdvertisementHelperGetResult.Value);
+            }
+
             Log.Error("Failed to retrieve {helperName}", nameof(DomiportaLatestAdvertisementHelper));
+            return null;
+        };
+
+        var latestAdvertisementHelper = await getAdvertisementHelper();
+
+        if (latestAdvertisementHelper is null)
+        {
             return [];
         }
-
-        var latestAdvertisementHelper =
-            new DomiportaLatestAdvertisementHelper(latestAdvertisementHelperGetResult.Value);
 
         var scraper = new DomiportaLinkScraper(new(city, false), latestAdvertisementHelper);
         var result = await scraper.ScrapeAsync();
 
-        await _scraperHelperRepository.AddRangeAsync([latestAdvertisementHelper.ToScraperHelper()]);
+        latestAdvertisementHelper = await getAdvertisementHelper();
+
+        if (latestAdvertisementHelper is null)
+        {
+            return [];
+        }
+
+        await _scraperHelperRepository.AddAsync(latestAdvertisementHelper.ToScraperHelper());
 
         return result;
     }
 
     private async Task<IEnumerable<string>> ScrapeOtodomAsync(string city, bool onlyNew)
     {
-        var otodomScraper = new OtodomLinkScraper(new(city, onlyNew));
+        var scraper = new OtodomLinkScraper(new(city, onlyNew));
 
-        var otodomTask = otodomScraper.ScrapeAsync();
+        var result = await scraper.ScrapeAsync();
 
-        var otodomScrapeResult = otodomTask.Result;
-
-        return [.. otodomScrapeResult];
+        return result;
     }
 }

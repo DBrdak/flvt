@@ -35,7 +35,7 @@ internal class LinksScrapingMonitor : IPerformanceMonitor
             Scraped links: {adsCount}
             Time: {time} ms
             """,
-            _scraper?.GetType().Name.Replace("Scraper", ""),
+            _scraper?.GetType().Name.Replace("LinksScraper", ""),
             _scraper?.SuccessfullyScrapedLinks,
             elapsed.Milliseconds);
 

@@ -1,4 +1,5 @@
-﻿using Flvt.Infrastructure.Scrapers.Olx;
+﻿using Flvt.Infrastructure.Scrapers.Domiporta;
+using Flvt.Infrastructure.Scrapers.Olx;
 using Flvt.Infrastructure.Scrapers.Otodom;
 using Flvt.Infrastructure.Scrapers.Shared.Parsers;
 
@@ -11,6 +12,7 @@ internal sealed class ScrapersFactory
         {
             _ when url.Contains("otodom.pl") => new OtodomParser(),
             _ when url.Contains("olx.pl") => new OlxParser(),
+            _ when url.Contains("domiporta.pl") => new DomiportaParser(),
             _ => null
         };
 }
