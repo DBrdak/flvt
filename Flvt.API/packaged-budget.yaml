@@ -60,13 +60,6 @@ Resources:
       VisibilityTimeout: 900
     Metadata:
       SamResourceId: LaunchedFiltersQueue
-  ScrapedLinksQueue:
-    Type: AWS::SQS::Queue
-    Properties:
-      QueueName: ScrapedLinksQueue
-      VisibilityTimeout: 900
-    Metadata:
-      SamResourceId: ScrapedLinksQueue
   ProcessAdvertisementsStartProcessing:
     Type: AWS::Serverless::Function
     Metadata:
@@ -75,12 +68,19 @@ Resources:
     Properties:
       FunctionName: StartProcessing
       Runtime: dotnet8
-      CodeUri: s3://flvt/6876947679583036d6e77ae1063fbd4d
+      CodeUri: s3://flvt/d473b59bcddc7f181c32f67c1db5f8e9
       MemorySize: 3008
       Timeout: 300
       Role: arn:aws:iam::975049887576:role/FullAccess
       PackageType: Zip
       Handler: Flvt.API::Flvt.API.Functions.Background.ProcessAdvertisements_StartProcessing_Generated::StartProcessing
+      Events:
+        ScheduleRule:
+          Type: Schedule
+          Properties:
+            Name: StartProcessingSchedule
+            Enabled: true
+            Schedule: cron(0 0/3 * * ? *)
   ProcessAdvertisementsCheckProcessingStatus:
     Type: AWS::Serverless::Function
     Metadata:
@@ -89,7 +89,7 @@ Resources:
     Properties:
       FunctionName: CheckProcessingStatus
       Runtime: dotnet8
-      CodeUri: s3://flvt/6876947679583036d6e77ae1063fbd4d
+      CodeUri: s3://flvt/d473b59bcddc7f181c32f67c1db5f8e9
       MemorySize: 3008
       Timeout: 120
       Role: arn:aws:iam::975049887576:role/FullAccess
@@ -109,7 +109,7 @@ Resources:
     Properties:
       FunctionName: EndProcessing
       Runtime: dotnet8
-      CodeUri: s3://flvt/6876947679583036d6e77ae1063fbd4d
+      CodeUri: s3://flvt/d473b59bcddc7f181c32f67c1db5f8e9
       MemorySize: 3008
       Timeout: 300
       Role: arn:aws:iam::975049887576:role/FullAccess
@@ -131,7 +131,7 @@ Resources:
     Properties:
       FunctionName: RemoveOutdated
       Runtime: dotnet8
-      CodeUri: s3://flvt/6876947679583036d6e77ae1063fbd4d
+      CodeUri: s3://flvt/d473b59bcddc7f181c32f67c1db5f8e9
       MemorySize: 3008
       Timeout: 900
       Role: arn:aws:iam::975049887576:role/FullAccess
@@ -151,7 +151,7 @@ Resources:
     Properties:
       FunctionName: RemoveDuplicates
       Runtime: dotnet8
-      CodeUri: s3://flvt/6876947679583036d6e77ae1063fbd4d
+      CodeUri: s3://flvt/d473b59bcddc7f181c32f67c1db5f8e9
       MemorySize: 3008
       Timeout: 300
       Role: arn:aws:iam::975049887576:role/FullAccess
@@ -172,7 +172,7 @@ Resources:
     Properties:
       FunctionName: UpdateUnprocessedScrapedAds
       Runtime: dotnet8
-      CodeUri: s3://flvt/6876947679583036d6e77ae1063fbd4d
+      CodeUri: s3://flvt/d473b59bcddc7f181c32f67c1db5f8e9
       MemorySize: 3008
       Timeout: 300
       Role: arn:aws:iam::975049887576:role/FullAccess
@@ -198,7 +198,7 @@ Resources:
     Properties:
       FunctionName: AdvertisementsGetByFilter
       Runtime: dotnet8
-      CodeUri: s3://flvt/6876947679583036d6e77ae1063fbd4d
+      CodeUri: s3://flvt/d473b59bcddc7f181c32f67c1db5f8e9
       MemorySize: 3008
       Timeout: 60
       Role: arn:aws:iam::975049887576:role/FullAccess
@@ -220,7 +220,7 @@ Resources:
     Properties:
       FunctionName: FlvtAuthorizer
       Runtime: dotnet8
-      CodeUri: s3://flvt/6876947679583036d6e77ae1063fbd4d
+      CodeUri: s3://flvt/d473b59bcddc7f181c32f67c1db5f8e9
       MemorySize: 3008
       Timeout: 60
       Role: arn:aws:iam::975049887576:role/FullAccess
@@ -240,7 +240,7 @@ Resources:
     Properties:
       FunctionName: Register
       Runtime: dotnet8
-      CodeUri: s3://flvt/6876947679583036d6e77ae1063fbd4d
+      CodeUri: s3://flvt/d473b59bcddc7f181c32f67c1db5f8e9
       MemorySize: 3008
       Timeout: 60
       Role: arn:aws:iam::975049887576:role/FullAccess
@@ -270,7 +270,7 @@ Resources:
     Properties:
       FunctionName: Login
       Runtime: dotnet8
-      CodeUri: s3://flvt/6876947679583036d6e77ae1063fbd4d
+      CodeUri: s3://flvt/d473b59bcddc7f181c32f67c1db5f8e9
       MemorySize: 3008
       Timeout: 60
       Role: arn:aws:iam::975049887576:role/FullAccess
@@ -300,7 +300,7 @@ Resources:
     Properties:
       FunctionName: VerifyEmail
       Runtime: dotnet8
-      CodeUri: s3://flvt/6876947679583036d6e77ae1063fbd4d
+      CodeUri: s3://flvt/d473b59bcddc7f181c32f67c1db5f8e9
       MemorySize: 3008
       Timeout: 60
       Role: arn:aws:iam::975049887576:role/FullAccess
@@ -324,7 +324,7 @@ Resources:
     Properties:
       FunctionName: RemoveUnusedPhotos
       Runtime: dotnet8
-      CodeUri: s3://flvt/6876947679583036d6e77ae1063fbd4d
+      CodeUri: s3://flvt/d473b59bcddc7f181c32f67c1db5f8e9
       MemorySize: 3008
       Timeout: 900
       Role: arn:aws:iam::975049887576:role/FullAccess
@@ -344,7 +344,7 @@ Resources:
     Properties:
       FunctionName: LaunchFilters
       Runtime: dotnet8
-      CodeUri: s3://flvt/6876947679583036d6e77ae1063fbd4d
+      CodeUri: s3://flvt/d473b59bcddc7f181c32f67c1db5f8e9
       MemorySize: 3008
       Timeout: 900
       Role: arn:aws:iam::975049887576:role/FullAccess
@@ -364,7 +364,7 @@ Resources:
     Properties:
       FunctionName: NotifyAboutLaunchedFilters
       Runtime: dotnet8
-      CodeUri: s3://flvt/6876947679583036d6e77ae1063fbd4d
+      CodeUri: s3://flvt/d473b59bcddc7f181c32f67c1db5f8e9
       MemorySize: 3008
       Timeout: 900
       Role: arn:aws:iam::975049887576:role/FullAccess
@@ -392,7 +392,7 @@ Resources:
     Properties:
       FunctionName: AdvertisementsMarkAsSeen
       Runtime: dotnet8
-      CodeUri: s3://flvt/6876947679583036d6e77ae1063fbd4d
+      CodeUri: s3://flvt/d473b59bcddc7f181c32f67c1db5f8e9
       MemorySize: 3008
       Timeout: 60
       Role: arn:aws:iam::975049887576:role/FullAccess
@@ -420,7 +420,7 @@ Resources:
     Properties:
       FunctionName: AdvertisementsFlag
       Runtime: dotnet8
-      CodeUri: s3://flvt/6876947679583036d6e77ae1063fbd4d
+      CodeUri: s3://flvt/d473b59bcddc7f181c32f67c1db5f8e9
       MemorySize: 3008
       Timeout: 60
       Role: arn:aws:iam::975049887576:role/FullAccess
@@ -448,7 +448,7 @@ Resources:
     Properties:
       FunctionName: AdvertisementsFollow
       Runtime: dotnet8
-      CodeUri: s3://flvt/6876947679583036d6e77ae1063fbd4d
+      CodeUri: s3://flvt/d473b59bcddc7f181c32f67c1db5f8e9
       MemorySize: 3008
       Timeout: 60
       Role: arn:aws:iam::975049887576:role/FullAccess
@@ -476,7 +476,7 @@ Resources:
     Properties:
       FunctionName: RequestNewPassword
       Runtime: dotnet8
-      CodeUri: s3://flvt/6876947679583036d6e77ae1063fbd4d
+      CodeUri: s3://flvt/d473b59bcddc7f181c32f67c1db5f8e9
       MemorySize: 3008
       Timeout: 60
       Role: arn:aws:iam::975049887576:role/FullAccess
@@ -506,7 +506,7 @@ Resources:
     Properties:
       FunctionName: SetNewPassword
       Runtime: dotnet8
-      CodeUri: s3://flvt/6876947679583036d6e77ae1063fbd4d
+      CodeUri: s3://flvt/d473b59bcddc7f181c32f67c1db5f8e9
       MemorySize: 3008
       Timeout: 60
       Role: arn:aws:iam::975049887576:role/FullAccess
@@ -536,7 +536,7 @@ Resources:
     Properties:
       FunctionName: ResendEmail
       Runtime: dotnet8
-      CodeUri: s3://flvt/6876947679583036d6e77ae1063fbd4d
+      CodeUri: s3://flvt/d473b59bcddc7f181c32f67c1db5f8e9
       MemorySize: 3008
       Timeout: 900
       Role: arn:aws:iam::975049887576:role/FullAccess
@@ -560,7 +560,7 @@ Resources:
     Properties:
       FunctionName: FlvtAuthorizerOffEmail
       Runtime: dotnet8
-      CodeUri: s3://flvt/6876947679583036d6e77ae1063fbd4d
+      CodeUri: s3://flvt/d473b59bcddc7f181c32f67c1db5f8e9
       MemorySize: 3008
       Timeout: 60
       Role: arn:aws:iam::975049887576:role/FullAccess
@@ -574,28 +574,19 @@ Resources:
     Properties:
       FunctionName: ScrapeAds
       Runtime: dotnet8
-      CodeUri: s3://flvt/6876947679583036d6e77ae1063fbd4d
+      CodeUri: s3://flvt/d473b59bcddc7f181c32f67c1db5f8e9
       MemorySize: 3008
       Timeout: 900
       Role: arn:aws:iam::975049887576:role/FullAccess
       PackageType: Zip
       Handler: Flvt.API::Flvt.API.Functions.Background.ScrapeAdvertisements_ScrapeAds_Generated::ScrapeAds
       Events:
-        SqsEvent:
-          Type: SQS
+        ScheduleRule:
+          Type: Schedule
           Properties:
-            Queue:
-              Fn::GetAtt:
-              - ScrapedLinksQueue
-              - Arn
-      EventInvokeConfig:
-        DestinationConfig:
-          OnSuccess:
-            Type: Lambda
-            Destination:
-              Fn::GetAtt:
-              - ProcessAdvertisementsStartProcessing
-              - Arn
+            Name: ScrapeAdsSchdule
+            Enabled: true
+            Schedule: rate(30 minutes)
   ScrapeLinks:
     Type: AWS::Serverless::Function
     Metadata:
@@ -604,7 +595,7 @@ Resources:
     Properties:
       FunctionName: ScrapeLinks
       Runtime: dotnet8
-      CodeUri: s3://flvt/6876947679583036d6e77ae1063fbd4d
+      CodeUri: s3://flvt/d473b59bcddc7f181c32f67c1db5f8e9
       MemorySize: 3008
       Timeout: 900
       Role: arn:aws:iam::975049887576:role/FullAccess
@@ -637,7 +628,7 @@ Resources:
     Properties:
       FunctionName: GetSubscriber
       Runtime: dotnet8
-      CodeUri: s3://flvt/6876947679583036d6e77ae1063fbd4d
+      CodeUri: s3://flvt/d473b59bcddc7f181c32f67c1db5f8e9
       MemorySize: 3008
       Timeout: 60
       Role: arn:aws:iam::975049887576:role/FullAccess
@@ -665,7 +656,7 @@ Resources:
     Properties:
       FunctionName: AddBasicFilter
       Runtime: dotnet8
-      CodeUri: s3://flvt/6876947679583036d6e77ae1063fbd4d
+      CodeUri: s3://flvt/d473b59bcddc7f181c32f67c1db5f8e9
       MemorySize: 3008
       Timeout: 60
       Role: arn:aws:iam::975049887576:role/FullAccess
@@ -693,7 +684,7 @@ Resources:
     Properties:
       FunctionName: RemoveFilter
       Runtime: dotnet8
-      CodeUri: s3://flvt/6876947679583036d6e77ae1063fbd4d
+      CodeUri: s3://flvt/d473b59bcddc7f181c32f67c1db5f8e9
       MemorySize: 3008
       Timeout: 60
       Role: arn:aws:iam::975049887576:role/FullAccess
@@ -721,7 +712,7 @@ Resources:
     Properties:
       FunctionName: AdvertisementsPreview
       Runtime: dotnet8
-      CodeUri: s3://flvt/6876947679583036d6e77ae1063fbd4d
+      CodeUri: s3://flvt/d473b59bcddc7f181c32f67c1db5f8e9
       MemorySize: 3008
       Timeout: 60
       Role: arn:aws:iam::975049887576:role/FullAccess

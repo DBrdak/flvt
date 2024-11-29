@@ -1,4 +1,5 @@
 ﻿using Flvt.Application.Abstractions;
+using Flvt.Domain.AdvertisementLinks;
 using Flvt.Domain.Filters;
 using Flvt.Domain.Photos;
 using Flvt.Domain.ProcessedAdvertisements;
@@ -58,6 +59,7 @@ public static class InfrastructureInjector
             .AddScoped<ISubscriberRepository, SubscriberRepository>()
             .AddScoped<IFilterRepository, FilterRepository>()
             .AddScoped<IScraperHelperRepository, ScraperHelperRepository>()
+            .AddScoped<IAdvertisementLinkRepository, AdvertisementLinkRepository>()
             .AddScoped<BatchRepository>();
 
     private static IServiceCollection AddScrapers(this IServiceCollection services) =>

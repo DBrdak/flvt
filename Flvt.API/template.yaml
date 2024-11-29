@@ -48,11 +48,6 @@ Resources:
     Properties:
       QueueName: LaunchedFiltersQueue
       VisibilityTimeout: 900
-  ScrapedLinksQueue:
-    Type: AWS::SQS::Queue
-    Properties:
-      QueueName: ScrapedLinksQueue
-      VisibilityTimeout: 900
   ProcessAdvertisementsStartProcessing:
     Type: AWS::Serverless::Function
     Metadata:
@@ -66,6 +61,13 @@ Resources:
       Role: arn:aws:iam::975049887576:role/FullAccess
       PackageType: Zip
       Handler: Flvt.API::Flvt.API.Functions.Background.ProcessAdvertisements_StartProcessing_Generated::StartProcessing
+      Events:
+        ScheduleRule:
+          Type: Schedule
+          Properties:
+            Name: StartProcessingSchedule
+            Enabled: true
+            Schedule: 'cron(0 0/3 * * ? *)'
   ProcessAdvertisementsCheckProcessingStatus:
     Type: AWS::Serverless::Function
     Metadata:
@@ -529,15 +531,12 @@ Resources:
       PackageType: Zip
       Handler: Flvt.API::Flvt.API.Functions.Background.ScrapeAdvertisements_ScrapeAds_Generated::ScrapeAds
       Events:
-        SqsEvent:
-          Type: SQS
+        ScheduleRule:
+          Type: Schedule
           Properties:
-            Queue: !GetAtt ScrapedLinksQueue.Arn
-      EventInvokeConfig:
-        DestinationConfig:
-          OnSuccess:
-            Type: Lambda
-            Destination: !GetAtt ProcessAdvertisementsStartProcessing.Arn
+            Name: ScrapeAdsSchdule
+            Enabled: true
+            Schedule: 'rate(30 minutes)'
   ScrapeLinks:
     Type: AWS::Serverless::Function
     Metadata:

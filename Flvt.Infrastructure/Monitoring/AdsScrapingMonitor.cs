@@ -30,7 +30,7 @@ internal class AdsScrapingMonitor : IPerformanceMonitor
 
         _logger.Information(
             """
-            === Scraper performance analysis ===
+            === Advertisement Scraper performance analysis ===
             Website: {website}
             Scraped advertisements: {adsCount}
             Time: {time} ms
