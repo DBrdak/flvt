@@ -66,7 +66,7 @@ Resources:
           Type: Schedule
           Properties:
             Name: StartProcessingSchedule
-            Enabled: true
+            Enabled: false
             Schedule: 'cron(0 0/3 * * ? *)'
   ProcessAdvertisementsCheckProcessingStatus:
     Type: AWS::Serverless::Function
@@ -86,6 +86,7 @@ Resources:
           Type: Schedule
           Properties:
             Name: CheckProcessingStatusSchedule
+            Enabled: false
             Schedule: 'rate(30 minutes)'
   ProcessAdvertisementsEndProcessing:
     Type: AWS::Serverless::Function
@@ -162,6 +163,7 @@ Resources:
           Type: Schedule
           Properties:
             Name: UpdateUnprocessedScrapedAdsSchedule
+            Enabled: false
             Schedule: 'cron(0 3 * * ? *)'
   AdvertisementsGetByFilter:
     Type: AWS::Serverless::Function
@@ -304,6 +306,7 @@ Resources:
           Type: Schedule
           Properties:
             Name: RemoveUnusedPhotosSchedule
+            Enabled: false
             Schedule: 'cron(0 4 * * ? *)'
   LaunchFilters:
     Type: AWS::Serverless::Function
@@ -323,6 +326,7 @@ Resources:
           Type: Schedule
           Properties:
             Name: LaunchFiltersSchedule
+            Enabled: false
             Schedule: 'rate(1 hour)'
   NotifyAboutLaunchedFilters:
     Type: AWS::Serverless::Function
@@ -535,7 +539,7 @@ Resources:
           Type: Schedule
           Properties:
             Name: ScrapeAdsSchdule
-            Enabled: true
+            Enabled: false
             Schedule: 'rate(30 minutes)'
   ScrapeLinks:
     Type: AWS::Serverless::Function
@@ -556,12 +560,14 @@ Resources:
           Properties:
             Name: OtodomScrapeLinksSchedule
             Schedule: 'cron(0 0/6 * * ? *)'
+            Enabled: false
             Input: '{"Service":"Otodom"}'
         DomiportaScheduleRule:
           Type: Schedule
           Properties:
             Name: DomiportaScrapeLinksSchedule
             Schedule: 'cron(0 0/6 * * ? *)'
+            Enabled: false
             Input: '{"Service":"Domiporta"}'
   GetSubscriber:
     Type: AWS::Serverless::Function
