@@ -48,16 +48,6 @@ Resources:
     Properties:
       QueueName: LaunchedFiltersQueue
       VisibilityTimeout: 900
-  ScrapedLinksQueue:
-    Type: AWS::SQS::Queue
-    Properties:
-      QueueName: ScrapedLinksQueue
-      VisibilityTimeout: 900
-  ScrapedAdsQueue:
-    Type: AWS::SQS::Queue
-    Properties:
-      QueueName: ScrapedAdsQueue
-      VisibilityTimeout: 900
   ProcessAdvertisementsStartProcessing:
     Type: AWS::Serverless::Function
     Metadata:
@@ -72,10 +62,12 @@ Resources:
       PackageType: Zip
       Handler: Flvt.API::Flvt.API.Functions.Background.ProcessAdvertisements_StartProcessing_Generated::StartProcessing
       Events:
-        SqsEvent:
-          Type: SQS
+        ScheduleRule:
+          Type: Schedule
           Properties:
-            Queue: !GetAtt ScrapedAdsQueue.Arn
+            Name: StartProcessingSchedule
+            Enabled: false
+            Schedule: 'cron(0 0/3 * * ? *)'
   ProcessAdvertisementsCheckProcessingStatus:
     Type: AWS::Serverless::Function
     Metadata:
@@ -94,6 +86,7 @@ Resources:
           Type: Schedule
           Properties:
             Name: CheckProcessingStatusSchedule
+            Enabled: false
             Schedule: 'rate(30 minutes)'
   ProcessAdvertisementsEndProcessing:
     Type: AWS::Serverless::Function
@@ -170,6 +163,7 @@ Resources:
           Type: Schedule
           Properties:
             Name: UpdateUnprocessedScrapedAdsSchedule
+            Enabled: false
             Schedule: 'cron(0 3 * * ? *)'
   AdvertisementsGetByFilter:
     Type: AWS::Serverless::Function
@@ -312,6 +306,7 @@ Resources:
           Type: Schedule
           Properties:
             Name: RemoveUnusedPhotosSchedule
+            Enabled: false
             Schedule: 'cron(0 4 * * ? *)'
   LaunchFilters:
     Type: AWS::Serverless::Function
@@ -331,6 +326,7 @@ Resources:
           Type: Schedule
           Properties:
             Name: LaunchFiltersSchedule
+            Enabled: false
             Schedule: 'rate(1 hour)'
   NotifyAboutLaunchedFilters:
     Type: AWS::Serverless::Function
@@ -539,10 +535,12 @@ Resources:
       PackageType: Zip
       Handler: Flvt.API::Flvt.API.Functions.Background.ScrapeAdvertisements_ScrapeAds_Generated::ScrapeAds
       Events:
-        SqsEvent:
-          Type: SQS
+        ScheduleRule:
+          Type: Schedule
           Properties:
-            Queue: !GetAtt ScrapedLinksQueue.Arn
+            Name: ScrapeAdsSchdule
+            Enabled: false
+            Schedule: 'rate(30 minutes)'
   ScrapeLinks:
     Type: AWS::Serverless::Function
     Metadata:
@@ -562,12 +560,14 @@ Resources:
           Properties:
             Name: OtodomScrapeLinksSchedule
             Schedule: 'cron(0 0/6 * * ? *)'
+            Enabled: false
             Input: '{"Service":"Otodom"}'
         DomiportaScheduleRule:
           Type: Schedule
           Properties:
             Name: DomiportaScrapeLinksSchedule
             Schedule: 'cron(0 0/6 * * ? *)'
+            Enabled: false
             Input: '{"Service":"Domiporta"}'
   GetSubscriber:
     Type: AWS::Serverless::Function

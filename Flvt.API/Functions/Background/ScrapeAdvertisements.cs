@@ -19,31 +19,11 @@ public sealed class ScrapeAdvertisements : BaseFunction
 
 
     [LambdaFunction(ResourceName = nameof(ScrapeAds))]
-    public async Task ScrapeAds(SQSEvent evnt)
+    public async Task ScrapeAds()
     {
-        try
-        {
-            var tasks = evnt.Records.Select(record =>
-            {
-                var command = new ScrapeAdvertisementsCommand(
-                    JsonConvert.DeserializeObject<IEnumerable<string>>(record.Body) ??
-                    throw new SerializationException("Failed to deserialize SQS event to Filters IDs array"));
+        var command = new ScrapeAdvertisementsCommand();
 
-                return Sender.Send(command);
-            });
-
-            await Task.WhenAll(tasks);
-        }
-        catch (Exception e)
-        {
-            Log.Logger.Error(
-                "Problem occured when trying to execute {queueHandlerName} Lambda queue handler" +
-                "Exception: {exception}" +
-                "Details: {message}",
-                nameof(ScrapeAds),
-                e.GetType().Name,
-                e.Message);
-        }
+        _ = await Sender.Send(command);
     }
 
     [LambdaFunction(ResourceName = nameof(ScrapeLinks))]

@@ -36,7 +36,7 @@ internal sealed class LinkScrapingOrchestrator : ILinkScrapingOrchestrator
 
             if (latestAdvertisementHelperGetResult.IsSuccess)
             {
-                return new(latestAdvertisementHelperGetResult.Value);
+                return new(latestAdvertisementHelperGetResult.Value, city);
             }
 
             Log.Error("Failed to retrieve {helperName}", nameof(DomiportaLatestAdvertisementHelper));

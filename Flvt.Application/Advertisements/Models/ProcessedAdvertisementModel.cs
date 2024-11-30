@@ -125,8 +125,7 @@ public sealed record ProcessedAdvertisementModel
             let wasSeen = seenAdvertisements.Any(ad => ad.Link == advertisement.Link)
             let isNew = newAdvertisements.Any(ad => ad.Link == advertisement.Link)
             let isFollowed = followedAdvertisements.Any(ad => ad.Link == advertisement.Link)
-            let advertisementPhotos = photos.FirstOrDefault(photo => photo.AdvertisementLink == advertisement.Link)
-                ?.Links ?? []
+            let advertisementPhotos = photos.FirstOrDefault(photo => photo.AdvertisementLink == advertisement.Link)?.Links
             select FromDomainModel(advertisement, advertisementPhotos, wasSeen, isNew, isFollowed));
 
         return advertisementsModels;

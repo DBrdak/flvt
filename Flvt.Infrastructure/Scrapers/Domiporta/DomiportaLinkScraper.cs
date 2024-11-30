@@ -16,7 +16,7 @@ internal sealed class DomiportaLinkScraper : AdvertisementLinkScraper
     protected override List<string> ValidateLinks(List<string> links)
     {
         var validLinks = links
-            .Where(link => GetIdFromLink(link) > _latestAdvertisementHelper.LastScrapedId)
+            .Where(link => GetIdFromLink(link) > _latestAdvertisementHelper.LastScrapedIdIn(Filter.City))
             .ToList();
 
         _latestAdvertisementHelper.CurrentlyScrapedIds.AddRange(validLinks.Select(GetIdFromLink));

@@ -16,7 +16,7 @@ internal sealed class ResendClient
     public async Task<Result> SendEmailAsync(Email email)
     {
         var apiToken = await SecretAccesor.GetSecretAsync(secretName);
-        _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {apiToken}");
+        _ = _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", $"Bearer {apiToken}");
 
         var resendEmail = ResendEmail.FromDomainEmail(email);
 

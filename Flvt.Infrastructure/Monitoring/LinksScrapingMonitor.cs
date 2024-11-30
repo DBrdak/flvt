@@ -30,12 +30,12 @@ internal class LinksScrapingMonitor : IPerformanceMonitor
 
         _logger.Information(
             """
-            === Scraper performance analysis ===
+            === Link Scraper performance analysis ===
             Website: {website}
             Scraped links: {adsCount}
             Time: {time} ms
             """,
-            _scraper?.GetType().Name.Replace("LinksScraper", ""),
+            _scraper?.GetType().Name.Replace("LinkScraper", ""),
             _scraper?.SuccessfullyScrapedLinks,
             elapsed.Milliseconds);
 

@@ -27,8 +27,13 @@ internal abstract class AdvertisementScraper
         _monitor = new AdsScrapingMonitor(this);
     }
 
-    public async Task<AdvertisementsScrapeResult> ScrapeAsync(IEnumerable<string> links)
+    public async Task<AdvertisementsScrapeResult> ScrapeAsync(List<string> links)
     {
+        if (!links.Any())
+        {
+            return new([], []);
+        }
+
         try
         {
             var scrapeTasks = links

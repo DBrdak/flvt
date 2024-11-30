@@ -62,6 +62,26 @@ internal abstract class Repository<TEntity>
 
         return Result.Create(docs.Take(limit ?? docs.Count));
     }
+    public async Task<Result<IEnumerable<TEntity>>> GetAllAsync(int limit)
+    {
+        var config = new ScanOperationConfig
+        {
+            Limit = limit
+        };
+
+        var scanner = Table.Scan(config);
+
+        var docs = new List<Document>();
+
+        do
+            docs.AddRange(await scanner.GetNextSetAsync());
+        while (docs.Count <= limit || !scanner.IsDone);
+
+        var records = docs.Select(_dataModelService.ConvertDocumentToDataModel);
+        var entities = records.Select(record => record.ToDomainModel());
+
+        return Result.Create(entities.Take(limit));
+    }
 
     protected virtual async Task<Result<IEnumerable<TEntity>>> GetWhereAsync(ScanFilter filter)
     {

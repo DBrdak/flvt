@@ -1,8 +1,10 @@
 ﻿using Amazon.DynamoDBv2.DocumentModel;
+using Flvt.Domain.AdvertisementLinks;
 using Flvt.Domain.Photos;
 using Flvt.Domain.ProcessedAdvertisements;
 using Flvt.Domain.ScrapedAdvertisements;
 using Flvt.Domain.Subscribers;
+using Flvt.Infrastructure.Data.DataModels.AdvertisementLinks;
 using Flvt.Infrastructure.Data.DataModels.Batches;
 using Flvt.Infrastructure.Data.DataModels.Filters;
 using Flvt.Infrastructure.Data.DataModels.Photos;
@@ -38,6 +40,8 @@ internal sealed class DataModelService<TEntity>
                 .FromDomainModel(photos) as IDataModel<TEntity>,
             ScraperHelper scraperHelper => ScraperHelperDataModel
                 .FromDomainModel(scraperHelper) as IDataModel<TEntity>,
+            AdvertisementLink advertisementLink => AdvertisementLinkDataModel
+                .FromDomainModel(advertisementLink) as IDataModel<TEntity>,
             _ => throw _convertDomainModelToDataModelException
         } ??
         throw _convertDomainModelToDataModelException;
@@ -59,6 +63,8 @@ internal sealed class DataModelService<TEntity>
                 AdvertisementPhotosDataModel.FromDocument(doc) as IDataModel<TEntity>,
             { Name: nameof(ScraperHelper) } =>
                 ScraperHelperDataModel.FromDocument(doc) as IDataModel<TEntity>,
+            { Name: nameof(AdvertisementLink) } =>
+                AdvertisementLinkDataModel.FromDocument(doc) as IDataModel<TEntity>,
             _ => throw _convertDocumentToDataModelException
         } ??
         throw _convertDocumentToDataModelException;

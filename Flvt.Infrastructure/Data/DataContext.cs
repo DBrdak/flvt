@@ -2,6 +2,7 @@
 using Amazon.DynamoDBv2.DocumentModel;
 using Amazon.Runtime;
 using Flvt.Domain;
+using Flvt.Domain.AdvertisementLinks;
 using Flvt.Domain.Photos;
 using Flvt.Domain.ProcessedAdvertisements;
 using Flvt.Domain.ScrapedAdvertisements;
@@ -36,6 +37,8 @@ internal sealed class DataContext
         table : throw _connectionException;
     private Table ScraperHelpers => Table.TryLoadTable(_client, nameof(ScraperHelpers), out var table) ?
         table : throw _connectionException;
+    private Table AdvertisementLinks => Table.TryLoadTable(_client, nameof(AdvertisementLinks), out var table) ?
+        table : throw _connectionException;
 
     public Table Set<TEntity>() =>
         typeof(TEntity) switch
@@ -47,6 +50,7 @@ internal sealed class DataContext
             { Name: nameof(Filter) } => Filters,
             { Name: nameof(AdvertisementPhotos) } => AdvertisementsPhotos,
             { Name: nameof(ScraperHelper) } => ScraperHelpers,
+            { Name: nameof(AdvertisementLink) } => AdvertisementLinks,
             var type => throw InvalidTableException(type.Name)
         };
 }

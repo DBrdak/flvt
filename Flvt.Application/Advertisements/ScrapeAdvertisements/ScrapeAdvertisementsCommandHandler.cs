@@ -1,5 +1,6 @@
 using Flvt.Application.Abstractions;
 using Flvt.Application.Messaging;
+using Flvt.Domain.AdvertisementLinks;
 using Flvt.Domain.Photos;
 using Flvt.Domain.Primitives.Responses;
 using Flvt.Domain.ScrapedAdvertisements;
@@ -11,34 +12,47 @@ internal sealed class ScrapeAdvertisementsCommandHandler : ICommandHandler<Scrap
     private readonly IAdvertisementScrapingOrchestrator _scrapingOrchestrator;
     private readonly IScrapedAdvertisementRepository _scrapedAdvertisementRepository;
     private readonly IAdvertisementPhotosRepository _advertisementPhotosRepository;
-    private readonly IQueuePublisher _queuePublisher;
+    private readonly IAdvertisementLinkRepository _advertisementLinkRepository;
+    private const int batchSize = 512;
 
     public ScrapeAdvertisementsCommandHandler(
         IAdvertisementScrapingOrchestrator scrapingOrchestrator,
         IScrapedAdvertisementRepository scrapedAdvertisementRepository,
         IAdvertisementPhotosRepository advertisementPhotosRepository,
-        IQueuePublisher queuePublisher)
+        IAdvertisementLinkRepository advertisementLinkRepository)
     {
         _scrapingOrchestrator = scrapingOrchestrator;
         _scrapedAdvertisementRepository = scrapedAdvertisementRepository;
         _advertisementPhotosRepository = advertisementPhotosRepository;
-        _queuePublisher = queuePublisher;
+        _advertisementLinkRepository = advertisementLinkRepository;
     }
 
     public async Task<Result> Handle(ScrapeAdvertisementsCommand request, CancellationToken cancellationToken)
     {
-        var alreadyScrapedAdvertisementsLinksGetResult = await _scrapedAdvertisementRepository.GetManyByLinkAsync(request.Links);
+        var linksGetResult = await _advertisementLinkRepository.GetAllAsync(batchSize);
 
-        if (alreadyScrapedAdvertisementsLinksGetResult.IsFailure)
+        if (linksGetResult.IsFailure)
         {
-            return alreadyScrapedAdvertisementsLinksGetResult.Error;
+            return linksGetResult.Error;
         }
 
-        var alreadyScrapedAdvertisementsLinks = alreadyScrapedAdvertisementsLinksGetResult.Value;
+        var links = linksGetResult.Value.Select(l => l.Link).ToList();
 
-        var alreadyScrapedLinks = alreadyScrapedAdvertisementsLinks.Select(ad => ad.Link).ToList();
+        if (!links.Any())
+        {
+            return Result.Success();
+        }
 
-        var linksToScrape = request.Links.Except(alreadyScrapedLinks).ToList();
+        var alreadyScrapedLinksGetResult = await _scrapedAdvertisementRepository.GetAllLinksAsync();
+
+        if (alreadyScrapedLinksGetResult.IsFailure)
+        {
+            return alreadyScrapedLinksGetResult.Error;
+        }
+
+        var alreadyScrapedLinks = alreadyScrapedLinksGetResult.Value.ToList();
+
+        var linksToScrape = links.Except(alreadyScrapedLinks).ToList();
 
         var scrapeResult = (await _scrapingOrchestrator.ScrapeAsync(linksToScrape)).ToList();
 
@@ -58,8 +72,10 @@ internal sealed class ScrapeAdvertisementsCommandHandler : ICommandHandler<Scrap
     private async Task<Result> SaveScrapedAdvertisementsAsync(
         List<ScrapedAdvertisement> scrapedAdvertisementsToInsert,
         List<AdvertisementPhotos> scrapedPhotos) =>
-        Result.Aggregate(await Task.WhenAll(
-            _scrapedAdvertisementRepository.AddRangeAsync(scrapedAdvertisementsToInsert),
-            _advertisementPhotosRepository.AddRangeAsync(scrapedPhotos),
-            _queuePublisher.PublishScrapedAdsAsync()));
+        Result.Aggregate(
+            await Task.WhenAll(
+                _scrapedAdvertisementRepository.AddRangeAsync(scrapedAdvertisementsToInsert),
+                _advertisementPhotosRepository.AddRangeAsync(scrapedPhotos),
+                _advertisementLinkRepository.RemoveRangeAsync(
+                    scrapedAdvertisementsToInsert.Select(ad => ad.Link))));
 }
