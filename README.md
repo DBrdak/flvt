@@ -115,9 +115,3 @@ This is a passion project, and contributions are more than welcome! If you'd lik
 ---
 ## License
 This project is open for public use. (Feel free to add any additional licensing details if necessary.)
-
----
-## Acknowledgments
-- **AWS Services:** For providing robust cloud infrastructure and services that power this app.
-- **Resend:** For the email delivery service that keeps users updated.
-- **The Open Source Community:** For the numerous tools, libraries, and frameworks that made this project possible.
