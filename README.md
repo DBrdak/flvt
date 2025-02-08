@@ -5,7 +5,7 @@
 
 flvt is a comprehensive app that aggregates apartment rental advertisements from the most popular classifieds portals in Poland. Leveraging advanced AI, flvt processes and summarizes ads to provide users with concise, concrete information—all in one place. With a clear and responsive UI, users can quickly browse through listings and find the perfect apartment. Powerful filtering options and scheduled email alerts ensure that every user can tailor the experience to their unique needs.
 
-> **Note:** This repository contains almost 15,000 lines of pure code, as calculated by [CLOC](https://github.com/AlDanial/cloc).
+15,000 lines of pure code, calculated by [CLOC](https://github.com/AlDanial/cloc).
 
 ---
 ## Table of Contents
