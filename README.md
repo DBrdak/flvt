@@ -35,11 +35,13 @@ flvt is a comprehensive app that aggregates apartment rental advertisements from
 ## Tech Stack
 ### Backend
 - **Language & Framework:**  
-  .NET 8 with Clean Architecture principles
+  C# + .NET 8
 - **Scheduled Jobs:**  
   Multiple scheduled jobs to scrape and process rental advertisements
 - **Email Service:**  
   Resend
+- **Database**
+  DynamoDB
 
 ### Infrastructure
 - **Cloud Services:**  
@@ -47,7 +49,8 @@ flvt is a comprehensive app that aggregates apartment rental advertisements from
   - AWS SQS and EventBridge (for scheduled jobs)  
   - AWS Amplify (for frontend hosting)  
   - AWS S3 (for enhanced performance and data access)  
-  - API Gateway (to expose Lambda functions)
+  - AWS API Gateway (to expose Lambda functions)
+  - AWS DynamoDB (data storage)
 - **Logging & Monitoring:**  
   EC2 instance running Seq for logging and performance monitoring
 - **Infrastructure Management:**  
