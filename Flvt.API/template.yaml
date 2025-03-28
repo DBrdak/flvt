@@ -124,6 +124,7 @@ Resources:
           Type: Schedule
           Properties:
             Name: RemoveOutdatedSchedule
+            Enabled: false
             Schedule: 'rate(1 hour)'
   CustodyFunctionsRemoveDuplicates:
     Type: AWS::Serverless::Function
