@@ -20,12 +20,12 @@ public class Startup
         services.AddSingleton<IConfiguration>(configuration);
         services.AddAWSService<IAmazonS3>();
 
-        AddLogger(services);
-        services.AddLogging(a => a.AddSerilog(null, true));
+        // AddLogger(services);
+        // services.AddLogging(a => a.AddSerilog(null, true));
         services.AddApplication();
         services.AddInfrastructure();
     }
-
+/*
     private static IServiceCollection AddLogger(IServiceCollection services)
     {
         var config = services
@@ -49,4 +49,5 @@ public class Startup
 
         return services;
     }
+*/
 }
